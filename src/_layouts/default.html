@@ -1,8 +1,10 @@
-<!DOCTYPE html>
-<html lang="en-US">
+{% if jekyll.environment == "development" %}<!DOCTYPE html>{% endif %}
+<html>
 	<head>
+		{% if jekyll.environment == "development" %}
 		<title>{{ site.title }} - v{{site.version}}</title>
 		<meta name="description" content="{{ site.description }}">
+		{% endif %}
 		<link rel="stylesheet" href="{{ "main.css" | prepend: site.baseurl }}">
 	</head>
 	<body>		
