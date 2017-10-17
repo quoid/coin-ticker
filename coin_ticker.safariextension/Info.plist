@@ -70,6 +70,6 @@
 	<key>Update Manifest URL</key>
 	<string>https://raw.githubusercontent.com/quoid/coin-ticker/master/coin_ticker.plist</string>
 	<key>Website</key>
-	<string>https://github.com/quoid</string>
+	<string>https://github.com/quoid/coin-ticker</string>
 </dict>
 </plist>
