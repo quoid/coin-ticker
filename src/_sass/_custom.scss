@@ -1,0 +1,257 @@
+$font-color-primary: #222;
+$font-color-secondary: #777;
+$border-color: #c3c3c3;
+$background-color: #ebebeb;
+
+%font-secondary {
+    color: $font-color-secondary;
+    font-size: 10px;
+}
+
+
+html,
+body {
+    background-color: transparent;
+}
+
+body,
+#wrap {
+    height: 100vh;
+}
+
+body {
+    color: $font-color-primary;
+	font-family: -apple-system, sans-serif;
+	font-size: 14px;
+	line-height: 1.25;
+}
+
+#wrap {
+    background-color: $background-color;
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    flex-direction: column;
+    position: relative;
+}
+
+#header {
+    background-color: rgba($background-color, 0.5);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid $border-color;
+    left: 0;
+    padding: 10px 15px;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    width: 100%;
+    span {
+        @extend %font-secondary;
+        font-style: italic;
+    }
+    
+}
+
+#status {
+    @extend %font-secondary;
+}
+
+#openSettings {
+    background: transparent url(settings.svg) no-repeat center center/contain;
+    cursor: pointer;
+    height: 17px;
+    left: 15px;
+    position: absolute;
+    top: 16px;
+    width: 17px;
+}
+
+.refresh {
+    -webkit-box-align: center;
+    align-items: center;
+    display: -webkit-box;
+    display: flex;
+    right: 15px;
+    position: absolute;
+    top: 16px;
+}
+
+#refresh {
+    cursor: pointer;
+    margin: 0;
+    margin-left: 10px;
+}
+
+#main {
+    -webkit-box-flex: 1;
+    flex: 1;
+    padding-top: 49px;
+    overflow-x: scroll;
+}
+
+#loaderContainer {
+    background-color: $background-color;
+    display: none;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
+#ticker {
+    padding: 0 15px;
+    
+    > .item.actual:last-child {
+        border-bottom: none;
+    }
+    
+}
+
+#welcome {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    text-align: center;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+}
+
+.item {
+    border-bottom: 1px solid $border-color;
+    padding: 10px 0;
+    
+    .title {
+        font-weight: 600;
+        
+        span {
+            @extend %font-secondary;
+            font-style: italic;
+            font-weight: 400;
+        }
+        
+    }
+    
+    .data {
+        @extend %font-secondary;
+        -webkit-box-align: center;
+        align-items: center;
+        display: -webkit-box;
+        display: flex;
+        font-size: 11px;
+        
+        > div {
+            padding-left: 10px;
+            
+            &:nth-child(1) {
+                padding-left: 0;
+            }
+            
+            span {
+                color: $font-color-primary;
+                font-weight: 600;
+            }
+            
+        }
+        
+    }
+    
+}
+
+#settings {
+    padding: 10px 15px;
+    position: relative;
+    text-align: center;
+    
+    > .title {
+        font-weight: 600;
+    }
+    
+}
+
+p {
+    @extend %font-secondary;
+    font-size: 11px;
+}
+
+.check-section {
+    margin-bottom: 10px;
+    text-align: left;
+    
+    .title {
+        font-weight: 600;
+    }
+    
+    .checkboxes {
+        -webkit-box-align: center;
+        align-items: center;
+        display: -webkit-box;
+        display: flex;
+        flex-wrap: wrap;
+        margin-left: -15px;
+        
+        > div {
+            margin-left: 15px;
+            margin-top: 5px;
+        }
+        
+    }
+    
+}
+
+label {
+    @extend %font-secondary;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+#closeSettings {
+    cursor: pointer;
+}
+
+.loading #loaderContainer {
+    display: block;
+}
+
+#settings {
+    display: none;
+}
+
+.show-settings #ticker {
+    display: none;
+}
+
+.show-settings #settings {
+    display: block;
+}
+
+.timer-on #openSettings,
+.loading #openSettings,
+.show-settings #openSettings {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.loading #refresh,
+.show-settings #refresh {
+    color: graytext;
+    pointer-events: none;
+}
+
+#header {
+    z-index: 10;
+}
+
+//development only
+#start {
+    cursor: pointer;
+    left: 42px;
+    margin: 0;
+    position: absolute;
+    top: 16px;
+}

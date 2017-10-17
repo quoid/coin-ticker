@@ -1,0 +1,37 @@
+<div id="settings">
+    <div class="title">Settings</div>
+    <p>Check all of the currency pairs you'd like to track. BTC prices are converted to USD by the GDAX current BTC/USD price. Regardless of the exchange we present the pairs as "coin/purchasing-currency."</p>
+    <div class="check-section">
+        <div class="title">GDAX</div>
+        <div class="checkboxes">
+            {% include pair.html pair="BTC-USD" exchange="gdax" name="BTC/USD" %}
+            {% include pair.html pair="ETH-BTC" exchange="gdax" name="ETH/BTC" %}
+            {% include pair.html pair="ETH-USD" exchange="gdax" name="ETH/USD" %}
+            {% include pair.html pair="LTC-BTC" exchange="gdax" name="LTC/BTC" %}
+            {% include pair.html pair="LTC-USD" exchange="gdax" name="LTC/USD" %}
+        </div>
+    </div>
+    <div class="check-section">
+        <div class="title">Poloniex</div>
+        <div class="checkboxes">
+            {% include pair.html pair="BTC_BCH" exchange="poloniex" name="BCH/BTC" %}
+            {% include pair.html pair="DASH" exchange="poloniex" name="DASH/BTC" %}
+            {% include pair.html pair="BTC_DGB" exchange="poloniex" name="DGB/BTC" %}
+            {% include pair.html pair="BTC_ETC" exchange="poloniex" name="ETC/BTC" %}
+            {% include pair.html pair="BTC_ETH" exchange="poloniex" name="ETH/BTC" %}
+            {% include pair.html pair="BTC_GAME" exchange="poloniex" name="GAME/BTC" %}
+            {% include pair.html pair="BTC_LSK" exchange="poloniex" name="LSK/BTC" %}
+            {% include pair.html pair="BTC_LTC" exchange="poloniex" name="LTC/BTC" %}
+            {% include pair.html pair="BTC_OMG" exchange="poloniex" name="OMG/BTC" %}
+            {% include pair.html pair="BTC_SC" exchange="poloniex" name="SC/BTC" %}
+            {% include pair.html pair="BTC_STR" exchange="poloniex" name="STR/BTC" %}
+            {% include pair.html pair="BTC_VTC" exchange="poloniex" name="VTC/BTC" %}
+            {% include pair.html pair="BTC_XEM" exchange="poloniex" name="XEM/BTC" %}
+            {% include pair.html pair="BTC_XMR" exchange="poloniex" name="XMR/BTC" %}
+            {% include pair.html pair="BTC_XRP" exchange="poloniex" name="XRP/BTC" %}
+            {% include pair.html pair="BTC_ZEC" exchange="poloniex" name="ZEC/BTC" %}
+        </div>
+    </div>
+    <p>The currency pairs you check will appear in the ticker in the order they are represented on this page. Your settings will be saved in the local storage of your browser. If you clear your browser's local storage, you will clear your settings for this extension.</p>
+    <button id="closeSettings">Exit settings</button>
+</div>

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		<title>{{ site.title }} - v{{site.version}}</title>
+		<meta name="description" content="{{ site.description }}">
+		<link rel="stylesheet" href="{{ "main.css" | prepend: site.baseurl }}">
+	</head>
+	<body>		
+		{{ content }}
+	<script src="scripts.js"></script>
+	</body>
+</html>

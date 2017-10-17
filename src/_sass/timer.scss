@@ -1,0 +1,53 @@
+$timer-bg: #ddd;
+$colored: #808080;
+
+.timer {
+    border-radius: 100%;
+    background: $timer-bg;
+    height: 16px;
+    width: 16px;
+}
+
+.timer .mask {
+    border-radius: 100% 0 0 100% / 50% 0 0 50%;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 50%;
+    transform-origin: 100% 50%;
+}
+
+.timer-on .timer {
+    background: -webkit-linear-gradient(left, $colored 50%, $timer-bg 50%);
+    animation: time 3s steps(20, start) infinite;
+}
+
+.timer-on .timer .mask {
+    animation: mask 3s steps(10, start) infinite;
+}
+
+@keyframes time {
+    100% { 
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes mask {
+    0% {
+        background: $timer-bg;
+        -webkit-transform: rotate(0deg);
+    }
+    50% {
+        background: $timer-bg;
+        -webkit-transform: rotate(-180deg);
+    }
+    50.01% {
+        background: $colored;
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        background: $colored;
+        -webkit-transform: rotate(-180deg);
+    }
+}
