@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<script>    
+    safari.application.addEventListener("popover", openPop, true);
+    
+    function openPop(event) {
+        safari.extension.popovers[0].contentWindow.start();
+    }
+</script>
