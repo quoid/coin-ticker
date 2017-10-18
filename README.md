@@ -6,11 +6,11 @@ A Safari extension that puts a configurable cryptocurrency ticker right in your 
 
 ## Installation
 
-Download the latest coin_ticker.safariextz release and double-click it to install.
+Download the [latest coin_ticker.safariextz](https://github.com/quoid/coin-ticker/releases) release and double-click it to install.
 
 ## Usage
 
-Once installed and you click the extension for the first time you'll have to click the settings icon to set which cryptocurrency pairs you'd like to track.
+Once installed, and you've clicked the extension for the first time, you'll have to click the settings icon to set which cryptocurrency pairs you'd like to track.
 
 ![settings image](https://raw.githubusercontent.com/quoid/coin-ticker/sandbox/etc/settings.png)
 
@@ -20,9 +20,9 @@ You can add/remove pairs at any time by going back into the settings page.
 
 ## Notes
 
-*Currently*, the only markets supported at [GDAX](https://www.gdax.com) and [Poloniex](https://poloniex.com).
+*Currently*, the only markets supported are [GDAX](https://www.gdax.com) and [Poloniex](https://poloniex.com).
 
-There is only a select group of coins currently supported for tracking. Eventually more coins from Poloniex will be added.
+There is only a select group of coins currently supported for tracking. Soon, more coins from Poloniex will be added.
 
 All prices are reflected in $USD and converted to $USD by the GDAX `BTC-USD` price.
 
