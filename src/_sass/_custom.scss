@@ -237,6 +237,7 @@ label {
     pointer-events: none;
 }
 
+.timer-on #refresh,
 .loading #refresh,
 .show-settings #refresh {
     color: graytext;
