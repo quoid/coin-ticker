@@ -17,6 +17,7 @@ var tickers = {
 var coinMap = {
     BCH: "Bitcoin Cash",
     BTC: "Bitcoin",
+    DASH: "Dash",
     DGB: "DigiByte",
     ETC: "Ethereum Classic",
     ETH: "Ethereum",
