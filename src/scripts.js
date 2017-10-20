@@ -116,7 +116,7 @@ function getPoloniex() {
     xhr.onloadend = function() {
         if (xhr.status === 200) {
             var data = JSON.parse(xhr.responseText);
-            console.log(data);
+            cl(data);
             for (var key in data) {
                 if (poloniexCoins.indexOf(key) > -1) {
                     if (document.querySelectorAll("." + key + ".poloniex").length < 1) {
