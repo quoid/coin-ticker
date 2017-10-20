@@ -1,14 +1,19 @@
-{% if jekyll.environment == "development" %}<!DOCTYPE html>{% endif %}
+{% if jekyll.environment == "development" %}<!DOCTYPE html>
 <html>
-	<head>
-		{% if jekyll.environment == "development" %}
-		<title>{{ site.title }} - v{{site.version}}</title>
-		<meta name="description" content="{{ site.description }}">
-		{% endif %}
-		<link rel="stylesheet" href="{{ "main.css" | prepend: site.baseurl }}">
-	</head>
-	<body>		
-		{{ content }}
-	<script src="scripts.js"></script>
-	</body>
+    <head>
+    {% endif %}
+        {% if jekyll.environment == "development" %}
+        <title>{{ site.title }} - v{{site.version}}</title>
+        <meta name="description" content="{{ site.description }}">
+        {% endif %}
+        <link rel="stylesheet" href="{{ "main.css" | prepend: site.baseurl }}">
+    {% if jekyll.environment == "development" %}
+    </head>
+    <body>
+    {% endif %}
+        {{ content }}
+    {% if jekyll.environment == "development" %}
+    <script src="scripts.js"></script>
+    </body>
 </html>
+{% endif %}
