@@ -16,22 +16,32 @@ var tickers = {
 
 var coinMap = {
     BCH: "Bitcoin Cash",
+    BCN: "Bytecoin",
     BTC: "Bitcoin",
+    BTS: "BitShares",
+    CLAM: "CLAMs",
     DASH: "Dash",
     DGB: "DigiByte",
+    DOGE: "Dogecoin",
     ETC: "Ethereum Classic",
     ETH: "Ethereum",
+    FCT: "Factom",
     GAME: "Gamecredits",
+    GAS: "Gas",
     LSK: "Lisk",
     LTC: "Litecoin",
+    NAV: "Nav Coin",
     OMG: "OmiseGO",
     SC: "Siacoin",
+    STEEM: "STEEM",
     STR: "Stellar",
+    STRAT: "Stratis",
     VTC: "Vertcoin",
     XEM: "Nem",
     XMR: "Monero",
     XRP: "Ripple",
-    ZEC: "Zcash"
+    ZEC: "Zcash",
+    ZRX: "0x"
 };
 
 //create function for logging message so it's easy to disable verbose logging
