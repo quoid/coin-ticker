@@ -7,7 +7,10 @@ var ls = localStorage;
 var refreshButton = document.getElementById("refresh");
 var openSettings = document.getElementById("openSettings");
 var closeSettings = document.getElementById("closeSettings");
+var clearChecks = document.getElementById("clearAllCheckboxes");
 var welcomeMessage = document.getElementById("welcome");
+var gdaxData;
+var poloniexData;
 
 var tickers = {
     gdax: "https://api.gdax.com/products/stats",
@@ -15,27 +18,37 @@ var tickers = {
 };
 
 var coinMap = {
+    ARDR: "Ardor",
     BCH: "Bitcoin Cash",
     BCN: "Bytecoin",
     BTC: "Bitcoin",
+    BTCD: "Bitcoin Dark",
     BTS: "BitShares",
     CLAM: "CLAMs",
     DASH: "Dash",
+    DCR: "Decred",
     DGB: "DigiByte",
     DOGE: "Dogecoin",
+    EMC2: "Einsteinium",
     ETC: "Ethereum Classic",
     ETH: "Ethereum",
     FCT: "Factom",
     GAME: "Gamecredits",
     GAS: "Gas",
+    GNT: "Golem",
     LSK: "Lisk",
     LTC: "Litecoin",
+    MAID: "MaidSafeCoin",
     NAV: "Nav Coin",
+    NEOS: "Neoscoin",
     OMG: "OmiseGO",
+    POT: "Potcoin",
+    REP: "Augur",
     SC: "Siacoin",
     STEEM: "STEEM",
     STR: "Stellar",
     STRAT: "Stratis",
+    SYS: "Syscoin",
     VTC: "Vertcoin",
     XEM: "Nem",
     XMR: "Monero",
@@ -73,14 +86,15 @@ function getGdax() {
         if (xhr.status === 200) { //if there were no errors
             cl(btcPrice); //we need the btcPrice variable to be set before we execute the functionality below
             if (gdaxCoins.length > 0) { //check if user is tracking gdax coins
-                var data = JSON.parse(xhr.responseText);
-                for (var key in data) {
-                    if (gdaxCoins.indexOf(key) > -1) { //if a key (currnecy pair) matches a coin being tracked
-                        if (document.querySelectorAll("." + key + ".gdax").length < 1) { //if element doesn't exist
-                            buildElement(key, "gdax"); //build the element
-                            fillData(key, "gdax", data); //fill data
+                gdaxData = JSON.parse(xhr.responseText);
+                
+                for (var i = 0; i < gdaxCoins.length; i++) {
+                    if (Object.keys(gdaxData).indexOf(gdaxCoins[i]) > -1) {
+                        if (document.querySelectorAll("." + gdaxCoins[i] + ".gdax").length < 1) {
+                            buildElement(gdaxCoins[i], "gdax");
+                            fillData(gdaxCoins[i], "gdax", gdaxData);
                         } else {
-                            fillData(key, "gdax", data);
+                            fillData(gdaxCoins[i], "gdax", gdaxData);
                         }
                     }
                 }
@@ -115,18 +129,19 @@ function getPoloniex() {
     
     xhr.onloadend = function() {
         if (xhr.status === 200) {
-            var data = JSON.parse(xhr.responseText);
-            cl(data);
-            for (var key in data) {
-                if (poloniexCoins.indexOf(key) > -1) {
-                    if (document.querySelectorAll("." + key + ".poloniex").length < 1) {
-                        buildElement(key, "poloniex");
-                        fillData(key, "poloniex", data);
+            poloniexData = JSON.parse(xhr.responseText);
+            
+            for (var i = 0; i < poloniexCoins.length; i++) {
+                if (Object.keys(poloniexData).indexOf(poloniexCoins[i]) > -1) {
+                    if (document.querySelectorAll("." + poloniexCoins[i] + ".poloniex").length < 1) {
+                        buildElement(poloniexCoins[i], "poloniex");
+                        fillData(poloniexCoins[i], "poloniex", poloniexData);
                     } else {
-                        fillData(key, "poloniex", data);
+                        fillData(poloniexCoins[i], "poloniex", poloniexData);
                     }
                 }
             }
+
             document.body.classList.remove("loading");
             updateStatus("Last updated: " + getCurrentDateTime());
         } else if (xhr.timeout > 0 && xhr.status === 0) {
@@ -281,10 +296,12 @@ function saveSetting(el) {
         switch (String(exchange)) {
             case "gdax":
                 gdaxCoins.push(pair); //update the gdaxCoins array
+                gdaxCoins.sort(); //sort the array in alphabetical order
                 ls.setItem(exchange, gdaxCoins); //update the localStorage for exchange
                 break;
             case "poloniex":
                 poloniexCoins.push(pair);
+                poloniexCoins.sort();
                 ls.setItem(exchange, poloniexCoins);
                 break;
         }
@@ -361,6 +378,20 @@ function closeSettingsPage() {
     
 }
 
+function clearAllChecked() {
+    var checkboxes = document.getElementsByClassName("ck");
+    for(var i = 0; i < checkboxes.length; i++){
+        var checkbox = checkboxes[i];
+        if(checkbox.checked === true) {
+            checkbox.checked = false;
+        }
+        ls.clear();
+        gdaxCoins = [];
+        poloniexCoins = [];
+    }
+}
+
+clearChecks.addEventListener("click", clearAllChecked);
 refreshButton.addEventListener("click", refresh);
 openSettings.addEventListener("click", showSettingsPage);
 closeSettings.addEventListener("click", closeSettingsPage);
