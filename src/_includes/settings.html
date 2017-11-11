@@ -14,26 +14,36 @@
     <div class="check-section">
         <div class="title">Poloniex</div>
         <div class="checkboxes">
+            {% include pair.html pair="BTC_ARDR" exchange="poloniex" name="ARDR/BTC" %}
             {% include pair.html pair="BTC_BCH" exchange="poloniex" name="BCH/BTC" %}
             {% include pair.html pair="BTC_BCN" exchange="poloniex" name="BCN/BTC" %}
+            {% include pair.html pair="BTC_BTCD" exchange="poloniex" name="BTCD/BTC" %}
             {% include pair.html pair="BTC_BTS" exchange="poloniex" name="BTS/BTC" %}
             {% include pair.html pair="BTC_CLAM" exchange="poloniex" name="CLAM/BTC" %}
             {% include pair.html pair="BTC_DASH" exchange="poloniex" name="DASH/BTC" %}
+            {% include pair.html pair="BTC_DCR" exchange="poloniex" name="DCR/BTC" %}
             {% include pair.html pair="BTC_DGB" exchange="poloniex" name="DGB/BTC" %}
             {% include pair.html pair="BTC_DOGE" exchange="poloniex" name="DOGE/BTC" %}
+            {% include pair.html pair="BTC_EMC2" exchange="poloniex" name="EMC2/BTC" %}
             {% include pair.html pair="BTC_ETC" exchange="poloniex" name="ETC/BTC" %}
             {% include pair.html pair="BTC_ETH" exchange="poloniex" name="ETH/BTC" %}
             {% include pair.html pair="BTC_FCT" exchange="poloniex" name="FCT/BTC" %}
             {% include pair.html pair="BTC_GAME" exchange="poloniex" name="GAME/BTC" %}
             {% include pair.html pair="BTC_GAS" exchange="poloniex" name="GAS/BTC" %}
+            {% include pair.html pair="BTC_GNT" exchange="poloniex" name="GNT/BTC" %}
             {% include pair.html pair="BTC_LSK" exchange="poloniex" name="LSK/BTC" %}
             {% include pair.html pair="BTC_LTC" exchange="poloniex" name="LTC/BTC" %}
+            {% include pair.html pair="BTC_MAID" exchange="poloniex" name="MAID/BTC" %}
             {% include pair.html pair="BTC_NAV" exchange="poloniex" name="NAV/BTC" %}
+            {% include pair.html pair="BTC_NEOS" exchange="poloniex" name="NEOS/BTC" %}
             {% include pair.html pair="BTC_OMG" exchange="poloniex" name="OMG/BTC" %}
+            {% include pair.html pair="BTC_POT" exchange="poloniex" name="POT/BTC" %}
+            {% include pair.html pair="BTC_REP" exchange="poloniex" name="REP/BTC" %}
             {% include pair.html pair="BTC_SC" exchange="poloniex" name="SC/BTC" %}
             {% include pair.html pair="BTC_STEEM" exchange="poloniex" name="STEEM/BTC" %}
             {% include pair.html pair="BTC_STR" exchange="poloniex" name="STR/BTC" %}
             {% include pair.html pair="BTC_STRAT" exchange="poloniex" name="STRAT/BTC" %}
+            {% include pair.html pair="BTC_SYS" exchange="poloniex" name="SYS/BTC" %}
             {% include pair.html pair="BTC_VTC" exchange="poloniex" name="VTC/BTC" %}
             {% include pair.html pair="BTC_XEM" exchange="poloniex" name="XEM/BTC" %}
             {% include pair.html pair="BTC_XMR" exchange="poloniex" name="XMR/BTC" %}
@@ -43,5 +53,6 @@
         </div>
     </div>
     <p>The currency pairs you check will appear in the ticker in the order they are represented on this page. Your settings will be saved in the local storage of your browser. If you clear your browser's local storage, you will clear your settings for this extension.</p>
+    <button id="clearAllCheckboxes">Clear selected</button>
     <button id="closeSettings">Exit settings</button>
 </div>
