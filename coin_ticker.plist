@@ -13,6 +13,8 @@
             <string>1.0.2</string>
             <key>Developer Identifier</key>
             <string>J74Q8V8V8N</string>
+            <key>Update From Gallery</key>
+            <true/>
             <key>URL</key>
             <string>https://raw.githubusercontent.com/quoid/coin-ticker/master/coin_ticker.safariextz</string>
         </dict>
