@@ -7,12 +7,12 @@
         <dict>
             <key>CFBundleIdentifier</key>
             <string>com.quoid.cointicker</string>
-            <key>CFBundleShortVersionString</key>
-            <string>1.0.2</string>
-            <key>CFBundleVersion</key>
-            <string>1.0.2</string>
             <key>Developer Identifier</key>
             <string>J74Q8V8V8N</string>
+            <key>CFBundleVersion</key>
+            <string>1.0.2</string>
+            <key>CFBundleShortVersionString</key>
+            <string>1.0.2</string>
             <key>Update From Gallery</key>
             <true/>
             <key>URL</key>
