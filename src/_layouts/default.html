@@ -1,19 +1,18 @@
-{% if jekyll.environment == "development" %}<!DOCTYPE html>
+---
+layout: compress
+---
 <html>
     <head>
-    {% endif %}
-        {% if jekyll.environment == "development" %}
-        <title>{{ site.title }} - v{{site.version}}</title>
-        <meta name="description" content="{{ site.description }}">
-        {% endif %}
-        <link rel="stylesheet" href="{{ "main.css" | prepend: site.baseurl }}">
-    {% if jekyll.environment == "development" %}
+    {% capture styles %}
+        {% include main.scss %}
+    {% endcapture %}
+    <style>{{ styles | scssify | strip }}</style>
     </head>
     <body>
-    {% endif %}
         {{ content }}
-    {% if jekyll.environment == "development" %}
-    <script src="scripts.js"></script>
+    {% capture scripts %}
+        {% include scripts.js %}
+    {% endcapture %}
+    <script>{{ scripts | uglify | strip }}</script>
     </body>
 </html>
-{% endif %}

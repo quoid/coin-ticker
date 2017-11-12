@@ -1,9 +1,9 @@
-#head 
-title: Coin Ticker
-description: "Coin Ticker is a safari extension that allows you to track cryptocurrency prices."
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://yourdomain.com" # the base hostname & protocol for your site
 version: "1.0.2"
+
+compress_html:
+  clippings: all
+  startings: [html, head, body]
+  endings: [html, head, body]
 
 #build
 source: src
@@ -12,3 +12,6 @@ sass:
   sass_dir: _sass
   style: compressed
 markdown: kramdown
+
+plugins:
+  - uglifier
