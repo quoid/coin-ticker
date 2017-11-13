@@ -13,9 +13,9 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.2</string>
+	<string>1.0.3</string>
 	<key>CFBundleVersion</key>
-	<string>1.0.2</string>
+	<string>1.0.3</string>
 	<key>Chrome</key>
 	<dict>
 		<key>Global Page</key>
@@ -26,11 +26,11 @@
 				<key>Filename</key>
 				<string>popover.html</string>
 				<key>Height</key>
-				<integer>550</integer>
+				<integer>580</integer>
 				<key>Identifier</key>
 				<string>coinTickerPopover</string>
 				<key>Width</key>
-				<integer>530</integer>
+				<integer>560</integer>
 			</dict>
 		</array>
 		<key>Toolbar Items</key>
