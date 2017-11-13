@@ -22,21 +22,9 @@ You can add/remove pairs at any time by going back into the settings page.
 
 *Currently*, the only markets supported are [GDAX](https://www.gdax.com) and [Poloniex](https://poloniex.com).
 
-There is only a select group of coins currently supported for tracking. Soon, more coins from Poloniex will be added.
-
-All prices are reflected in $USD and converted to $USD by the GDAX `BTC-USD` price.
+All prices are reflected in `$USD` and converted to `$USD` by the GDAX `BTC-USD` price.
 
 
 ## Pipeline
 
-* Auto-refresh
-* Add *more* cryptocurrencies from Poloniex
-* More currency support
-    * £GBP
-    * €EUR
-* Allow users to toggle between USD and BTC conversions
-* Additional market support
-    * Gemeni
-    * Bitfinex
-    * Bittrex
-    * etc...
+https://github.com/quoid/coin-ticker/issues/7
