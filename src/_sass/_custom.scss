@@ -195,6 +195,9 @@ p {
         > div {
             margin-left: 15px;
             margin-top: 5px;
+            overflow: visible;
+            white-space: nowrap;
+            width: 70px;
         }
         
     }
