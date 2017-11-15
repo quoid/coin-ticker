@@ -27,4 +27,4 @@ All prices are reflected in `$USD` and converted to `$USD` by the GDAX `BTC-USD`
 
 ## Pipeline
 
-https://github.com/quoid/coin-ticker/issues/7
+https://github.com/quoid/coin-ticker/milestones
