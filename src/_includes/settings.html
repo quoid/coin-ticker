@@ -1,28 +1,41 @@
 <div id="settings">
-    <div class="title">Settings</div>
-    <p>Check all of the currency pairs you'd like to track. BTC prices are converted to USD by the GDAX current BTC/USD price.</p>
-    <div class="check-section">
-        <div class="title">GDAX</div>
-        <div class="checkboxes">
-            {% include pair.html pair="BTC-USD" exchange="gdax" name="BTC/USD" %}
-            {% include pair.html pair="ETH-BTC" exchange="gdax" name="ETH/BTC" %}
-            {% include pair.html pair="ETH-USD" exchange="gdax" name="ETH/USD" %}
-            {% include pair.html pair="LTC-BTC" exchange="gdax" name="LTC/BTC" %}
-            {% include pair.html pair="LTC-USD" exchange="gdax" name="LTC/USD" %}
+    <div>
+        <div class="title">Settings</div>
+        <p>
+            Check all of the currency pairs you'd like to track. All prices are converted to USD. The selected pairs appear in ticker alphabetically by symbol (as shown on this page). Your settings are saved in the local storage of your browser, if you clear it, you will clear this extension's settings.
+        </p>
+        <div class="exchange">
+            <div class="title">GDAX</div>
+            <div class="checkboxes">
+                {% include pair.html pair="BTC-USD" exchange="gdax" name="BTC/USD" %}
+                {% include pair.html pair="ETH-BTC" exchange="gdax" name="ETH/BTC" %}
+                {% include pair.html pair="ETH-USD" exchange="gdax" name="ETH/USD" %}
+                {% include pair.html pair="LTC-BTC" exchange="gdax" name="LTC/BTC" %}
+                {% include pair.html pair="LTC-USD" exchange="gdax" name="LTC/USD" %}
+            </div>
+        </div>
+        <div class="exchange">
+            <div class="title">Gemini</div>
+            <div class="checkboxes">
+                {% include pair.html pair="BTC-USD" exchange="gemini" name="BTC/USD" %}
+                {% include pair.html pair="ETH-BTC" exchange="gemini" name="ETH/BTC" %}
+                {% include pair.html pair="ETH-USD" exchange="gemini" name="ETH/USD" %}
+            </div>
+        </div>
+        <div class="exchange">
+            <div class="title">Poloniex</div>
+            <div class="checkboxes">
+                {% assign pCoins = "AMP,ARDR,BCH,BCN,BCY,BELA,BLK,BTCD,BTM,BTS,BURST,CLAM,CVC,DASH,DCR,DGB,DOGE,EMC2,ETC,ETH,EXP,FCT,FLDC,FLO,GAME,GAS,GNO,GNT,GRC,HUC,LBC,LSK,LTC,MAID,NAUT,NAV,NEOS,NMC,NOTE,NXC,NXT,OMG,OMNI,PASC,PINK,POT,PPC,RADS,REP,RIC,SBD,SC,SJCX,STEEM,STORJ,STR,STRAT,SYS,VIA,VRC,VTC,XBC,XCP,XEM,XMR,XPM,XRP,XVC,ZEC,ZRX" | split: ',' %}
+                {% for coin in pCoins %}
+                    {% capture pair %}{{ coin | prepend: "BTC_" }}{% endcapture %}
+                    {% capture name %}{{ coin | append: "/BTC" }}{% endcapture %}
+                    {% include pair.html pair=pair exchange="poloniex" name=name %}
+                {% endfor %}
+            </div>
         </div>
     </div>
-    <div class="check-section">
-        <div class="title">Poloniex</div>
-        <div class="checkboxes">
-            {% assign pCoins = "AMP,ARDR,BCH,BCN,BCY,BELA,BLK,BTCD,BTM,BTS,BURST,CLAM,CVC,DASH,DCR,DGB,DOGE,EMC2,ETC,ETH,EXP,FCT,FLDC,FLO,GAME,GAS,GNO,GNT,GRC,HUC,LBC,LSK,LTC,MAID,NAUT,NAV,NEOS,NMC,NOTE,NXC,NXT,OMG,OMNI,PASC,PINK,POT,PPC,RADS,REP,RIC,SBD,SC,SJCX,STEEM,STORJ,STR,STRAT,SYS,VIA,VRC,VTC,XBC,XCP,XEM,XMR,XPM,XRP,XVC,ZEC,ZRX" | split: ',' %}
-            {% for coin in pCoins %}
-                {% capture pair %}{{ coin | prepend: "BTC_" }}{% endcapture %}
-                {% capture name %}{{ coin | append: "/BTC" }}{% endcapture %}
-                {% include pair.html pair=pair exchange="poloniex" name=name %}
-            {% endfor %}
-        </div>
+    <div class="settings-footer">
+        <button class="button">Uncheck All</button>
+        <button class="button">Exit Settings</button>
     </div>
-    <p>The selected pairs appear in ticker alphabetically by symbol (as shown on this page). Your settings are saved in the local storage of your browser, if you clear it, you will clear this extension's settings.</p>
-    <button id="clearAllCheckboxes">Clear selected</button>
-    <button id="closeSettings">Exit settings</button>
 </div>

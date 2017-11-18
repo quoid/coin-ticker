@@ -1,0 +1,61 @@
+#loading-container {
+    display: none;
+    left: 50%;
+    position: absolute;
+	top: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+.loader {
+    font-size: 30px;
+    height: 1em;
+    position: relative;
+    width: 1em;
+    
+    .spinner-blade {
+        background-color: transparent;
+        border-radius: .0555em;
+        bottom: 0;
+        height: .2777em;
+        left: .4629em;
+        position: absolute;
+        width: .074em;
+        -webkit-transform-origin: center -.2222em;
+        transform-origin: center -.2222em;
+        -webkit-animation: spinner-fade 1s infinite linear;
+        animation: spinner-fade 1s infinite linear;
+        
+        $animation-delay: 0s;
+        $blade-rotation: 0deg;
+
+        @for $i from 1 through 12 {
+            &:nth-child(#{$i}) {
+                -webkit-animation-delay: $animation-delay;
+                animation-delay: $animation-delay;
+                -webkit-transform: rotate($blade-rotation);
+                transform: rotate($blade-rotation);
+                $blade-rotation: $blade-rotation + 30;
+                $animation-delay: $animation-delay + .083;
+            }
+        }
+    }
+}
+
+@-webkit-keyframes spinner-fade {
+    0% {
+        background-color: #777;
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
+@keyframes spinner-fade {
+    0% {
+     background-color: #777;
+    }
+    100% {
+        background-color: transparent;
+    }
+}
