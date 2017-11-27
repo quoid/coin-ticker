@@ -1,18 +1,20 @@
 <div id="ticker">
-    <div id="welcome" style="display: none;">Click the settings button to start tracking coins!</div>
-    {% for i in (1..20) %}
-    <div id="placeholder" class="item">
+    <div class="ticker-loader">
+        {% include loader.html %}
+    </div>
+    <div id="placeholder" class="item" style="display: none">
         <div class="icon"></div>
         <div class="content">
-            <div class="title">Bitcoin<span>GDAX (BTC/USD)</span></div>
-            <div class="data">
-                <div>Price:&#160;<span class="last">$7234.00</span></div>
-                <div>24hr low:&#160;<span class="low">$6500.00</span></div>
-                <div>24hr high:&#160;<span class="high">$7722.56</span></div>
-                <div>24hr change:&#160;<span class="change">10.10%</span></div>
+            <div>
+                <div class="name"></div>
+                <div class="symbol"></div>
+            </div>
+            <div>
+                <div class="price"></div>
+                <div class="change"></div>
             </div>
         </div>
         <div class="arrow"></div>
     </div>
-    {% endfor %}
+    <div id="welcome">Click the settings button to start tracking coins!</div>
 </div>

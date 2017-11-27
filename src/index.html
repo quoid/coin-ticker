@@ -2,19 +2,18 @@
 layout: default
 ---
 <div id="header">
-    <div id="openSettings"></div>
+    <div id="open-settings"></div>
     {% if jekyll.environment == "development" %}<button id="start" onclick="start();">Start</button>{% endif %}
-    Coin Ticker<span>v{{site.version}}</span>
-    <div id="status" class="font-secondary">init</div>
-    <div class="socket-status" title="GDAX: null&#013;Gemini: null&#013;Poloniex: null">
-        <div id="gdaxStatus"></div>
-        <div id="geminiStatus"></div>
-        <div id="poloniexStatus"></div>
-         <button id="pause" class="button">Pause</button>
+    <div id="title">Coin Ticker<span>&nbsp;v{{site.version}}</span></div>
+    <div id="status">init</div>
+    <div class="flex">
+        <div>
+            {% include loader.html %}
+        </div>
+        <button id="pause" class="button">Pause</button>
     </div>
 </div>
 <div id="main">
-    {% include loader.html %}
     {% include ticker.html %}
     {% include settings.html %}
 </div>
