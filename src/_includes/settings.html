@@ -5,6 +5,7 @@
         <div id="clear-filter" tabindex="0"></div>
     </div>
     <div class="settings-content">
+        <p>Select all the coins you&apos;d like to track. All settings are saved in the local storage of your browser. Coin data is from CryptoCompare.com.</p>
         <div id="checkboxes">
             {% for coin in site.data.coins %}
                 {% include coin.html symbol=coin.symbol name=coin.name %}
@@ -12,7 +13,7 @@
         </div>
     </div>
     <div class="settings-footer">
-        <button id="exit-settings" class="button">Exit Settings</button>
         <button id="clear-checkboxes" class="button">Uncheck All</button>
+        <button id="hide-settings" class="button">Exit Settings</button>
     </div>
 </div>

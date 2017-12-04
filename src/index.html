@@ -2,7 +2,7 @@
 layout: default
 ---
 <div id="header">
-    <div id="open-settings"></div>
+    <div id="show-settings"></div>
     {% if jekyll.environment == "development" %}<button id="start" onclick="start();">Start</button>{% endif %}
     <div id="title">Coin Ticker<span>&nbsp;v{{site.version}}</span></div>
     <div id="status">init</div>
@@ -10,7 +10,7 @@ layout: default
         <div>
             {% include loader.html %}
         </div>
-        <button id="pause" class="button">Pause</button>
+        <button id="update" class="button">Update</button>
     </div>
 </div>
 <div id="main">
