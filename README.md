@@ -10,20 +10,22 @@ Download the [latest coin_ticker.safariextz](https://github.com/quoid/coin-ticke
 
 ## Usage
 
-Once installed, and you've clicked the extension for the first time, you'll have to click the settings icon to set which cryptocurrency pairs you'd like to track.
+Once installed, and you've clicked the extension for the first time, you'll have to click the settings icon to set which coins you'd like to track.
 
 ![settings image](https://raw.githubusercontent.com/quoid/coin-ticker/sandbox/etc/settings.png)
 
-Select all cryptocurrency pairs you'd like to track and then exit the settings page. Once you exit the settings the page, the ticker will update for the pairs you've selected. You can update the prices manually by clicking the refresh button. To respect API limits, you can only click the refresh button once every 3 seconds.
+From here, you can tick the checkboxes of any coins you'd like to track. Once you exit the settings page, the ticker will update for the coins you've selected. You can update the coin data *manually* by clicking the `update` button. To respect API limits, you can only update the data once every 10 seconds. If you attempt to update the data more frequently, the update request will be deferred until 10 seconds has past since your previous update.
 
-You can add/remove pairs at any time by going back into the settings page.
+To make finding your coins easier, you can use the filter bar in the settings page to filter all available coins. You can also use the search flag `:checked` to only show coins you have already selected. You can only track, at max, 50 coins at one time.
+
+You can add/remove coins at any time by going back into the settings page.
 
 ## Notes
 
-*Currently*, the only markets supported are [GDAX](https://www.gdax.com) and [Poloniex](https://poloniex.com).
-
-All prices are reflected in `$USD` and converted to `$USD` by the GDAX `BTC-USD` price.
-
+- All data is from [CryptoCompare](https://www.cryptocompare.com) and generalized from multiple exchanges
+- All prices are reflected in `$USD`
+- Coin icons from [cryptocoins](https://github.com/allienworks/cryptocoins)
+- Extension logo inspired by [Anton Kalik](https://thenounproject.com/antonkalik/)
 
 ## Pipeline
 

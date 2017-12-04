@@ -13,9 +13,9 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.3</string>
+	<string>1.1.0</string>
 	<key>CFBundleVersion</key>
-	<string>1.0.3</string>
+	<string>1.1.0</string>
 	<key>Chrome</key>
 	<dict>
 		<key>Global Page</key>
@@ -30,7 +30,7 @@
 				<key>Identifier</key>
 				<string>coinTickerPopover</string>
 				<key>Width</key>
-				<integer>560</integer>
+				<integer>414</integer>
 			</dict>
 		</array>
 		<key>Toolbar Items</key>
@@ -39,7 +39,7 @@
 				<key>Identifier</key>
 				<string>coinTicker-button</string>
 				<key>Image</key>
-				<string>icon.png</string>
+				<string>toolbar.png</string>
 				<key>Include By Default</key>
 				<true/>
 				<key>Label</key>
