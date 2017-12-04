@@ -1,5 +1,7 @@
 # Coin Ticker
 
+<img src="https://raw.githubusercontent.com/quoid/coin-ticker/sandbox/etc/logo.png" width="64" height="64">
+
 A Safari extension that puts a configurable cryptocurrency ticker right in your browser.
 
 ![ticker image](https://raw.githubusercontent.com/quoid/coin-ticker/sandbox/etc/ticker.png)
@@ -30,5 +32,3 @@ You can add/remove coins at any time by going back into the settings page.
 ## Pipeline
 
 https://github.com/quoid/coin-ticker/milestones
-
-<img src="https://raw.githubusercontent.com/quoid/coin-ticker/sandbox/etc/logo.png" width="64" height="64">
