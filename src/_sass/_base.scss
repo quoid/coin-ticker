@@ -4,20 +4,17 @@
 *:before,
 *:after  {
 	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
 html {
 	-webkit-tap-highlight-color: transparent;
 	-webkit-text-size-adjust: 100%;
-	-ms-text-size-adjust: 100%;
 	-webkit-touch-callout: none;
 }
 
 html, 
 body {
-	background-color: white;
 	color: black;
 	font-family: sans-serif;
 	font-size: 16px;
@@ -27,68 +24,4 @@ body {
 	margin: 0;
 	position: relative;
 	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-}
-
-article,
-aside,
-details,
-figcaption,
-figure,
-footer,
-header,
-hgroup,
-main,
-menu,
-nav,
-section,
-summary {
-  display: block;
-}
-
-img {
-	max-width: 100%;
-	height: auto;
-	border: 0;
-}
-
-a {
-	color: inherit;
-	text-decoration: none;
-	
-	&:focus,
-	&:hover {
-		color: inherit;
-		text-decoration: none;
-	}
-
-}
-
-b,
-strong {
-	font-weight: bold;
-}
-
-ul,
-il,
-li {
-	list-style: none;
-	padding: 0;
-}
-
-*:focus,
-a:focus {
-	outline: none;
-}
-
-figure {
-	margin: 0;
-}
-
-hr {
-	-webkit-box-sizing: content-box;
-	-moz-box-sizing: content-box;
-	box-sizing: content-box;
-	height: 0;
-	overflow: visible;
 }

@@ -1,0 +1,7 @@
+$coins: "adc", "aeon", "amp", "anc", "arch", "ardr", "aur", "banx", "bat", "bay", "bc", "bch", "bcn", "bft", "brk", "brx", "bsd", "bta", "btc", "btcd", "bts", "clam", "cloak", "dao", "dash", "dcr", "dct", "dgb", "dgd", "dgx", "dmd", "doge", "emc", "eos", "erc", "etc", "eth", "fc2", "fct", "flo", "frk", "ftc", "game", "gdc", "gemz", "gld", "gno", "gnt", "golos", "grc", "grs", "heat", "icn", "ifc", "incnt", "ioc", "iota", "jbs", "kmd", "kobo", "kore", "lbc", "ldoge", "lsk", "ltc", "maid", "mco", "mint", "mona", "mrc", "msc", "mtr", "mue", "nbt", "neo", "neos", "neu", "nlg", "nmc", "note", "nvc", "nxt", "ok", "omg", "omni", "opal", "part", "piggy", "pink", "pivx", "pot", "ppc", "qrk", "rads", "rbies", "rbt", "rby", "rdd", "rep", "rise", "sar", "scot", "sdc", "sia", "sjcx", "slg", "sls", "snrg", "start", "steem", "str", "strat", "swift", "sync", "sys", "trig", "tx", "ubq", "unity", "usdt", "vior", "vnl", "vpn", "vrc", "vtc", "waves", "xai", "xbs", "xcp", "xem", "xmr", "xpm", "xrp", "xtz", "xvg", "ybc", "zec", "zeit", "ark", "ada", "gbyte", "btm", "qtum", "xzc", "xlm";
+
+@each $coin in $coins {
+    .#{$coin}.item .icon {
+     background-image: url("img/coins/#{$coin}.svg");
+    }
+}

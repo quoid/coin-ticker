@@ -1,284 +1,93 @@
-// /* jshint quotmark: double *///https://devhints.io/jshint
-var btcPrice;
-var settingsVisible = false;
-var gdaxCoins = [];
-var poloniexCoins = [];
+var last_updated = 0;
+var timeout_id = null;
+var timeout_delay = 0;
+var last_coins = [];
+var coins = {};
 var ls = localStorage;
-var refreshButton = document.getElementById("refresh");
-var openSettings = document.getElementById("openSettings");
-var closeSettings = document.getElementById("closeSettings");
-var clearChecks = document.getElementById("clearAllCheckboxes");
-var welcomeMessage = document.getElementById("welcome");
-var gdaxData;
-var poloniexData;
+var filter_bar = document.getElementById("filter-bar");
+var filter_icon = document.getElementById("filter-icon");
+var filter_clear = document.getElementById("clear-filter");
+var button_clear_checks = document.getElementById("clear-checkboxes");
+var button_show_settings = document.getElementById("show-settings");
+var button_hide_settings = document.getElementById("hide-settings");
+var button_update = document.getElementById("update");
+var green = "#4cd964";
+var red = "#ff3b30";
+var max_checks = 50;
 
-var tickers = {
-    gdax: "https://api.gdax.com/products/stats",
-    poloniex: "https://poloniex.com/public?command=returnTicker"
-};
-
-var coinMap = {
-    AMP: "Synereo AMP",
-    ARDR: "Ardor",
-    BCH: "Bitcoin Cash",
-    BCN: "Bytecoin",
-    BCY: "BitCrystals",
-    BELA: "Bela",
-    BLK: "BlackCoin",
-    BTC: "Bitcoin",
-    BTCD: "Bitcoin Dark",
-    BTM: "Bitmark",
-    BTS: "BitShares",
-    BURST: "Burst",
-    CLAM: "CLAMs",
-    CVC: "Civic",
-    DASH: "Dash",
-    DCR: "Decred",
-    DGB: "DigiByte",
-    DOGE: "Dogecoin",
-    EMC2: "Einsteinium",
-    ETC: "Ethereum Classic",
-    ETH: "Ethereum",
-    EXP: "Expanse",
-    FCT: "Factom",
-    FLDC: "FoldingCoin",
-    FLO: "Florincoin",
-    GAME: "Gamecredits",
-    GAS: "Gas",
-    GNO: "Gnosis",
-    GNT: "Golem",
-    GRC: "Gridcoin Research",
-    HUC: "Huntercoin",
-    LBC: "LBRY Credits",
-    LSK: "Lisk",
-    LTC: "Litecoin",
-    MAID: "MaidSafeCoin",
-    NAUT: "Nautiluscoin",
-    NAV: "Nav Coin",
-    NEOS: "Neoscoin",
-    NMC: "Namecoin",
-    NOTE: "DNotes",
-    NXC: "Nexium",
-    NXT: "NXT",
-    OMG: "OmiseGO",
-    OMNI: "Omni",
-    PASC: "PascalCoin",
-    PINK: "Pinkcoin",
-    POT: "Potcoin",
-    PPC: "Peercoin",
-    RADS: "Radium",
-    REP: "Augur",
-    RIC: "Riecoin",
-    SBD: "Steem Dollars",
-    SC: "Siacoin",
-    SJCX: "Storjcoin X",
-    STEEM: "STEEM",
-    STORJ: "Storj",
-    STR: "Stellar",
-    STRAT: "Stratis",
-    SYS: "Syscoin",
-    VIA: "Viacoin",
-    VRC: "VeriCoin",
-    VTC: "Vertcoin",
-    XBC: "BitcoinPlus",
-    XCP: "Counterparty",
-    XEM: "Nem",
-    XMR: "Monero",
-    XPM: "Primecoin",
-    XRP: "Ripple",
-    XVC: "Vcash",
-    ZEC: "Zcash",
-    ZRX: "0x"
-};
-
-//create function for logging message so it's easy to disable verbose logging
-function cl(message) {
-    //console.log(message);
+//helper functions
+function cl(msg) { //create function for logging message so it's easy to disable verbose logging for production
+    //console.log(msg);
 }
 
-function updateStatus(str) {
+function update_status(str) {
     document.getElementById("status").innerHTML = str;
 }
 
-function getGdax() {
-    //https://stackoverflow.com/q/39542092/
-    var xhr = new XMLHttpRequest();
-    xhr.timeout = 20000; //after 20 seconds stop trying to get data
-    updateStatus("Loading GDAX data...");
-    document.body.classList.add("loading");
-    
-    xhr.onload = function() { //onload happens before onloadend, we use this event to log the btc price so it's available below
-        var data = JSON.parse(xhr.responseText);
-        for (var key in data) {
-            if (key == "BTC-USD") {
-                btcPrice = Number(data[key].stats_24hour.last); //always get BTC price, even if user isn't tracking gdax coins
-            }
-        }
-    };
-    
-    xhr.onloadend = function() {
-        if (xhr.status === 200) { //if there were no errors
-            cl(btcPrice); //we need the btcPrice variable to be set before we execute the functionality below
-            if (gdaxCoins.length > 0) { //check if user is tracking gdax coins
-                gdaxData = JSON.parse(xhr.responseText);
-                
-                for (var i = 0; i < gdaxCoins.length; i++) {
-                    if (Object.keys(gdaxData).indexOf(gdaxCoins[i]) > -1) {
-                        if (document.querySelectorAll("." + gdaxCoins[i] + ".gdax").length < 1) {
-                            buildElement(gdaxCoins[i], "gdax");
-                            fillData(gdaxCoins[i], "gdax", gdaxData);
-                        } else {
-                            fillData(gdaxCoins[i], "gdax", gdaxData);
-                        }
-                    }
-                }
-            }
-            
-            if (poloniexCoins.length > 0) { //check if user is tracking poloniex coins
-                //if so, start getting the data
-                getPoloniex();
-            } else {
-                //if not, remove loader and everything
-                document.body.classList.remove("loading");
-                updateStatus("Last updated: " + getCurrentDateTime());
-            }
-            
-        } else if (xhr.timeout > 0 && xhr.status === 0) { //if a timeout occurs
-            console.log("Timeout error getting data from " + tickers.gdax);
-            updateStatus("Error, check console...");
-        } else {
-            console.log("Error getting data from " + xhr.responseURL + " - " + xhr.responseText);
-            updateStatus("Error, check console...");
-        }
-    };
-    
-    xhr.open('GET', tickers.gdax);
-    xhr.send(null);
+function disable_buttons() {
+    button_show_settings.classList.add("disabled");
+    button_update.disabled = true;
 }
 
-function getPoloniex() {
-    var xhr = new XMLHttpRequest();
-    xhr.timeout = 20000;
-    updateStatus("Loading Poloniex data...");
-    
-    xhr.onloadend = function() {
-        if (xhr.status === 200) {
-            poloniexData = JSON.parse(xhr.responseText);
-            
-            for (var i = 0; i < poloniexCoins.length; i++) {
-                if (Object.keys(poloniexData).indexOf(poloniexCoins[i]) > -1) {
-                    if (document.querySelectorAll("." + poloniexCoins[i] + ".poloniex").length < 1) {
-                        buildElement(poloniexCoins[i], "poloniex");
-                        fillData(poloniexCoins[i], "poloniex", poloniexData);
-                    } else {
-                        fillData(poloniexCoins[i], "poloniex", poloniexData);
-                    }
-                }
-            }
-
-            document.body.classList.remove("loading");
-            updateStatus("Last updated: " + getCurrentDateTime());
-        } else if (xhr.timeout > 0 && xhr.status === 0) {
-            console.log("Timeout error getting data from " + tickers.poloniex);
-            updateStatus("Error, check console...");
-        } else {
-            console.log("Error getting data from " + xhr.responseURL + " - " + xhr.responseText);
-            updateStatus("Error, check console...");
-        }
-    };
-    
-    xhr.open('GET', tickers.poloniex);
-    xhr.send(null);
+function enable_buttons() {
+    button_show_settings.classList.remove("disabled");
+    button_update.disabled = false;
 }
 
-function buildElement(pair, exchange) {
-    var clone = document.getElementById("placeholder").cloneNode(true);
-    var pairSplit;
-    var title = clone.querySelector(".title");
-    
-    //determine exchange, we will be splitting the values differently between each exchange
-    if (exchange === "gdax") {
-        pairSplit = pair.split("-");
-        title.innerHTML = coinMap[pairSplit[0]] + " <span>GDAX (" + pairSplit[0] + "/" + pairSplit[1] + ")</span>";
-    } else if (exchange === "poloniex") {
-        pairSplit = pair.split("_");
-        title.innerHTML = coinMap[pairSplit[1]] + " <span>Poloniex (" + pairSplit[1] + "/" + pairSplit[0] + ")</span>";
+function sort_object(obj) { //https://stackoverflow.com/a/29622653/3126477
+    return Object.keys(obj).sort().reduce(function (result, key) {
+        result[key] = obj[key];
+        return result;
+    }, {});
+}
+
+function arrays_are_equal(arr1, arr2) { //https://stackoverflow.com/a/22395370/3126477
+    if (arr1.length !== arr2.length) {
+        return false;
     }
-    
-    clone.removeAttribute("id");
-    clone.removeAttribute("style");
-    clone.classList.add(pair);
-    clone.classList.add(exchange);
-    clone.classList.add("actual");
-    document.getElementById("ticker").appendChild(clone);
-}
-
-function fillData(pair, exchange, data) {
-    var el = document.querySelector("." + pair + "." + exchange);
-    var last = el.querySelector(".last");
-    var low = el.querySelector(".low");
-    var high = el.querySelector(".high");
-    var change = el.querySelector(".change");
-    
-    if (exchange === "gdax") { //if the purchasing currency is BTC, convert it to USD
-        var pairSplit = pair.split("-");
-        if (pairSplit[1] === "USD") {
-            last.innerHTML = "$" + makeNum(data[pair].stats_24hour.last);
-            low.innerHTML = "$" + makeNum(data[pair].stats_24hour.low);
-            high.innerHTML = "$" + makeNum(data[pair].stats_24hour.high);
-        } else if (pairSplit[1] === "BTC") {
-            last.innerHTML = "$" + makeNum(data[pair].stats_24hour.last * btcPrice);
-            low.innerHTML = "$" + makeNum(data[pair].stats_24hour.low * btcPrice);
-            high.innerHTML = "$" + makeNum(data[pair].stats_24hour.high * btcPrice);
-        }
-        change.innerHTML =  percChange(data[pair].stats_24hour.open, data[pair].stats_24hour.last) + "%";
-        
-        if (parseFloat(percChange(data[pair].stats_24hour.open, data[pair].stats_24hour.last)) < 0) {
-            change.style.color = "red"; //if % change is negative make text red
-        } else {
-            change.style.color = "green"; //if % change is positive make text green
-        }
-    } else if (exchange === "poloniex") {
-        last.innerHTML = "$" + makeNum(data[pair].last * btcPrice);
-        low.innerHTML = "$" + makeNum(data[pair].low24hr * btcPrice);
-        high.innerHTML = "$" + makeNum(data[pair].high24hr * btcPrice);
-        change.innerHTML = parseFloat(data[pair].percentChange*100).toFixed(2) + "%";
-        
-        if (parseFloat(parseFloat(data[pair].percentChange*100).toFixed(2)) < 0) {
-            change.style.color = "red";
-        } else {
-            change.style.color = "green";
+    for (var i = 0, len = arr1.length; i < len; i++){
+        if (arr1[i] !== arr2[i]){
+            return false;
         }
     }
+    return true;
 }
 
-function makeNum(str) {
-    var makeNumA;
-    if (str > 1) {
-        makeNumA = parseFloat(str);
-        return makeNumA.toFixed(2);
-    } else if (str > 0.1) {
-        makeNumA = parseFloat(str);
-        return makeNumA.toFixed(3);
-    } else if (str > 0.01) {
-        makeNumA = parseFloat(str);
-        return makeNumA.toFixed(4);
-    } else {
-        makeNumA = parseFloat(str);
-        return makeNumA.toFixed(5);
-    }
+function price_increase(i) {
+    document.querySelectorAll(".price")[i].classList.add("up");
+    setTimeout(function() {
+        document.querySelectorAll(".price")[i].classList.remove("up");
+    }, 250);
 }
 
-function percChange(open, last) {
-    var decrease = open - last;
-    var div = decrease / open;
-    var change = div * 100;
-    var value = parseFloat(change * -1).toFixed(2);
-    return value;
+function price_decrease(i) {
+    document.querySelectorAll(".price")[i].classList.add("down");
+    setTimeout(function() {
+        document.querySelectorAll(".price")[i].classList.remove("down");
+    }, 250);
 }
 
-function getCurrentDateTime() {
-    var today = new Date(); //outputs like Wed Apr 19 2017 00:25:35 GMT-0400 (EDT)
+function delay_data_request(ms) { //this isn't currently used
+    cl("Will get updated data from CryptoCompare in " + ms + "ms");
+    update_status("Updating data in " + Math.round(ms/1000) + " seconds...");
+    timeout_id = setTimeout(function() {
+        getData();
+        clearTimeout(timeout_id);
+        timeout_id = null;
+    }, ms);
+}
+
+function remove_data_request_delay() {
+    cl("Cancelling the deffered data request");
+    clearTimeout(timeout_id);
+    timeout_id = null;
+    document.body.classList.remove("data-updating");
+    update_status("Last updated: " + get_current_date_time(new Date(last_updated)));
+    enable_buttons();
+}
+
+function get_current_date_time(d) {
+    var today = d //new Date(); outputs like Wed Apr 19 2017 00:25:35 GMT-0400 (EDT)
     var date = today.toString().split(" ", 4).join(" ");
     var time = today.toString().split(" ")[4];
     var hours = time.slice(0, -6);
@@ -293,141 +102,364 @@ function getCurrentDateTime() {
     return date + " " + hours + minSec;
 }
 
-function refresh() {
-    if (localStorage.length > 0) {
-        getGdax();
-        disableButtons();
-    }
-}
+function format_number(x) { //https://stackoverflow.com/a/2901298/3126477
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
 
-function start() {
-    updateStatus("Starting...");
-    if (ls.length > 0) { //if the user is already tracking some coins
-        welcomeMessage.style.display = "none";
-        getGdax();
-    } else {
-        updateStatus("Ready...");
-    }
-}
 
-function disableButtons() {
-    refreshButton.disabled = true;
-    openSettings.classList.add("disabled");
-    document.body.classList.add("timer-on");
-    setTimeout(function(){
-        refreshButton.disabled = false;
-        openSettings.classList.remove("disabled");
-        document.body.classList.remove("timer-on");
-    }, 3000);
-}
-
-function saveSetting(el) {
-    var exchange = el.dataset.exchange;
-    var pair = el.value;
-    var index;
-
-    if (el.checked) { //when user checks a currency pair
-        switch (String(exchange)) {
-            case "gdax":
-                gdaxCoins.push(pair); //update the gdaxCoins array
-                gdaxCoins.sort(); //sort the array in alphabetical order
-                ls.setItem(exchange, gdaxCoins); //update the localStorage for exchange
-                break;
-            case "poloniex":
-                poloniexCoins.push(pair);
-                poloniexCoins.sort();
-                ls.setItem(exchange, poloniexCoins);
-                break;
-        }
-    } else { //when user UNchecks a currency pair
-        switch (String(exchange)) {
-            case "gdax":
-                index = gdaxCoins.indexOf(pair); //find index in the array for currency pair
-                gdaxCoins.splice(index, 1); //remove it from array
-                ls.setItem(exchange, gdaxCoins); //update the localStorage for exchange
-                
-                if (gdaxCoins.length < 1) { //if there are no more items in the gdaxCoins array
-                    ls.removeItem(exchange); //remove the item from localStorage
-                }
-                break;
-            case "poloniex":
-                index = poloniexCoins.indexOf(pair);
-                poloniexCoins.splice(index, 1);
-                ls.setItem(exchange, poloniexCoins);
-                
-                if (poloniexCoins.length < 1) {
-                    ls.removeItem(exchange);
-                }
-                break;
-        }
-    }
-}
-
-function loadSettings() {
-    if (ls.length > 0) { //check if there is localStorage for this page/extension
-        cl("local storage exists, we should load it");
-        var newArray;
-        
-        if (Object.keys(ls).indexOf("gdax") > -1) { //if a localStorage key named gdax exists
-            newArray = ls.gdax.split(","); ///split the localStorage string at the comma
-            gdaxCoins = newArray; //set the new array for gdaxCoins
-            
-            for (var i=0; i<newArray.length; i++) { //re-check all checkboxes in localStorage
-                document.getElementById(newArray[i]).setAttribute("checked", true);
-            }
-        }
-        
-        if (Object.keys(ls).indexOf("poloniex") > -1) {
-            newArray = ls.poloniex.split(",");
-            poloniexCoins = newArray;
-            
-            for (var a=0; a<newArray.length; a++) {
-                document.getElementById(newArray[a]).setAttribute("checked", true);
-            }
-            
-        }
-    }
-}
-
-function showSettingsPage() {
-    cl("opening settings page");
-    settingsVisible = true;
-    document.body.classList.add("show-settings");
-}
-
-function closeSettingsPage() {
-    cl("closing settings page");
-    document.body.classList.remove("show-settings");
-    document.querySelectorAll(".actual").forEach(function (e) {
-        return e.parentNode.removeChild(e);
-    });
-    settingsVisible = false;
+//not used
+function time_since(date) { //https://stackoverflow.com/a/3177838/3126477
+    var seconds = Math.floor((new Date() - date) / 1000);
+    interval = Math.floor(seconds / 86400); //1 day, in seconds
     
-    if (ls.length > 0) { //if the user now tracking coins
-        getGdax();
-        welcomeMessage.style.display = "none";
-    } else {
-        welcomeMessage.removeAttribute("style");
+    if (interval > 1) {
+        return "more than days ago";
     }
+    
+    interval = Math.floor(seconds / 3600); //1 hour, in seconds
+    if (interval > 1) {
+        return interval + " hours ago";
+    }
+    
+    interval = Math.floor(seconds / 60); //1 minute, in seconds
+    if (interval > 1) {
+        return interval + " minutes ago";
+    }
+    
+    if (seconds >= 60 && seconds <= 120) {
+        return "a minute ago";
+    }
+    
+    if (seconds < 10) {
+        return "moments ago";
+    }
+    return Math.floor(seconds) + " seconds ago";
     
 }
 
-function clearAllChecked() {
+//elements
+function build_elements() {
+    update_status("Building elements...");
+    document.body.classList.add("elements-loading");
+    for (var key in coins) {
+        var clone = document.getElementById("placeholder").cloneNode(true);
+        var name = clone.querySelector(".name");
+        var symbol = clone.querySelector(".symbol");
+        var price = clone.querySelector(".price");
+        var change = clone.querySelector(".change");
+        clone.removeAttribute("id");
+        clone.removeAttribute("style");
+        clone.classList.add(coins[key]);
+        clone.classList.add("actual");
+        name.innerHTML = key;
+        symbol.innerHTML = coins[key];
+        document.getElementById("ticker").insertBefore(clone, document.getElementById("welcome"));
+    }
+    update();
+}
+
+//data
+function getData() {
+    update_status("Getting data from CryptoCompare...");
+    var endpoint = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=" + Object.values(coins).toString() + "&tsyms=USD";
+    var xhr = new XMLHttpRequest();
+    cl("Requesting data from " + endpoint);
+    xhr.timeout = 20000; //after 20 seconds stop trying to get data
+    xhr.open('GET', endpoint);
+    
+    xhr.onloadstart = function() {
+        last_updated = Date.now();
+    }
+    
+    xhr.onloadend = function() {
+        if (xhr.status === 200) { //if there were no errors
+            var data = JSON.parse(xhr.responseText);
+            for (var key in data["DISPLAY"]) {
+                var el = document.querySelector("." + key); //the element where we should put the data
+                var price_el = el.querySelector(".price"); //the element that holds the price data
+                var change_el = el.querySelector(".change"); //the element that holds the 24hr change data
+                var price = data["DISPLAY"][key]["USD"]["PRICE"].replace(/\s/g,''); //the price data
+                var change = data["DISPLAY"][key]["USD"]["CHANGEPCT24HOUR"]; //the 24hr change data
+                var price_old = price_el.innerHTML; //the old price when updating, we use this to determine if it went up or down from last recorded price
+                var change_old = change_el.innerHTML; //the old 24hr change, used to determine if it went up or down from last recorded 24hr change
+                var i = Object.values(coins).indexOf(key) + 1; //store the index of the coin so we can use it for the increase and decrease price functions (+1 for placholder)
+                
+                if (data["RAW"][key]["USD"]["PRICE"] > 9999) { //for some reason large number only have 1 deciimal point
+                    var a = format_number(data["RAW"][key]["USD"]["PRICE"]);
+                    price = "$" + a;
+                }
+                
+                
+                //add/update price data
+                if (price_old) { //if there's previously recorded price
+                    if (price > price_old) { //if price went up
+                        cl(key + " price has gone up - old price was " + price_old + ", new price is " + price);
+                        price_el.innerHTML = price;
+                        price_increase(i);
+                    } else if (price < price_old) { //if price went down
+                        cl(key + " price has gone down - old price was " + price_old + ", new price is " + price);
+                        price_el.innerHTML = price;
+                        price_decrease(i);
+                    }
+                } else { //no data yet added
+                    price_el.innerHTML = price;
+                }
+                
+                //add/update 24hr change data
+                if (change != change_old) { //no special styling if change goes up or down, so we only update change if it changes
+                    
+                    //color 24hr change text
+                    if (change.startsWith("-")) { //since we're getting back a string, we know it is negative if the string starts with a "-"
+                        change_el.style.color = red;
+                        change_el.innerHTML = change + "%";
+                    } else {
+                        change_el.style.color = green;
+                        change_el.innerHTML = "+" + change + "%";
+                    }
+                }
+
+            }
+            //after for loop
+            document.body.classList.remove("elements-loading");
+            document.body.classList.remove("data-updating");
+            update_status("Last updated: " + get_current_date_time(new Date(last_updated)));
+            enable_buttons();
+            cl("Data request complete");
+        } else if (xhr.timeout > 0 && xhr.status === 0) { //if a timeout occurs
+            console.log("Timeout error getting data from " + endpoint);
+            update_status("Error, check console...");
+        } else { //if non-timeout error occurs
+            console.log("Error getting data from " + xhr.responseURL + " - " + xhr.responseText);
+            update_status("Error, check console...");
+        }
+    }
+    
+    xhr.send(null);
+}
+
+function update() {
+    if (document.querySelectorAll(".actual").length > 0) { //if there are elements that have data to update
+        var last = Date.now() - last_updated; //log the difference between the current time and last update time set in the getData() function
+        timeout_delay = 10000 - last; //how long to delay the update, to respect API limits
+        disable_buttons();
+        if (!document.body.classList.contains("elements-loading")) {
+            document.body.classList.add("data-updating");
+        }
+        
+        if (timeout_delay > 0) {
+            cl("Will get updated data from CryptoCompare in " + timeout_delay + "ms");
+            var delay;
+            if (timeout_delay > 1000) {
+                update_status("Updating data in " + Math.round(timeout_delay/1000) + " seconds...");
+                delay = 1000;
+            } else if (timeout_delay < 1000 && timeout_delay > 0) {
+                update_status("Updating data in " + timeout_delay + " ms...");
+                delay = timeout_delay;
+            }
+            timeout_id = setTimeout(function() {
+                timeout_delay = timeout_delay - delay;
+                clearTimeout(timeout_id);
+                timeout_id = null;
+                update();
+            }, delay);
+        } else {
+            setTimeout(function() { //gives a better ux by showing the loading icon longer so user knows it is being updated
+                getData();
+            }, 500);
+        }
+    }
+}
+
+//filter
+function filter_focus() {
+    filter_bar.style.textAlign = "left";
+    filter_icon.style.left = "22px";
+}
+
+function filter_blur() {
+    var l = filter_bar.value.length;
+    if (l < 1) {
+        filter_bar.removeAttribute("style");
+        filter_icon.removeAttribute("style");
+    }
+}
+
+function show_filter_clear() {
+    var l = filter_bar.value.length;
+    if (l > 0) {
+        filter_bar.classList.add("show-clear");
+    } else {
+        filter_bar.classList.remove("show-clear")
+    }
+}
+
+function clear_filter_bar(event) {
+    if (event.type === "click" || event.keyCode === 13 || event.type === "blur") {
+        filter_bar.value = "";
+        filter_bar.blur();
+        filter_clear.blur();
+        filter_blur();
+        show_filter_clear();
+        filter_coins();
+    }
+}
+
+function filter_coins() {
+    var parent = document.getElementById("checkboxes");
+    var check = parent.getElementsByTagName("div");
+    var term = filter_bar.value.toUpperCase();
+    var flag_checked = /(^|\W):check($|\W)|(^|\W):checke($|\W)|(^|\W):checked($|\W)/gi;
+    
+    if (term.startsWith(":")) { //check if user is entering a special search flag
+        cl("Search flag detected");
+        if (flag_checked.exec(term)) { //if user is searching for elements that are already checked
+            for (var i = 0; i < check.length; i++) { //iterate through elements
+                var input = check[i].getElementsByTagName("input")[0]; //the actual checkbox element
+                if (input.checked) { //if checkbox is checked
+                    check[i].style.display = ""; //make sure it's display isn't "none'
+                } else {
+                    check[i].style.display = "none"; //hide non-checked elements
+                }
+            }
+        } else { //user is using a search flag but there aren't any flag matches, so show all checkboxes
+            for (var i = 0; i < check.length; i++) {
+                check[i].style.display = "";
+            }
+        }
+    } else {
+        cl("No search flag detected, filtering as usual");
+        for (var i = 0; i < check.length; i++) {
+            var label = check[i].getElementsByTagName("label")[0];
+            if (label.innerHTML.toUpperCase().indexOf(term) > - 1) {
+                check[i].style.display = "";
+            } else {
+                check[i].style.display = "none";
+            }
+        }
+    }
+}
+
+//settings
+function show_settings() {
+    cl("Showing settings page");
+    update_status("Settings");
+    document.body.classList.add("settings");
+    disable_buttons();
+    last_coins = Object.keys(coins);
+    document.getElementById("main").scrollTop = 0;
+}
+
+function hide_settings() {
+    cl("Hiding settings page");
+    update_status("Last updated: " + get_current_date_time(new Date(last_updated)));
+    document.body.classList.remove("settings");
+    document.getElementById("main").scrollTop = 0;
+    clear_filter_bar(event);
+    if (Object.keys(coins).length < 1 && arrays_are_equal(last_coins, Object.keys(coins))) { //entered settings with no coins being tracked and exited the same
+        //nothing being tracked so do nothing
+        enable_buttons();
+        update_status("Ready...");
+    } else if (!arrays_are_equal(last_coins, Object.keys(coins))) { //entered settings with or without coins being tracked and changed coins to be tracked
+        document.querySelectorAll(".actual").forEach(function(e) { //remove all coin elements
+            return e.parentNode.removeChild(e);
+        });
+        if (Object.keys(coins).length < 1) { //if coins are no longer being tracked
+            update_status("Ready...");
+            enable_buttons();
+        } else {
+            build_elements();
+        }
+    } else if (arrays_are_equal(last_coins, Object.keys(coins))) { //entered settings with coins being tracked and changed nothing
+        if (document.querySelectorAll(".actual").length < 1) { //elements aren't already built for some reason
+            build_elements();
+        } else {
+            enable_buttons();
+        }
+    }
+}
+
+function save_setting(event) {
+    var name = event.target.dataset.name; //name = Bitcoin, Litecoin, etc...
+    var symbol = event.target.id; //id = BTC, LTC, etc...
+    if (document.querySelectorAll(".ck:checked").length < max_checks) { //user can allow track up to this amount, due to API limits
+        if (event.target.checked) { //when ticking a checkbox
+            coins[name] = symbol; //push to coins object
+            coins = sort_object(coins); //sort the coins object alphabetically by name (not symbol)
+            ls.setItem("coins", JSON.stringify(coins)); //save to local storage
+        } else { //when unticking a checkbox
+            delete coins[name]; //delete key/value from object
+            ls.setItem("coins", JSON.stringify(coins)); //overwrite local storage
+            if (Object.keys(coins).length < 1) { //if it was the last coin (meaning user is no longer tracking any coins)
+                ls.removeItem("coins"); //remove the local storage item
+            }
+        }
+    } else {
+        event.preventDefault();
+        return false;
+        cl("Too many coins are being tracked, remove some, then try again");
+    }
+}
+
+function clear_all_checked() {
     var checkboxes = document.getElementsByClassName("ck");
     for(var i = 0; i < checkboxes.length; i++){
         var checkbox = checkboxes[i];
         if(checkbox.checked === true) {
             checkbox.checked = false;
         }
+        coins = {};
         ls.clear();
-        gdaxCoins = [];
-        poloniexCoins = [];
     }
 }
 
-clearChecks.addEventListener("click", clearAllChecked);
-refreshButton.addEventListener("click", refresh);
-openSettings.addEventListener("click", showSettingsPage);
-closeSettings.addEventListener("click", closeSettingsPage);
+function load_settings() {
+    if (ls.coins) {
+        cl("Local storage exists, loading it");
+        coins = JSON.parse(ls.coins);
+        for (var key in coins) {
+            document.getElementById(coins[key]).setAttribute("checked", true);
+        }
+    }
+}
 
-loadSettings();
+//start/open popover
+function start() {
+    update_status("Starting...");
+    
+    if (Object.keys(coins).length > 0) {
+        if (document.querySelectorAll(".actual").length < 1) {
+            build_elements();
+        } else {
+            if (timeout_id === null) {
+                update();
+            }
+        }
+    } else {
+        update_status("Ready...");
+    }
+}
+
+//event listeners
+button_show_settings.addEventListener("click", show_settings);
+button_hide_settings.addEventListener("click", hide_settings);
+button_clear_checks.addEventListener("click", clear_all_checked);
+filter_bar.addEventListener("focus", filter_focus);
+filter_bar.addEventListener("blur", filter_blur);
+filter_bar.addEventListener("keyup", show_filter_clear);
+filter_bar.addEventListener("keyup", filter_coins);
+filter_clear.addEventListener("click", clear_filter_bar);
+filter_clear.addEventListener("keydown", clear_filter_bar);
+button_update.addEventListener("click", update);
+window.addEventListener("blur", function() {
+    cl("Window or extension lost focus");
+    if (timeout_id != null) {
+        remove_data_request_delay();
+    }
+    
+    if (document.body.classList.contains("settings")) {
+        hide_settings();
+    }
+    
+});
+
+load_settings();

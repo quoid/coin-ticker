@@ -1,4 +1,4 @@
-version: "1.0.3"
+version: "1.1.0"
 
 compress_html:
   clippings: all
