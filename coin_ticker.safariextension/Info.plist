@@ -5,7 +5,7 @@
 	<key>Author</key>
 	<string>Justin Wasack</string>
 	<key>Builder Version</key>
-	<string>12604.3.5.1.1</string>
+	<string>12604.4.7.1.4</string>
 	<key>CFBundleDisplayName</key>
 	<string>Coin Ticker</string>
 	<key>CFBundleIdentifier</key>
@@ -13,9 +13,9 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.1.0</string>
+	<string>1.1.1</string>
 	<key>CFBundleVersion</key>
-	<string>1.1.0</string>
+	<string>1.1.1</string>
 	<key>Chrome</key>
 	<dict>
 		<key>Global Page</key>
@@ -63,6 +63,8 @@
 	<dict>
 		<key>Website Access</key>
 		<dict>
+			<key>Include Secure Pages</key>
+			<true/>
 			<key>Level</key>
 			<string>None</string>
 		</dict>
