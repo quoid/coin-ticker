@@ -347,6 +347,7 @@ function show_settings() {
     disable_buttons();
     last_coins = Object.keys(coins);
     document.getElementById("main").scrollTop = 0;
+    safari.extension.globalPage.contentWindow.ga_settings_page();
 }
 
 function hide_settings() {
@@ -355,6 +356,7 @@ function hide_settings() {
     document.body.classList.remove("settings");
     document.getElementById("main").scrollTop = 0;
     clear_filter_bar(event);
+    safari.extension.globalPage.contentWindow.ga_ticker_page();
     if (Object.keys(coins).length < 1 && arrays_are_equal(last_coins, Object.keys(coins))) { //entered settings with no coins being tracked and exited the same
         //nothing being tracked so do nothing
         enable_buttons();
@@ -449,7 +451,10 @@ filter_bar.addEventListener("keyup", show_filter_clear);
 filter_bar.addEventListener("keyup", filter_coins);
 filter_clear.addEventListener("click", clear_filter_bar);
 filter_clear.addEventListener("keydown", clear_filter_bar);
-button_update.addEventListener("click", update);
+button_update.addEventListener("click", function() {
+    update();
+    safari.extension.globalPage.contentWindow.ga_update_event();
+});
 window.addEventListener("blur", function() {
     cl("Window or extension lost focus");
     if (timeout_id != null) {
@@ -459,7 +464,7 @@ window.addEventListener("blur", function() {
     if (document.body.classList.contains("settings")) {
         hide_settings();
     }
-    
+    safari.extension.globalPage.contentWindow.ga_close_event();
 });
 
 load_settings();

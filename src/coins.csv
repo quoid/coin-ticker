@@ -1,10 +1,14 @@
 name,symbol
 0x,ZRX
 AdEx,ADX
+AeonCoin,AEON
 Aeternity,AE
+Agoras Token,AGRS
+Aion,AION
 Aragon,ANT
 Ardor,ARDR
 ARK,ARK
+Asch,XAS
 ATMChain,ATM
 Augur,REP
 B3 Coin,B3
@@ -23,14 +27,18 @@ Bytecoin,BCN
 Bytom,BTM
 Cardano,ADA
 Civic,CVC
+CounterParty,XCP
 Cryptonex,CNX
 Dash,DASH
 Decred,DCR
 DigiByte,DGB
 Digix DAO,DGD
 Dogecoin,DOGE
+Dragonchain,DRGN
 Edgeless,EDG
+Eidoo,EDOGE
 Electroneum,ETN
+Emercoin,EMC
 EOS,EOS
 EtherDoge,EDOGE
 Ethereum,ETH
@@ -38,21 +46,25 @@ Ethereum Classic,ETC
 Ethos,ETHOS
 Exchange Union,XUC
 Factom,FCT
+FairCoin,FAIR
 FirstCoin,FRST
 FunFair,FUN
 Gamecredits,GAME
 Gas,GAS
 Gnosis,GNO
 Golem,GNT
+Groestlcoin,GRS
 GXShares,GXS
 Iconomi,ICN
 IOTA,IOT
 Komodo,KMD
+Kyber Network,KNC
 Lisk,LSK
 Litecoin,LTC
 Loopring,LRC
 Lykke,LKK
 MaidSafe Coin,MAID
+Mercury,MER
 Metal,MTL
 Metaverse ETP,ETP
 MobileGo,MGO
@@ -73,14 +85,23 @@ Populous,PPT
 PotCoin,POT
 Power Ledger,POWR
 Pura,PURA
+QASH,QASH
 QTUM,QTUM
 Quantstamp,QSP
+Quantum Resistant Ledger,QRL
 RadonPay,RDN
+RaiBlocks,XRB
 Regalcoin,REC
+Request Network,REQ
+Revain,R
+Ripio Credit Network,RCN
 Ripple,XRP
+Rise,RISE
 SALT,SALT
+Santiment,SAN
 Siacoin,SC
 SingularDTV,SNGLS
+SONM,SNM
 Status,SNT
 Steem,STEEM
 Stellar,XLM
@@ -88,14 +109,18 @@ Storj,STORJ
 Stratis,STRAT
 Streamr DATAcoin,DATA
 Substratum,SUB
+SuperNET,UNITY
 SysCoin,SYS
 TenX,PAY
 Tether,USDT
 TRON,TRX
+VeChain,VEN
 Verge,XVG
 Veritaseum,VERI
 Vertcoin,VTC
 Walton,WTC
 Waves,WAVES
+Wings,WINGS
+YOYOW,YOYOW
 ZCash,ZEC
 ZCoin,XZC

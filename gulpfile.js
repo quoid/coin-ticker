@@ -60,6 +60,12 @@ var connect = require("gulp-connect");
         - partials folder that got copied over in file-includes task
 */
 
+gulp.task("version", function() {
+    var version = require('./package.json').version;
+    console.log("\x1b[32m%s\x1b[0m", "Setting version...");
+    fs.writeFileSync("./src/partials/version.html", "&nbsp;" + version); 
+});
+
 gulp.task("empty", function() {
     console.log("\x1b[31m%s\x1b[0m", "Emptying files...");
     $("#checkboxes").empty();
@@ -196,12 +202,6 @@ gulp.task("remove", ["move"], function() {
         "./src/partials/version.html",
         "./dist/partials/**"
     ]);
-});
-
-gulp.task("version", function() {
-    var version = require('./package.json').version;
-    console.log("\x1b[32m%s\x1b[0m", "Setting version...");
-    fs.writeFileSync("./src/partials/version.html", "&nbsp;" + version); 
 });
 
 gulp.task("build", ["version", "empty", "create", "csv", "checkboxes", "coins_var"]);
