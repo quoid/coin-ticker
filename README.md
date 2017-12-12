@@ -8,7 +8,7 @@ A Safari extension that puts a configurable cryptocurrency ticker right in your 
 
 ## Installation
 
-Download the [latest coin_ticker.safariextz](https://github.com/quoid/coin-ticker/releases) release and double-click it to install or install it via the [Safari Extensions Gallery](https://safari-extensions.apple.com/details/?id=com.quoid.cointicker-J74Q8V8V8N).
+Download the [latest coin_ticker.safariextz](https://github.com/quoid/coin-ticker/releases) release and double-click it to install or install it via the [Safari Extensions Gallery](https://safari-extensions.apple.com/details/?id=com.quoid.cointicker-J74Q8V8V8N). If you've made it to this page, I would **highly** suggest installing the extension through Github. The extension on the gallery is outdated and deploying update to Apple is a slow process.
 
 ## Usage
 
