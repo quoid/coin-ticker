@@ -32,3 +32,7 @@ You can add/remove coins at any time by going back into the settings page.
 ## Pipeline
 
 https://github.com/quoid/coin-ticker/milestones
+
+## Coins Requests
+
+If you aren't able to track a coin that you'd like to, please make a github issue and **assign the request label** to it. I will make sure to include the coin in the next update.
