@@ -1,9 +1,0 @@
-@import "sass/custom";
-@import "sass/loader";
-@import "sass/coins";
-
-@each $coin in $coins {
-    .#{$coin}.item .icon {
-     background-image: url("img/coins/#{$coin}.svg");
-    }
-}

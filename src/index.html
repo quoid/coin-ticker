@@ -1,0 +1,19 @@
+---
+layout: default
+---
+<div id="header">
+    <div id="show-settings"></div>
+    {% if jekyll.environment == "development" %}<button id="start" onclick="start();">Start</button>{% endif %}
+    <div id="title">Coin Ticker<span>&nbsp;v{{site.version}}</span></div>
+    <div id="status">init</div>
+    <div class="flex">
+        <div>
+            {% include loader.html %}
+        </div>
+        <button id="update" class="button">Update</button>
+    </div>
+</div>
+<div id="main">
+    {% include ticker.html %}
+    {% include settings.html %}
+</div>

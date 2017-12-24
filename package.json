@@ -1,6 +1,6 @@
 {
     "name": "coin-ticker",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "description": "A Safari extension that puts a configurable cryptocurrency ticker right in your browser.",
     "author": "Justin Wasack",
     "license": "MIT",
@@ -17,20 +17,12 @@
         "url": "git://github.com/quoid/coin-ticker.git"
     },
     "scripts": {
-        "dev": "gulp server",
         "build": "gulp build"
     },
     "devDependencies": {
-        "cheerio": "^0.22.0",
         "del": "^3.0.0",
         "gulp": "^3.9.1",
-        "gulp-connect": "^5.0.0",
-        "gulp-csvtojson": "^0.2.0",
-        "gulp-file-include": "^2.0.0",
         "gulp-filelist": "^1.0.0",
-        "gulp-fn": "0.0.0",
-        "gulp-htmlmin": "^3.0.0",
-        "gulp-inline-source": "^3.1.0",
-        "gulp-sass": "^3.1.0"
+        "gulp-fn": "0.0.0"
     }
 }

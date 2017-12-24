@@ -1,0 +1,37 @@
+---
+layout: compress
+---
+<html>
+    <head>
+    {% capture styles %}
+        {% include main.scss %}
+    {% endcapture %}
+    <style>{{ styles | scssify | strip }}</style>
+    </head>
+    <body>
+        {{ content }}
+    {% capture scripts %}
+        {% include scripts.js %}
+    {% endcapture %}
+    <script>{{ scripts | uglify | strip }}</script>
+    {% if jekyll.environment == "production" %}
+    <script>
+        window.addEventListener("blur", function() {
+            if (document.body.classList.contains("settings")) {
+                safari.extension.globalPage.contentWindow.ga_ticker_page();
+            }
+            safari.extension.globalPage.contentWindow.ga_close_event();
+        });
+        document.getElementById("show-settings").addEventListener("click", function(){
+            safari.extension.globalPage.contentWindow.ga_settings_page();
+        });
+        document.getElementById("update").addEventListener("click", function(){
+            safari.extension.globalPage.contentWindow.ga_update_event();
+        });
+        document.getElementById("hide-settings").addEventListener("click", function(){
+            safari.extension.globalPage.contentWindow.ga_ticker_page();
+        });
+    </script>
+    {% endif %}
+    </body>
+</html>
