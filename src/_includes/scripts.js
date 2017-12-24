@@ -386,13 +386,16 @@ function save_setting(event) {
     if (document.querySelectorAll(".ck:checked").length < max_checks) { //user can allow track up to this amount, due to API limits
         if (event.target.checked) { //when ticking a checkbox
             coins[name] = symbol; //push to coins object
-            coins = sort_object(coins); //sort the coins object alphabetically by name (not symbol)
+            if (!ls.order) { //only sort if the user has not set a custom order
+                coins = sort_object(coins); //sort the coins object alphabetically by name (not symbol)
+            }
             ls.setItem("coins", JSON.stringify(coins)); //save to local storage
         } else { //when unticking a checkbox
             delete coins[name]; //delete key/value from object
             ls.setItem("coins", JSON.stringify(coins)); //overwrite local storage
             if (Object.keys(coins).length < 1) { //if it was the last coin (meaning user is no longer tracking any coins)
                 ls.removeItem("coins"); //remove the local storage item
+                ls.removeItem("order");
             }
         }
     } else {
@@ -442,8 +445,90 @@ function start() {
 }
 
 //drag n drop
-function ondrop(event) {
-    console.log(event);
+//turns on dragging for the element by clicking it's coin icon
+function mousedown(event) {
+    var p = event.target.closest(".actual");
+    //console.log("Turning drag on for elment with class name '" + p.className + "'");
+    p.setAttribute("draggable", true);
+}
+
+//if the users clicks, but dragging does not start, immediately turn off the dragging capabailities
+function mouseup(event) {
+    var p = event.target.closest(".actual");
+    if (!p.classList.contains(".dragging")) {
+        p.removeAttribute("draggable");
+    }
+}
+
+function dragstart(event) {
+    if (event.target.classList.contains("actual")) {
+        //console.log("Dragging started for element with class name '" + event.target.className + "'");
+        event.target.classList.add("dragging");
+        event.dataTransfer.effectAllowed = "move";
+    } else {
+        event.preventDefault();
+    }
+}
+
+function dragend(event) {
+    if (event.target.classList.contains("actual")) {
+        event.target.classList.remove("dragging");
+        event.target.removeAttribute("draggable");
+        if (document.querySelectorAll(".dragover").length > 0) {
+            document.querySelector(".dragover").classList.remove("dragover");
+        }
+    }
+}
+
+//the way the elements are set up, we will always hit the parent before the children
+//we want to parent to have the visual "dragenter effect", not the children
+//we also don't want the children to remove the effect, only other elements
+function dragenter(event) {
+    //if NOT the element being dragged or a child of the element being dragged
+    if (!event.target.classList.contains("dragging") && !event.target.closest(".actual").classList.contains("dragging")) {
+        //if it's a parent element (.actual) that doesn't already have the dragover class
+        if (event.target.classList.contains("actual") && !event.target.classList.contains("dragover")) {
+            //if another element has the dragover class, remove it before applying to new element
+            if (document.querySelectorAll(".dragover").length > 0) {
+                document.querySelector(".dragover").classList.remove("dragover");
+            }
+            event.target.classList.add("dragover");
+        }
+    } else {
+        if (document.querySelectorAll(".dragover").length > 0) {
+            document.querySelector(".dragover").classList.remove("dragover");
+        }
+    }
+}
+
+function dragover(event) {
+    event.preventDefault();
+}
+
+function drop(event) {
+    event.preventDefault();
+    var dropping = event.target;
+    var dragging = document.querySelector(".dragging");
+    if (!event.target.classList.contains("actual")) {
+        dropping = event.target.closest(".actual");
+    }
+    document.getElementById("ticker").insertBefore(dragging, dropping);
+    ro();
+}
+
+function ro() {
+    var actual = document.querySelectorAll(".actual");
+    coins = {};
+    ls.clear();
+    for (var i = 0; i < actual.length; i++) {
+        var name = actual[i].querySelector(".name").innerHTML;
+        var symbol = actual[i].querySelector(".symbol").innerHTML;
+        coins[name] = symbol;
+    }
+    ls.setItem("coins",JSON.stringify(coins));
+    if (!ls.order) {
+        ls.setItem("order", "custom");
+    }
 }
 
 //event listeners
@@ -473,3 +558,4 @@ window.addEventListener("blur", function() {
 });
 
 load_settings();
+start();

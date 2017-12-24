@@ -2,8 +2,8 @@
     <div class="ticker-loader">
         {% include loader.html %}
     </div>
-    <div id="placeholder" class="item" style="display: none" ondrop="ondrop(event)">
-        <div class="icon"></div>
+    <div id="placeholder" class="item" style="display: none" ondragstart="dragstart(event)" ondragend="dragend(event)" ondragenter="dragenter(event)" ondragover="dragover(event)" ondrop="drop(event)">
+        <div class="icon" onmousedown="mousedown(event)" onmouseup="mouseup(event)"></div>
         <div class="content">
             <div>
                 <div class="name"></div>

@@ -292,6 +292,7 @@ a {
 
 .item {
     @extend .flex;
+    background-color: $background-color;
     border-bottom: 1px solid $border-color-light;
     padding: 12px 0;
     
@@ -396,6 +397,24 @@ a {
 }
 .data-updating #header .loader {
     display: block;
+}
+
+//drag
+.actual .icon {
+    cursor: move;
+}
+
+.actual.dragging {
+    opacity: 0.4;
+}
+
+.actual {
+    -webkit-transition: padding-top 200ms;
+    transition: padding-top 200ms;
+}
+
+.dragover {
+    padding-top: calc(12px + 55px); //line 297 + 55px (height of .item element)
 }
 
 //development only
