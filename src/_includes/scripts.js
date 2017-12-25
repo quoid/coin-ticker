@@ -484,7 +484,7 @@ function dragend(event) {
 //don't apply the effect to
 //child elements
 //elements that are being dragged
-//elements the precede the element being dragged that aren't last in the list (last part of this needs to be completed)
+//elements that precede the element being dragged that aren't last in the list (last part of this needs to be completed)
 function dragenter(event) {
     var dragon = event.target; //element that is getting dragged ONTO
     var dragging = document.querySelector(".dragging"); //element being dragged
