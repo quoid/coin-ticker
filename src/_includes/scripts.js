@@ -480,24 +480,27 @@ function dragend(event) {
     }
 }
 
-//the way the elements are set up, we will always hit the parent before the children
-//we want to parent to have the visual "dragenter effect", not the children
-//we also don't want the children to remove the effect, only other elements
+
+//don't apply the effect to
+//child elements
+//elements that are being dragged
+//elements the precede the element being dragged that aren't last in the list (last part of this needs to be completed)
 function dragenter(event) {
-    //if NOT the element being dragged or a child of the element being dragged
-    if (!event.target.classList.contains("dragging") && !event.target.closest(".actual").classList.contains("dragging")) {
-        //if it's a parent element (.actual) that doesn't already have the dragover class
-        if (event.target.classList.contains("actual") && !event.target.classList.contains("dragover")) {
-            //if another element has the dragover class, remove it before applying to new element
-            if (document.querySelectorAll(".dragover").length > 0) {
-                document.querySelector(".dragover").classList.remove("dragover");
-            }
-            event.target.classList.add("dragover");
-        }
-    } else {
+    var dragon = event.target; //element that is getting dragged ONTO
+    var dragging = document.querySelector(".dragging"); //element being dragged
+    
+    //if element being dragged onto is a child element of an .actual element, target the parent
+    if (!dragon.classList.contains("actual")) { 
+        dragon = event.target.closest(".actual");
+    }
+    
+    //if NOT the element being dragged & not the immediate nextSibling of the element being dragged
+    if (!dragon.classList.contains("dragging") && dragon != dragging.nextSibling) {
+        //if another element has the dragover class, remove it before applying to new element
         if (document.querySelectorAll(".dragover").length > 0) {
             document.querySelector(".dragover").classList.remove("dragover");
         }
+        dragon.classList.add("dragover");
     }
 }
 
@@ -507,16 +510,16 @@ function dragover(event) {
 
 function drop(event) {
     event.preventDefault();
-    var dropping = event.target;
     var dragging = document.querySelector(".dragging");
+    var dropping = event.target;
     if (!event.target.classList.contains("actual")) {
         dropping = event.target.closest(".actual");
     }
     document.getElementById("ticker").insertBefore(dragging, dropping);
-    ro();
+    set_coins_order();
 }
 
-function ro() {
+function set_coins_order() {
     var actual = document.querySelectorAll(".actual");
     coins = {};
     ls.clear();
