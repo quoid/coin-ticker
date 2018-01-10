@@ -1,10 +1,15 @@
 name,symbol
 0x,ZRX
+AChain,ACT
 AdEx,ADX
-AeonCoin,AEON
+aelf,ELF
+Aeon,AEON
 Aeternity,AE
 Agoras Token,AGRS
+Agoras Tokens,AGRS
 Aion,AION
+AirSwap,AST
+Ambrosus,AMB
 Aragon,ANT
 Ardor,ARDR
 ARK,ARK
@@ -22,65 +27,118 @@ BitcoinDark,BTCD
 BitConnect,BCC
 Bitshares,BTS
 BlockNet,BLOCK
+BLOCKv,VEE
+Bread,BRD
+BridgeCoin,BCO
+Burst,BURST
 Byteball,GBYTE
 Bytecoin,BCN
 Bytom,BTM
 Cardano,ADA
+Centra,CTR
+ChainLink,LINK
+Cindicator,CND
 Civic,CVC
+CloakCoin,CLOAK
+Cobinhood,COB
+CoinDash,CDT
 CounterParty,XCP
 Cryptonex,CNX
+CyberMiles,CMT
 Dash,DASH
+DECENT,DCT
+Decentraland,MANA
+Decision Token,HST
 Decred,DCR
+DeepBrain Chain,DBC
+Dentacoin,DCN
 DigiByte,DGB
+DigitalNote,XDN
 Digix DAO,DGD
+district0x,DNT
 Dogecoin,DOGE
 Dragonchain,DRGN
+Dynamic Trading Rights,DTR
 Edgeless,EDG
 Eidoo,EDOGE
+Einsteinium,EMC2
 Electroneum,ETN
 Emercoin,EMC
+Enigma,ENG
+Enjin Coin,ENJ
 EOS,EOS
 EtherDoge,EDOGE
 Ethereum,ETH
 Ethereum Classic,ETC
+Etherparty,FUEL
+ETHLend,LEND
 Ethos,ETHOS
 Exchange Union,XUC
+Experience Points,XP
 Factom,FCT
 FairCoin,FAIR
+FirstBlood,1ST
 FirstCoin,FRST
+Flash,FLASH
 FunFair,FUN
 Gamecredits,GAME
 Gas,GAS
+Genesis Vision,GVT
+Gifto,GTO
 Gnosis,GNO
 Golem,GNT
+Grid+,GRID
 Groestlcoin,GRS
+Gulden,NLG
 GXShares,GXS
+HempCoin,THC
+Hshare,HSR
 Iconomi,ICN
+iExec RLC,RLC
+IoT Chain,ITC
 IOTA,IOT
+iXledger,IXT
+Jinn,JINN
+Kin,KIN
 Komodo,KMD
+KuCoin Shares,KCS
 Kyber Network,KNC
+LAToken,LA
+LBRY Credits,LBC
 Lisk,LSK
 Litecoin,LTC
 Loopring,LRC
+Lunyr,LUN
 Lykke,LKK
 MaidSafe Coin,MAID
+Medibloc,MED
+Melon,MLN
 Mercury,MER
 Metal,MTL
 Metaverse ETP,ETP
 MobileGo,MGO
+Modum,MOD
 Monaco,MCO
 MonaCoin,MONA
 Monero,XMR
+Mooncoin,MOON
 NavCoin,NAV
+Neblio,NEBL
 NEM,XEM
 NEO,NEO
 Nexus,NXS
+Nuls,NULS
 Nxt,NXT
 OmiseGo,OMG
 Open Trading Network,OTN
+Oyster Pearl,PRL
+PACcoin,PAC
 Particl,PART
 PayPie,PPP
+Peercoin,PPC
+Pillar,PLR
 PIVX,PIVX
+Po.et,POE
 Populous,PPT
 PotCoin,POT
 Power Ledger,POWR
@@ -91,6 +149,8 @@ Quantstamp,QSP
 Quantum Resistant Ledger,QRL
 RadonPay,RDN
 RaiBlocks,XRB
+RChain,RHOC
+Red Pulse,RPX
 Regalcoin,REC
 Request Network,REQ
 Revain,R
@@ -99,13 +159,23 @@ Ripple,XRP
 Rise,RISE
 SALT,SALT
 Santiment,SAN
+SHIELD,XSH
+Shift,SHIFT
 Siacoin,SC
+Simple Token,ST
 SingularDTV,SNGLS
+SIRIN LABS Token,SRN
+Skycoin,Sky
+SmartCash,SMART
+Snovio,SNOV
 SONM,SNM
+SpankChain,SPANK
 Status,SNT
 Steem,STEEM
 Stellar,XLM
 Storj,STORJ
+Storjcoin X,SJCX
+Storm,STORM
 Stratis,STRAT
 Streamr DATAcoin,DATA
 Substratum,SUB
@@ -113,14 +183,31 @@ SuperNET,UNITY
 SysCoin,SYS
 TenX,PAY
 Tether,USDT
+Tierion,TNT
+Time New Bank,TNB
+Triggers,TRIG
 TRON,TRX
+Ubiq,UBQ
+Unikoin Gold,UKG
+UTRUST,UTK
 VeChain,VEN
 Verge,XVG
 Veritaseum,VERI
 Vertcoin,VTC
+Viacoin,VIA
+Viberate,VIB
+Voxels,VOX
+WaBi,WABI
+Wagerr,WGR
 Walton,WTC
 Waves,WAVES
+WAX,WAX
 Wings,WINGS
+Xenon,XNN
+XPlay,XPA
+XTRABYTES,XBY
 YOYOW,YOYOW
 ZCash,ZEC
+ZClassic,ZCL
 ZCoin,XZC
+ZenCash,ZEN
