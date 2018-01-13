@@ -13,6 +13,8 @@
             <string>1.1.1</string>
             <key>CFBundleShortVersionString</key>
             <string>1.1.1</string>
+            <key>Update From Gallery</key>
+            <true/>
             <key>URL</key>
             <string>https://raw.githubusercontent.com/quoid/coin-ticker/master/coin_ticker.safariextz</string>
         </dict>
