@@ -57,14 +57,14 @@ function price_increase(i) {
     document.querySelectorAll(".price")[i].classList.add("up");
     setTimeout(function() {
         document.querySelectorAll(".price")[i].classList.remove("up");
-    }, 250);
+    }, 350);
 }
 
 function price_decrease(i) {
     document.querySelectorAll(".price")[i].classList.add("down");
     setTimeout(function() {
         document.querySelectorAll(".price")[i].classList.remove("down");
-    }, 250);
+    }, 350);
 }
 
 function delay_data_request(ms) { //this isn't currently used
