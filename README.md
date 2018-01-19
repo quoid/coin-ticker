@@ -24,8 +24,6 @@ To make finding your coins easier, you can use the filter bar in the settings pa
 
 You can only track, at max, 50 coins at one time.
 
-![settings image](https://raw.githubusercontent.com/quoid/coin-ticker/sandbox/etc/settings.png)
-
 When you leave the settings page the ticker will grab the prices and data for the coins you selected.
 
 You can update the coin data *manually* by clicking the `update` button. To respect API limits, you can only update the data once every 10 seconds.
