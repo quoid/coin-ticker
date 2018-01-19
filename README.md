@@ -8,21 +8,25 @@ A Safari extension that puts a configurable cryptocurrency ticker right in your 
 
 ## Installation
 
-Download the [latest coin_ticker.safariextz](https://github.com/quoid/coin-ticker/releases) release and double-click it to install or install it via the [Safari Extensions Gallery](https://safari-extensions.apple.com/details/?id=com.quoid.cointicker-J74Q8V8V8N). If you've made it to this page, I would **highly** suggest installing the extension through Github. ~~The extension on the gallery is outdated and deploying update to Apple is a slow process.~~
+Download the [latest coin_ticker.safariextz](https://github.com/quoid/coin-ticker/releases) release and double-click it to install or install it via the [Safari Extensions Gallery](https://safari-extensions.apple.com/details/?id=com.quoid.cointicker-J74Q8V8V8N). If you've made it to this page, I would **highly** suggest installing the extension through Github as it is the latest version.
 
-The version on Github and in the [Safari Extensions Gallery](https://safari-extensions.apple.com/details/?id=com.quoid.cointicker-J74Q8V8V8N) **are NOT currently aligned**.
+The version in the [Safari Extensions Gallery](https://safari-extensions.apple.com/details/?id=com.quoid.cointicker-J74Q8V8V8N) is **not currently up to date** with the version here, on Github.
 
 ## Usage
 
-Once installed, and you've clicked the extension for the first time, you'll have to click the settings icon to set which coins you'd like to track.
+Once installed head over to the settings page, but clicking the settings icon, and select the coins you'd like to track.
+
+To make finding your coins easier, you can use the filter bar in the settings page to filter all available coins. You can also use the search flag `:checked` to only show coins you have already selected. 
+
+You can only track, at max, 50 coins at one time.
 
 ![settings image](https://raw.githubusercontent.com/quoid/coin-ticker/sandbox/etc/settings.png)
 
-From here, you can tick the checkboxes of any coins you'd like to track. Once you exit the settings page, the ticker will update for the coins you've selected. You can update the coin data *manually* by clicking the `update` button. To respect API limits, you can only update the data once every 10 seconds. If you attempt to update the data more frequently, the update request will be deferred until 10 seconds has past since your previous update.
+When you leave the settings page the ticker will grab the prices and data for the coins you selected.
 
-To make finding your coins easier, you can use the filter bar in the settings page to filter all available coins. You can also use the search flag `:checked` to only show coins you have already selected. You can only track, at max, 50 coins at one time.
+You can update the coin data *manually* by clicking the `update` button. To respect API limits, you can only update the data once every 10 seconds.
 
-You can add/remove coins at any time by going back into the settings page.
+By default, the coins in ticker are ordered alphabetically (the same order you see in the settings page). You can reorder the coins by dragging and dropping them by their icons.
 
 ## Notes
 
