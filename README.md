@@ -16,7 +16,11 @@ The version in the [Safari Extensions Gallery](https://safari-extensions.apple.c
 
 Once installed head over to the settings page, but clicking the settings icon, and select the coins you'd like to track.
 
+![adding coins](https://raw.githubusercontent.com/quoid/coin-ticker/sandbox/etc/addcoins.gif)
+
 To make finding your coins easier, you can use the filter bar in the settings page to filter all available coins. You can also use the search flag `:checked` to only show coins you have already selected. 
+
+![filter coins](https://raw.githubusercontent.com/quoid/coin-ticker/sandbox/etc/checked.gif)
 
 You can only track, at max, 50 coins at one time.
 
@@ -27,6 +31,8 @@ When you leave the settings page the ticker will grab the prices and data for th
 You can update the coin data *manually* by clicking the `update` button. To respect API limits, you can only update the data once every 10 seconds.
 
 By default, the coins in ticker are ordered alphabetically (the same order you see in the settings page). You can reorder the coins by dragging and dropping them by their icons.
+
+![reorder coins](https://raw.githubusercontent.com/quoid/coin-ticker/sandbox/etc/reorder.gif)
 
 ## Notes
 
