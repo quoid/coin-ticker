@@ -5,7 +5,27 @@
         <div id="clear-filter" tabindex="0"></div>
     </div>
     <div class="settings-content">
-        <p>Select all the coins you&apos;d like to track. All settings are saved in the local storage of your browser. Coin data is from CryptoCompare.com.</p>
+        <p>Select your currency and all the coins you&apos;d like to track. All settings are saved in the local storage of your browser. Coin data is from CryptoCompare.com.</p>
+        <div style="margin: 6px 0; text-align: center;">
+            <select id="currency">
+                <option id="c_aud" value="AUD">AUD</option>
+                <option id="c_cad" value="CAD">CAD</option>
+                <option id="c_cny" value="CNY">CNY</option>
+                <option id="c_eur" value="EUR">EUR</option>
+                <option id="c_gbp" value="GBP">GBP</option>
+                <option id="c_hkd" value="HKD">HKD</option>
+                <option id="c_jpy" value="JPY">JPY</option>
+                <option id="c_krw" value="KRW">KRW</option>
+                <option id="c_pln" value="PLN">PLN</option>
+                <option id="c_rub" value="RUB">RUB</option>
+                <option id="c_sek" value="SEK">SEK</option>
+                <option id="c_usd" value="USD" selected>USD</option>
+                <option disabled>&#9472;&#9472;&#9472;</option>
+                <option id="c_btc" value="BTC">BTC</option>
+                <option id="c_eth" value="ETH">ETH</option>
+                <option id="c_usdt" value="USDT">USDT</option>
+            </select>
+        </div>
         <div id="checkboxes">
             {% for coin in site.data.coins %}
                 {% include coin.html symbol=coin.symbol name=coin.name %}

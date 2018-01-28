@@ -14,10 +14,13 @@ var button_update = document.getElementById("update");
 var green = "#4cd964";
 var red = "#ff3b30";
 var max_checks = 50;
+var currency_select = document.getElementById("currency");
+var currency = "USD";
+var last_curr = "";
 
 //helper functions
 function cl(msg) { //create function for logging message so it's easy to disable verbose logging for production
-    //console.log(msg);
+    console.log(msg);
 }
 
 function update_status(str) {
@@ -161,7 +164,7 @@ function build_elements() {
 //data
 function getData() {
     update_status("Getting data from CryptoCompare...");
-    var endpoint = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=" + Object.values(coins).toString() + "&tsyms=USD";
+    var endpoint = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=" + Object.values(coins).toString() + "&tsyms=" + currency;
     var xhr = new XMLHttpRequest();
     cl("Requesting data from " + endpoint);
     xhr.timeout = 20000; //after 20 seconds stop trying to get data
@@ -178,26 +181,33 @@ function getData() {
                 var el = document.querySelector("." + key); //the element where we should put the data
                 var price_el = el.querySelector(".price"); //the element that holds the price data
                 var change_el = el.querySelector(".change"); //the element that holds the 24hr change data
-                var price = data["DISPLAY"][key]["USD"]["PRICE"].replace(/\s/g,''); //the price data
-                var change = data["DISPLAY"][key]["USD"]["CHANGEPCT24HOUR"]; //the 24hr change data
-                var price_old = price_el.innerHTML; //the old price when updating, we use this to determine if it went up or down from last recorded price
+                //var price = data["DISPLAY"][key][currency]["PRICE"].replace(/\s/g,''); //the price data
+                var change = data["DISPLAY"][key][currency]["CHANGEPCT24HOUR"]; //the 24hr change data
+                //var price_old = price_el.innerHTML; //the old price when updating, we use this to determine if it went up or down from last recorded price
+                var price_old = price_el.getElementsByTagName("div")[0].innerHTML;
                 var change_old = change_el.innerHTML; //the old 24hr change, used to determine if it went up or down from last recorded 24hr change
                 var i = Object.values(coins).indexOf(key) + 1; //store the index of the coin so we can use it for the increase and decrease price functions (+1 for placholder)
-                
-                if (data["RAW"][key]["USD"]["PRICE"] > 9999) { //for some reason large number only have 1 deciimal point
-                    var a = format_number(data["RAW"][key]["USD"]["PRICE"]);
-                    price = "$" + a;
+                var price_symbol = data["DISPLAY"][key][currency][ "PRICE"].split(" ")[0];
+                var price_number = data["DISPLAY"][key][currency][ "PRICE"].split(" ")[1];
+                var price = "<span class='currency'>" + price_symbol +  "&nbsp;</span><div>" + price_number + "</div>";
+                if (data["DISPLAY"][key][currency][ "TOSYMBOL"].length > 1) {
+                    price = "<span class='currency small'>" + price_symbol +  "&nbsp;</span><div>" + price_number + "</div>";
                 }
+                
+                /*if (data["RAW"][key][currency]["PRICE"] > 9999) { //for some reason large number only have 1 deciimal point
+                    var a = format_number(data["RAW"][key][currency]["PRICE"]);
+                    price = "$" + a;
+                }*/
                 
                 
                 //add/update price data
                 if (price_old) { //if there's previously recorded price
-                    if (price > price_old) { //if price went up
-                        cl(key + " price has gone up - old price was " + price_old + ", new price is " + price);
+                    if (parseFloat(price_number) > parseFloat(price_old)) { //if price went up
+                        cl(key + " price has gone up - old price was " + parseFloat(price_old) + ", new price is " + parseFloat(price_number));
                         price_el.innerHTML = price;
                         price_increase(i);
-                    } else if (price < price_old) { //if price went down
-                        cl(key + " price has gone down - old price was " + price_old + ", new price is " + price);
+                    } else if (parseFloat(price_number) < parseFloat(price_old)) { //if price went down
+                        cl(key + " price has gone down - old price was " + parseFloat(price_old) + ", new price is " + parseFloat(price_number));
                         price_el.innerHTML = price;
                         price_decrease(i);
                     }
@@ -347,6 +357,7 @@ function show_settings() {
     disable_buttons();
     last_coins = Object.keys(coins);
     document.getElementById("main").scrollTop = 0;
+    last_curr = ls.currency;
     //safari.extension.globalPage.contentWindow.ga_settings_page();
 }
 
@@ -357,11 +368,8 @@ function hide_settings() {
     document.getElementById("main").scrollTop = 0;
     clear_filter_bar(event);
     //safari.extension.globalPage.contentWindow.ga_ticker_page();
-    if (Object.keys(coins).length < 1 && arrays_are_equal(last_coins, Object.keys(coins))) { //entered settings with no coins being tracked and exited the same
-        //nothing being tracked so do nothing
-        enable_buttons();
-        update_status("Ready...");
-    } else if (!arrays_are_equal(last_coins, Object.keys(coins))) { //entered settings with or without coins being tracked and changed coins to be tracked
+    
+    if (last_curr != ls.currency) {
         document.querySelectorAll(".actual").forEach(function(e) { //remove all coin elements
             return e.parentNode.removeChild(e);
         });
@@ -371,12 +379,30 @@ function hide_settings() {
         } else {
             build_elements();
         }
-    } else if (arrays_are_equal(last_coins, Object.keys(coins))) { //entered settings with coins being tracked and changed nothing
-        if (document.querySelectorAll(".actual").length < 1) { //elements aren't already built for some reason
-            build_elements();
-        } else {
+    } else {
+    
+        if (Object.keys(coins).length < 1 && arrays_are_equal(last_coins, Object.keys(coins))) { //entered settings with no coins being tracked and exited the same
+            //nothing being tracked so do nothing
             enable_buttons();
+            update_status("Ready...");
+        } else if (!arrays_are_equal(last_coins, Object.keys(coins))) { //entered settings with or without coins being tracked and changed coins to be tracked
+            document.querySelectorAll(".actual").forEach(function(e) { //remove all coin elements
+                return e.parentNode.removeChild(e);
+            });
+            if (Object.keys(coins).length < 1) { //if coins are no longer being tracked
+                update_status("Ready...");
+                enable_buttons();
+            } else {
+                build_elements();
+            }
+        } else if (arrays_are_equal(last_coins, Object.keys(coins))) { //entered settings with coins being tracked and changed nothing
+            if (document.querySelectorAll(".actual").length < 1) { //elements aren't already built for some reason
+                build_elements();
+            } else {
+                enable_buttons();
+            }
         }
+    
     }
 }
 
@@ -424,6 +450,13 @@ function load_settings() {
         for (var key in coins) {
             document.getElementById(coins[key]).setAttribute("checked", true);
         }
+    }
+    if (!ls.currency) {
+        ls.setItem("currency", "USD");
+    } else {
+        currency = ls.currency;
+        currency_select.options[currency_select.selectedIndex].removeAttribute("selected");
+        document.getElementById("c_" + ls.currency.toLowerCase()).setAttribute("selected", "selected");
     }
 }
 
@@ -534,7 +567,14 @@ function set_coins_order() {
     }
 }
 
+//currency select
+function set_currency() {
+    ls.setItem("currency", currency_select.value);
+    currency = currency_select.value;
+}
+
 //event listeners
+currency_select.addEventListener("change", set_currency);
 button_show_settings.addEventListener("click", show_settings);
 button_hide_settings.addEventListener("click", hide_settings);
 button_clear_checks.addEventListener("click", clear_all_checked);
