@@ -32,10 +32,28 @@ By default, the coins in ticker are ordered alphabetically (the same order you s
 
 ![reorder coins](https://raw.githubusercontent.com/quoid/coin-ticker/sandbox/etc/reorder.gif)
 
-## Notes
+## Currencies
+Prices can be reflected in the following currencies:
+- AUD
+- CAD
+- CNY
+- EUR
+- GBP
+- HKD
+- JPY
+- KRW
+- PLN
+- RUB
+- SEK
+- BTC
+- ETH
+- USDT
 
+You can change this in the settings page.
+![change currency](https://raw.githubusercontent.com/quoid/coin-ticker/sandbox/etc/currency.gif)
+
+## Notes
 - All data is from [CryptoCompare](https://www.cryptocompare.com) and generalized from multiple exchanges
-- All prices are reflected in `$USD`
 - Coin icons from [cryptocoins](https://github.com/allienworks/cryptocoins)
 - Extension logo inspired by [Anton Kalik](https://thenounproject.com/antonkalik/)
 
