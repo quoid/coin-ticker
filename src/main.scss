@@ -1,0 +1,20 @@
+---
+---
+
+@charset "utf-8";
+
+@import
+	"base",
+	"coins",
+	"off-canvas",
+	"update",
+	"toggle",
+	"loader",
+	"custom"
+;
+
+@each $coin in $coins {
+    .#{$coin}.item .icon {
+     background-image: url("img/coins/#{$coin}.svg");
+    }
+}

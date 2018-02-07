@@ -1,0 +1,12 @@
+@-webkit-keyframes update {
+     100% {
+        -webkit-transform:rotate(360deg);
+        transform:rotate(360deg)
+    }
+}
+ @keyframes update {
+     100% {
+        -webkit-transform:rotate(360deg);
+        transform:rotate(360deg)
+    }
+}

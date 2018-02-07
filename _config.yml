@@ -1,9 +1,4 @@
-version: "1.2"
-
-compress_html:
-  clippings: all
-  startings: [html, head, body]
-  endings: [html, head, body]
+version: "2.0"
 
 #build
 source: src
@@ -12,6 +7,3 @@ sass:
   sass_dir: _sass
   style: compressed
 markdown: kramdown
-
-plugins:
-  - uglifier

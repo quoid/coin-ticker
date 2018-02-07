@@ -1,39 +1,81 @@
-<div id="settings">
-    <div class="filter">
-        <div id="filter-icon"></div>
-        <input id="filter-bar" type="text" placeholder="Search for coins...">
-        <div id="clear-filter" tabindex="0"></div>
-    </div>
-    <div class="settings-content">
-        <p>Select your currency and all the coins you&apos;d like to track. All settings are saved in the local storage of your browser. Coin data is from CryptoCompare.com.</p>
-        <div style="margin: 6px 0; text-align: center;">
-            <select id="currency">
-                <option id="c_aud" value="AUD">AUD</option>
-                <option id="c_cad" value="CAD">CAD</option>
-                <option id="c_cny" value="CNY">CNY</option>
-                <option id="c_eur" value="EUR">EUR</option>
-                <option id="c_gbp" value="GBP">GBP</option>
-                <option id="c_hkd" value="HKD">HKD</option>
-                <option id="c_jpy" value="JPY">JPY</option>
-                <option id="c_krw" value="KRW">KRW</option>
-                <option id="c_pln" value="PLN">PLN</option>
-                <option id="c_rub" value="RUB">RUB</option>
-                <option id="c_sek" value="SEK">SEK</option>
-                <option id="c_usd" value="USD" selected>USD</option>
-                <option disabled>&#9472;&#9472;&#9472;</option>
-                <option id="c_btc" value="BTC">BTC</option>
-                <option id="c_eth" value="ETH">ETH</option>
-                <option id="c_usdt" value="USDT">USDT</option>
-            </select>
-        </div>
-        <div id="checkboxes">
-            {% for coin in site.data.coins %}
-                {% include coin.html symbol=coin.symbol name=coin.name %}
-            {% endfor %}
+<section id="settings">
+    <div id="version">
+        <div class="container">
+            Coin Ticker for Safari - Version {{site.version}}
         </div>
     </div>
-    <div class="settings-footer">
-        <button id="clear-checkboxes" class="button">Uncheck All</button>
-        <button id="hide-settings" class="button">Exit Settings</button>
+    <ul>
+        <li class="setting">
+            <div>
+                <div class="setting-name">Base Currency</div>
+                <div class="setting-description">Prices are shown in this currency</div>
+            </div>
+            <div class="setting-control">
+                <select id="currency">
+                    <option id="c_aud" value="AUD">AUD</option>
+                    <option id="c_cad" value="CAD">CAD</option>
+                    <option id="c_cny" value="CNY">CNY</option>
+                    <option id="c_eur" value="EUR">EUR</option>
+                    <option id="c_gbp" value="GBP">GBP</option>
+                    <option id="c_hkd" value="HKD">HKD</option>
+                    <option id="c_jpy" value="JPY">JPY</option>
+                    <option id="c_krw" value="KRW">KRW</option>
+                    <option id="c_pln" value="PLN">PLN</option>
+                    <option id="c_rub" value="RUB">RUB</option>
+                    <option id="c_sek" value="SEK">SEK</option>
+                    <option id="c_usd" value="USD" selected>USD</option>
+                    <option disabled>&#9472;&#9472;&#9472;</option>
+                    <option id="c_btc" value="BTC">BTC</option>
+                    <option id="c_eth" value="ETH">ETH</option>
+                    <option id="c_usdt" value="USDT">USDT</option>
+                </select>
+            </div>
+        </li>
+        <li class="setting">
+            <div>
+                <div class="setting-name">Show Top 10 Coins</div>
+                <div class="setting-description">Disabling will allow custom selections</div>
+            </div>
+            <div class="setting-control">
+                <div class="toggle">
+                    <input type="checkbox" id="top" checked="checked">
+                    <label for="top"></label>
+                </div>
+            </div>
+        </li>
+        <li id="button-tracking" class="setting">
+            <div>
+                <div class="setting-name">Coin Tracking</div>
+                <div class="setting-description">Select the coins you'd like to track</div>
+            </div>
+            <div class="setting-control">
+                <div class="arrow"></div>
+            </div>
+        </li>
+        <li class="setting">
+            <div>
+                <div class="setting-name">Night Mode</div>
+                <div class="setting-description">Coming Soon!</div>
+            </div>
+            <div class="setting-control">
+                <div class="toggle">
+                    <input type="checkbox" id="night" disabled="disabled">
+                    <label for="night"></label>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <div class="setting">
+        <div class="setting-name">Donate</div>
+        <div class="setting-description">
+            Coin Ticker is free and open source, if you enjoy using the extension and would like help fund future development <a href="http://google.com" target="_blank">you can donate here</a>. 
+        </div>
     </div>
-</div>
+    <div class="setting">
+        <div class="setting-name">Reset All Settings</div>
+        <div class="setting-description">
+            Extension settings are saved in the local storage of your browser. If you clear your browser’s local storage, you will reset all the settings for this extension. If you'd like to clear the settings now, click the button below. 
+        </div>
+        <button id="button-reset">Reset All Settings</button>
+    </div>
+</section>

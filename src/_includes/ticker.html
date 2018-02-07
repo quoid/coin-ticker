@@ -1,23 +1,20 @@
-<div id="ticker">
-    <div class="ticker-loader">
-        {% include loader.html %}
+<section id="ticker">
+    <div id="alert">
+        Update available. <a href="https://google.com" target="_blank">Click here for newest version</a>.
+        <div id="close-alert"></div>
     </div>
-    <div id="placeholder" class="item" style="display: none" ondragstart="dragstart(event)" ondragend="dragend(event)" ondragenter="dragenter(event)" ondragover="dragover(event)" ondrop="drop(event)">
-        <div class="icon" onmousedown="mousedown(event)" onmouseup="mouseup(event)"></div>
-        <div class="content">
+    <div id="placeholder" class="ti" style="display: none" ondragstart="dragstart(event)" ondragend="dragend(event)" ondragenter="dragenter(event)" ondragover="dragover(event)" ondrop="drop(event)">
+        <div class="ti-icon" onmousedown="mousedown(event)" onmouseup="mouseup(event)"></div>
+        <div class="ti-content">
             <div>
-                <div class="name"></div>
-                <div class="symbol"></div>
+                <div class="ti-name">Coin Name</div>
+                <div class="ti-symbol">Ticker Symbol</div>
             </div>
             <div>
-                <div class="price">
-                    <span></span>
-                    <div></div>
-                </div>
-                <div class="change"></div>
+                <div class="ti-price"><span class="sign">$</span>&nbsp;<span class="amount">99,999.99</span></div>
+                <div class="ti-change">-99.99%</div>
             </div>
         </div>
-        <div class="arrow"></div>
+        <div class="ti-arrow"></div>
     </div>
-    <div id="welcome">Click the settings button to start tracking coins!</div>
-</div>
+</section>

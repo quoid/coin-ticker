@@ -13,7 +13,7 @@
         position: absolute;
         width: .074em;
         -webkit-transform-origin: center -.2222em;
-        transform-origin: center -.2222em;
+            transform-origin: center -.2222em;
         -webkit-animation: spinner-fade 1s infinite linear;
         animation: spinner-fade 1s infinite linear;
         
@@ -25,7 +25,7 @@
                 -webkit-animation-delay: $animation-delay;
                 animation-delay: $animation-delay;
                 -webkit-transform: rotate($blade-rotation);
-                transform: rotate($blade-rotation);
+                    transform: rotate($blade-rotation);
                 $blade-rotation: $blade-rotation + 30;
                 $animation-delay: $animation-delay + .083;
             }
