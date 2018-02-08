@@ -8,5 +8,29 @@
 	<body>		
 		{{ content }}
 	<script src="inc/js/scripts.js"></script>
+	{% if jekyll.environment == "production" %}
+    <script>
+        window.addEventListener("blur", function() {
+            safari.extension.globalPage.contentWindow.ga_close_event();
+        });
+        document.getElementById("button-settings").addEventListener("click", function() {
+            safari.extension.globalPage.contentWindow.ga_open_settings_page();
+        });
+        document.getElementById("button-refresh").addEventListener("click", function() {
+            safari.extension.globalPage.contentWindow.ga_update_event();
+        });
+        document.getElementById("button-tracking").addEventListener("click", function() {
+            safari.extension.globalPage.contentWindow.ga_open_tracking_page();
+        }).
+        document.getElementById("button-back").addEventListener("click", function() {
+            if (document.body.classList.contains("show-tracking")) {
+                safari.extension.globalPage.contentWindow.ga_close_tracking_page();
+            }
+            if (document.body.classList.contains("show-settings")) {
+                safari.extension.globalPage.contentWindow.ga_close_settings_page();
+            }
+        });
+    </script>
+    {% endif %}
 	</body>
 </html>

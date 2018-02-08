@@ -1,3 +1,8 @@
+.updating #button-refresh {
+    -webkit-animation: update 650ms infinite linear;
+    animation: update 650ms infinite linear;
+}
+
 @-webkit-keyframes update {
      100% {
         -webkit-transform:rotate(360deg);

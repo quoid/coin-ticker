@@ -7,6 +7,7 @@ layout: default
             <div id="button-settings"></div>
             <div id="button-back"></div>
         </div>
+         {% if jekyll.environment == "development" %}<button id="start" style="position: absolute; left: 48px;" onclick="start()">Start</button>{% endif %}
         <div class="header-center">
             <div id="header-logo"></div>
             <div id="status">init</div>

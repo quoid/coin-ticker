@@ -52,7 +52,7 @@ a {
     text-decoration: underline;
 }
 
-button {
+.button {
     @extend %font-medium;
     background-color: $pop;
     border: none;
@@ -141,11 +141,6 @@ header [id^="button-"] {
     transform-origin: 50% 56%;
 }
 
-.updating #button-refresh {
-    -webkit-animation: update 650ms infinite linear;
-    animation: update 650ms infinite linear;
-}
-
 #button-back,
 #button-settings {
     position: absolute;
@@ -209,6 +204,21 @@ section {
     text-align: center;
 }
 
+#welcome {
+    color: $font-light;
+    left: 50%;
+    position: absolute;
+	top: calc(50% - 27px); //54px (height of header) /2 = 27px (perfect center)
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	text-align: center;
+	width: 100%;
+}
+
+.actual ~ #welcome {
+    display: none;
+}
+
 .ti {
     @extend .flex;
     background-color: $background-color;
@@ -264,8 +274,26 @@ section {
     font-weight: 600;
 }
 
+.ti-price .amount {
+    -webkit-transition: color 200ms ease-in-out;
+    transition: color 200ms ease-in-out;
+}
+
+.ti-price.up .amount {
+    color: $green;
+}
+
+.ti-price.down .amount {
+    color: $red;
+}
+
 .ti-price .sign {
     color: $placeholder;
+    
+    span {
+        font-size: 9px;
+    }
+    
 }
 
 li.setting {
@@ -360,25 +388,17 @@ div.setting {
 #checkboxes {
     @extend .flex;
     flex-wrap: wrap;
-    //margin-left: -12px;
+    margin-left: -6px;
     
     > div {
         @extend %font-small;
         color: $font-light;
         margin-bottom: 12px;
+        margin-left: 6px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         width: calc(50vw - 24px);
-        
-        &:nth-child(odd) {
-            margin-right: 6px;
-        }
-        
-        &:nth-child(even) {
-            margin-left: 6px;
-        }
-        
     }
     
     label {
@@ -388,6 +408,11 @@ div.setting {
         -webkit-user-select: none;
         user-select: none;
     }
+}
+
+#uncheck {
+    display: none;
+    margin: 12px auto 0 auto;
 }
 
 #loading {
@@ -447,6 +472,9 @@ header {
     display: none;
 }
 
+.updating #button-settings,
+.loading #button-refresh,
+.loading #button-settings,
 .show-settings #button-refresh {
     opacity: 0.4;
     pointer-events: none;
