@@ -176,6 +176,7 @@ section {
     -webkit-box-shadow: inset 0 -1px 0 #fedfae, inset 0 1px 0 #fedfae;
     box-shadow: inset 0 -1px 0 #fedfae, inset 0 1px 0 #fedfae;
     color: #e2a54a;
+    display: none;
     position: relative;
     
     a {
@@ -432,7 +433,7 @@ div.setting {
 }
 
 //drag
-.actual .icon {
+.actual .ti-icon {
     cursor: move;
 }
 
@@ -446,7 +447,7 @@ div.setting {
 }
 
 .dragover {
-    padding-top: calc(12px + 55px); //line 297 + 55px (height of .item element)
+    padding-top: calc(12px + 48px);
 }
 
 //z-index

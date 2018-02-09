@@ -14,7 +14,19 @@
 ;
 
 @each $coin in $coins {
-    .#{$coin}.item .icon {
-     background-image: url("img/coins/#{$coin}.svg");
+    $symbol: str-slice($coin, str-index($coin, "_")+1, str-length($coin));
+    .#{$symbol} .ti-icon {
+     background-image: url("inc/img/coins/#{$coin}.svg");
     }
 }
+
+/*
+@each $coin in $coins {
+    $name: str-slice($coin, 1, str-index($coin, "_")-1);
+    $symbol: str-slice($coin, str-index($coin, "_")+1, str-length($coin));
+    .ti.#{$symbol} .ti-icon {
+        background-image: url("inc/img/coins/#{$coin}.svg");
+        marks: cross;
+    }
+}
+*/

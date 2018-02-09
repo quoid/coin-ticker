@@ -22,6 +22,7 @@ var button_uncheck_all = document.getElementById("uncheck");
 var currency_select = document.getElementById("currency");
 var filter_bar = document.getElementById("filter-bar");
 var filter_clear = document.getElementById("clear-filter");
+var time_format_toggle = document.getElementById("ampm");
 
 //body classes
 var settings_page_class = "show-settings";
@@ -39,7 +40,7 @@ var update_animation_time = 650; //this is the time (in ms) for the update icon 
 
 //helper functions
 function cl(msg) {
-    console.log(msg);
+    //console.log(msg);
 }
 
 function update_status(str, title) {
@@ -84,43 +85,65 @@ function arrays_are_equal(arr1, arr2) { //https://stackoverflow.com/a/22395370/3
 }
 
 function get_current_date_time(d) {
-    var today = new Date(d); //new Date(); outputs like Wed Apr 19 2017 00:25:35 GMT-0400 (EDT)
-    var date = today.toString().split(" ", 4).join(" ");
-    var time = today.toString().split(" ")[4];
-    var hours = time.slice(0, -6);
-    var period = "AM";
-    if (hours >= 13) {
-        hours = hours - 12;
-        period = "PM";
+    var t = new Date(d); //outputs Wed Apr 19 2017 00:25:35 GMT-0400 (EDT);
+    var date = t.toString().split(" ", 4).join(" "); //outputs Web Apr 19 2017
+    var time = t.toString().split(" ")[4]; //outpts 00:25:35
+    var timezone = t.toString().split(" ")[6]; //otputs (EDT)
+    
+    var output = date + " " + time + " " + timezone;
+    //time formats
+    // 24hr - Fri Feb 09 2018 11:49:57 (EST)
+    //12hr - Fri Feb 09 2018 11:49:57 AM (EST)
+    
+    if (ls.ampm) { //if the user has set the time format to AM/PM (if this setting doesn't exist, user kept default format at 24 hour clock)
+        var hours = time.slice(0, -6); //outputs 00
+        var period = "AM";
+        if (hours >= 13) {
+            hours = hours - 12;
+            period = "PM";
+        }
+        if (hours == "00") {
+            hours = "12";
+        }
+        hours = ("0" + hours).slice(-2);
+        var min_sec = time.slice(-6);
+        output = date + " " + hours + min_sec + " " + period + " " + timezone;
     }
-    if (hours == "00") {
-        hours = "12";
-    }
-    hours = ("0" + hours).slice(-2);
-    var minSec = time.slice(-6);
-    return date + " " + hours + minSec + " " + period;
+    
+    return output;
 }
 
-function get_last_updated(d) {
+function format_last_updated(d) {
     var then = d;
     var now = Date.now();
     var diff = (now - then)/1000; //the difference between the two unix timestamps is reflected in ms, so divide it by 1000 to get differences in seconds
+    var output;
+            
+    if (diff < 86400) { //if difference is less than 24 hours
+        var raw = get_current_date_time(then);
+        var time = raw.split(" ").slice(4, 5)[0].split(":").slice(0,2).join(":"); //in both 12/24 time format, the time portion is in the 4 index, remove seconds here
+        var hour = time.split(":").slice(0,1)[0]; //get hour for adding AM/PM
 
-    if (diff < 86400) { //if last updated was in the past 24 hours
-        
-        var raw = get_current_date_time(then); //e.g. Thu Feb 08 2018 01:18:24 PM
-        var time = raw.split(" ").slice(-2, 5)[0].split(":").slice(0,2).join(":"); //change time from 01:18:24 to 01:18
-        var period = raw.split(" ").slice(-1, 6)[0]; //just the AM or PM
-        
-        if (new Date(now).getDate() === new Date(then).getDate()) {
-            return "Today at " + time + " " + period;
+        if (parseInt(hour) > 0 && parseInt(hour) < 10) {
+            time = time.substring(1);
+        }
+                
+        if (new Date(now).getDate() === new Date(then).getDate()) { //compares the days within the 24 hour to see if they occured on the same day
+            output = "Today at " + time;
         } else {
-            return "Yesterday at " + time + " " + period;
+            output= "Yesterday at " + time;
+        }
+        
+        if (ls.ampm) {
+            var period = raw.split(" ").slice(5, 6);
+            output += " " + period;
         }
         
     } else {
-        return "More than a 24 hours ago"
+        output = "More than a 24 hours ago";
     }
+    
+    return output;
 }
 
 function delay_data_request(ms) { //this isn't currently used
@@ -138,7 +161,7 @@ function remove_data_request_delay() {
     clearTimeout(timeout_id);
     timeout_id = null;
     body.classList.remove(updating_class);
-    update_status("Last updated: " + get_last_updated(last_updated), get_current_date_time(last_updated));
+    update_status("Last updated: " + format_last_updated(last_updated), get_current_date_time(last_updated));
 }
 
 // page navigation
@@ -191,12 +214,24 @@ function hide_settings() {
         }
     } else {
         if (document.querySelectorAll(".actual").length > 0) { //if there are elements that were previously tracked
-            update_status("Last updated: " + get_last_updated(last_updated), get_current_date_time(last_updated));
+            update_status("Last updated: " + format_last_updated(last_updated), get_current_date_time(last_updated));
         } else { //if ticker is empty
             update_status("Ready...", "");
         }
     }
 }
+
+function change_time_format(event) {
+    if (event.target.checked) { //when enabling AM/PM
+        cl("ampm turned on");
+        ls.setItem("ampm", "on");
+    } else {
+        cl("am pm turned off");
+        ls.removeItem("ampm");
+    }
+}
+
+time_format_toggle.addEventListener("click", change_time_format);
 
 //elements
 function build_elements() {
@@ -210,7 +245,7 @@ function build_elements() {
         var change = clone.querySelector(".ti-change");
         clone.removeAttribute("id");
         clone.removeAttribute("style");
-        clone.classList.add(coins[key]);
+        clone.classList.add(coins[key].toLowerCase());
         clone.classList.add("actual");
         name.innerHTML = key;
         symbol.innerHTML = coins[key];
@@ -271,7 +306,7 @@ function get_data() {
             var data = JSON.parse(xhr.responseText);
             
             for (var key in data["DISPLAY"]) {
-                var el = document.querySelector("." + key); //the element where we should put the data
+                var el = document.querySelector("." + key.toLowerCase()); //the element where we should put the data
                 var price_el = el.querySelector(".amount"); //the element that holds the price data
                 var sign_el = el.querySelector(".sign"); //the element that holds the currency sign
                 var price_old = el.querySelector(".amount").innerHTML; //old price used to determine if price went up/down since last update
@@ -311,7 +346,7 @@ function get_data() {
             
             body.classList.remove(loading_class);
             body.classList.remove(updating_class);
-            update_status("Last updated: " + get_last_updated(last_updated), get_current_date_time(last_updated));
+            update_status("Last updated: " + format_last_updated(last_updated), get_current_date_time(last_updated));
         } else if (xhr.timeout > 0 && xhr.status === 0) { //if a timeout occurs
             console.log("Timeout error getting data from " + endpoint);
             update_status("Error, check console...", "");
@@ -436,6 +471,96 @@ function clear_all_checked() {
     }
 }
 
+//drag n drop
+//turns on dragging for the element by clicking it's coin icon
+function mousedown(event) {
+    var p = event.target.closest(".actual");
+    cl("Turning drag on for elment with class name '" + p.className + "'");
+    p.setAttribute("draggable", true);
+}
+
+//if the users clicks, but dragging does not start, immediately turn off the dragging capabailities
+function mouseup(event) {
+    var p = event.target.closest(".actual");
+    if (!p.classList.contains(".dragging")) {
+        p.removeAttribute("draggable");
+    }
+}
+
+function dragstart(event) {
+    if (event.target.classList.contains("actual")) {
+        cl("Dragging started for element with class name '" + event.target.className + "'");
+        event.target.classList.add("dragging");
+        event.dataTransfer.effectAllowed = "move";
+    } else {
+        event.preventDefault();
+    }
+}
+
+function dragend(event) {
+    if (event.target.classList.contains("actual")) {
+        event.target.classList.remove("dragging");
+        event.target.removeAttribute("draggable");
+        if (document.querySelectorAll(".dragover").length > 0) {
+            document.querySelector(".dragover").classList.remove("dragover");
+        }
+    }
+}
+
+
+//don't apply the effect to
+//child elements
+//elements that are being dragged
+//elements that precede the element being dragged that aren't last in the list (last part of this needs to be completed)
+function dragenter(event) {
+    var dragon = event.target; //element that is getting dragged ONTO
+    var dragging = document.querySelector(".dragging"); //element being dragged
+    
+    //if element being dragged onto is a child element of an .actual element, target the parent
+    if (!dragon.classList.contains("actual")) { 
+        dragon = event.target.closest(".actual");
+    }
+    
+    //if NOT the element being dragged & not the immediate nextSibling of the element being dragged
+    if (!dragon.classList.contains("dragging") && dragon != dragging.nextSibling) {
+        //if another element has the dragover class, remove it before applying to new element
+        if (document.querySelectorAll(".dragover").length > 0) {
+            document.querySelector(".dragover").classList.remove("dragover");
+        }
+        dragon.classList.add("dragover");
+    }
+}
+
+function dragover(event) {
+    event.preventDefault();
+}
+
+function drop(event) {
+    event.preventDefault();
+    var dragging = document.querySelector(".dragging");
+    var dropping = event.target;
+    if (!event.target.classList.contains("actual")) {
+        dropping = event.target.closest(".actual");
+    }
+    document.getElementById("ticker").insertBefore(dragging, dropping);
+    set_coins_order();
+}
+
+function set_coins_order() {
+    var actual = document.querySelectorAll(".actual");
+    coins = {};
+    ls.clear();
+    for (var i = 0; i < actual.length; i++) {
+        var name = actual[i].querySelector(".ti-name").innerHTML;
+        var symbol = actual[i].querySelector(".ti-symbol").innerHTML;
+        coins[name] = symbol;
+    }
+    ls.setItem("coins",JSON.stringify(coins));
+    if (!ls.order) {
+        ls.setItem("order", "custom");
+    }
+}
+
 //start
 function start() {
     update_status("Starting...", "");
@@ -485,50 +610,10 @@ window.addEventListener("blur", function() {
         //hide_settings();
         clear_filter_bar(event);
         scroll_top_tracking_page();
-        update_status("Last updated: " + get_last_updated(last_updated), get_current_date_time(last_updated));
+        update_status("Last updated: " + format_last_updated(last_updated), get_current_date_time(last_updated));
     }
     
 });
-
-function cv() {
-    
-}
-
-//check for updates
-function check_new_version() {
-    //this will check if there's a new version of the plugin available to users
-    //first we check if the user has suppressed checks
-    
-    if (!ls.checkVersion) { //if version checking in on
-        
-        if (!ls.lastVersionCheck) { //if no version check has occured yet
-            ls.setItem("lastVersionCheck", Date.now());
-        }
-        
-        /*
-        console.log(new Date(Date.now()), new Date(parseInt(ls.lastVersionCheck)));
-        var d = (Date.now()/1000) - (parseInt(ls.lastVersionCheck)/1000);
-        console.log(d);
-        */
-    }
-    
-    /*
-    console.log("checking for a new version");
-    var a = "https://raw.githubusercontent.com/quoid/coin-ticker/master/coin_ticker.plist";
-    var xhr = new XMLHttpRequest();
-    var parser = new DOMParser();
-    xhr.open('GET', a);
-    xhr.onloadend = function() {
-        if (xhr.status === 200) { //if there were no errors
-            var data = parser.parseFromString(xhr.responseText,"text/xml");
-            var a = data.getElementsByTagName("dict")[1];
-            var b = a.getElementsByTagName("key");
-            console.log(a.childNodes[15].innerHTML);
-        }
-    }
-    xhr.send(null);
-    */
-}
 
 //on load
 function load_settings() {
@@ -547,7 +632,9 @@ function load_settings() {
         currency_select.options[currency_select.selectedIndex].removeAttribute("selected"); //remove the selected attribute from the default currency setting (usd)
         document.getElementById("c_" + ls.currency.toLowerCase()).setAttribute("selected", "selected"); //set the selected attribute for whatever is set in local storage
     }
+    if (ls.ampm) { //user has turned on AM/PM time format previously
+        document.getElementById("ampm").setAttribute("checked", true);
+    }
 }
 
 load_settings();
-check_new_version();
