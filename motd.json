@@ -1,13 +1,13 @@
 {
     "enabled": "true",
     "message": [
-        "Have you encountered an issue? <a href='https://github.com/quoid/coin-ticker' target='_blank'>Tell us about it</a>",
+        "Have you encountered an issue? <a data-link='https://github.com/quoid/coin-ticker' onclick='open_link(event)'>Tell us about it</a>",
         "Good Things Come To Those Who HODL",
         "Only invest what you can afford to lose",
-        "Keep your coins secure with a <a href='http://amzn.to/2nPfMAq' target='_blank'>hardware wallet</a>",
-        "Do you mine crypto? Check out <a href='https://github.com/kfatehi' target='_blank'>Happy Miner</a>",
+        "Keep your coins secure with a <a data-link='http://amzn.to/2nPfMAq' onclick='open_link(event)'>hardware wallet</a>",
+        "Do you mine crypto? Check out <a data-link='https://github.com/kfatehi' onclick='open_link(event)'>Happy Miner</a>",
         "Some guy told us Litecoin was the best.",
-        "Fireproof titanium cold storage wallets; <a href='https://bitkee.com' target='_blank'>Bitkee</a>",
-        "<a href='https://www.cryptocompare.com' target='_blank'>CryptoCompare</a> - Live cryptocurrency prices & more"
+        "Fireproof titanium cold storage wallets; <a data-link='https://bitkee.com' onclick='open_link(event)'>Bitkee</a>",
+        "<a data-link='https://www.cryptocompare.com' onclick='open_link(event)'>CryptoCompare</a> - Live cryptocurrency prices & more"
     ]
 }
