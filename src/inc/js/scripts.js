@@ -1,5 +1,3 @@
-// variables
-
 var body = document.body;
 var coins = {};
 var last_coins = [];
@@ -10,7 +8,8 @@ var last_curr = "";
 var timeout_id = null;
 var last_updated = 0;
 var timeout_delay = 0;
-var api_throttle = 10000;//10000;
+var api_throttle = 10000; //how often a user can request updated price data in ms
+var time_between_checks = 600; //time between motd checks in seconds
 
 // buttons & inputs
 var button_refresh = document.getElementById("button-refresh");
@@ -23,6 +22,7 @@ var currency_select = document.getElementById("currency");
 var filter_bar = document.getElementById("filter-bar");
 var filter_clear = document.getElementById("clear-filter");
 var time_format_toggle = document.getElementById("ampm");
+var button_close_motd = document.getElementById("close-alert");
 
 //body classes
 var settings_page_class = "show-settings";
@@ -164,6 +164,20 @@ function remove_data_request_delay() {
     update_status("Last updated: " + format_last_updated(last_updated), get_current_date_time(last_updated));
 }
 
+function price_increase(i) {
+    document.querySelectorAll(".ti-price")[i].classList.add("up");
+    setTimeout(function() {
+        document.querySelectorAll(".ti-price")[i].classList.remove("up");
+    }, 350);
+}
+
+function price_decrease(i) {
+    document.querySelectorAll(".ti-price")[i].classList.add("down");
+    setTimeout(function() {
+        document.querySelectorAll(".ti-price")[i].classList.remove("down");
+    }, 350);
+}
+
 // page navigation
 function show_settings() {
     if (!body.classList.contains(settings_page_class)) {
@@ -194,12 +208,16 @@ function back() {
     }*/
 }
 
-//settings
-function set_currency() {
-    ls.setItem("currency", currency_select.value);
-    currency = currency_select.value;
+function get_select_index(ele, text) { //https://stackoverflow.com/q/7489982/
+    for (var i=0; i<ele.length;i++) {
+        if (ele[i].childNodes[0].nodeValue === text){
+            return i;
+        }
+    }
+    return undefined;
 }
 
+//settings
 function hide_settings() {
     cl("Hiding settings page");
     clear_filter_bar(event);
@@ -221,6 +239,11 @@ function hide_settings() {
     }
 }
 
+function set_currency() {
+    ls.setItem("currency", currency_select.value);
+    currency = currency_select.value;
+}
+
 function change_time_format(event) {
     if (event.target.checked) { //when enabling AM/PM
         cl("ampm turned on");
@@ -231,7 +254,20 @@ function change_time_format(event) {
     }
 }
 
-time_format_toggle.addEventListener("click", change_time_format);
+function reset() {
+    ls.clear();
+    document.querySelectorAll(".actual").forEach(function(e) { //remove all coin elements
+        return e.parentNode.removeChild(e);
+    });
+    clear_all_checked();
+    document.getElementById("ampm").checked = false;
+    body.classList.remove(settings_page_class);
+    ls.setItem("currency", "USD");
+    document.getElementById("c_usd").setAttribute("selected", "selected");
+    currency_select.selectedIndex = get_select_index(currency_select, "USD");
+    currency = "USD";
+    update_status("Ready...", "");
+}
 
 //elements
 function build_elements() {
@@ -360,18 +396,43 @@ function get_data() {
     
 }
 
-function price_increase(i) {
-    document.querySelectorAll(".ti-price")[i].classList.add("up");
-    setTimeout(function() {
-        document.querySelectorAll(".ti-price")[i].classList.remove("up");
-    }, 350);
+//check for MOTD
+function check_motd() {
+    
+    if (!ls.motdCleared) {
+        document.getElementById("alert").style.display = "block";
+        document.getElementById("alert").getElementsByTagName("span")[0].innerHTML = ls.motd;
+    }
+    
+    if (!ls.lastCheck || ((Date.now()/1000) - (parseInt(ls.lastCheck)/1000) > time_between_checks)) { //no motd ever checked or time between checks hit
+        ls.setItem("lastCheck", Date.now());
+        ls.removeItem("motdCleared")
+        get_motd();
+    }
 }
 
-function price_decrease(i) {
-    document.querySelectorAll(".ti-price")[i].classList.add("down");
-    setTimeout(function() {
-        document.querySelectorAll(".ti-price")[i].classList.remove("down");
-    }, 350);
+function get_motd() {
+    var endpoint = "https://raw.githubusercontent.com/quoid/coin-ticker/motd/motd.json";
+    var xhr = new XMLHttpRequest();
+    xhr.timeout = 20000;
+    xhr.open('GET', endpoint);
+    xhr.onloadend = function() {
+        if (xhr.status === 200) {
+            var data = JSON.parse(xhr.responseText);
+            document.getElementById("alert").style.display = "block";
+            if (data["enabled"] != "false") {
+                var message = data["message"][Math.floor(Math.random() * data["message"].length)];
+                ls.setItem("motd", message);
+                document.getElementById("alert").getElementsByTagName("span")[0].innerHTML = message;
+                document.getElementById("alert").style.display = "block";
+            }
+        } else if (xhr.timeout > 0 && xhr.status === 0) {
+            console.log("Timeout error getting data from " + endpoint);
+        } else {
+             console.log("Error getting data from " + xhr.responseURL + " - " + xhr.responseText);
+        }
+    }
+    xhr.send(null);
 }
 
 //tracking page filtering
@@ -549,7 +610,7 @@ function drop(event) {
 function set_coins_order() {
     var actual = document.querySelectorAll(".actual");
     coins = {};
-    ls.clear();
+    ls.removeItem("coins");
     for (var i = 0; i < actual.length; i++) {
         var name = actual[i].querySelector(".ti-name").innerHTML;
         var symbol = actual[i].querySelector(".ti-symbol").innerHTML;
@@ -564,6 +625,7 @@ function set_coins_order() {
 //start
 function start() {
     update_status("Starting...", "");
+    check_motd();
     if (Object.keys(coins).length > 0) { //if there are coins set to be tracked
         if (document.querySelectorAll(".actual").length < 1) { //if the coin elements are not yet built
             build_elements();
@@ -580,6 +642,7 @@ function start() {
 button_settings.addEventListener("click", show_settings);
 button_tracking.addEventListener("click", show_tracking);
 button_back.addEventListener("click", back);
+button_reset.addEventListener("click", reset);
 
 filter_bar.addEventListener("keyup", show_filter_clear);
 filter_clear.addEventListener("click", clear_filter_bar);
@@ -589,10 +652,16 @@ button_uncheck_all.addEventListener("click", clear_all_checked);
 
 currency_select.addEventListener("change", set_currency);
 
+time_format_toggle.addEventListener("click", change_time_format);
+
 button_refresh.addEventListener("click", function() {
     if (!body.classList.contains(updating_class)) { //make sure data isn't already updating
         update();
     }
+});
+button_close_motd.addEventListener("click", function(){
+    ls.setItem("motdCleared", "true");
+    document.getElementById("alert").removeAttribute("style");
 });
 
 window.addEventListener("blur", function() {
@@ -621,7 +690,7 @@ function load_settings() {
         cl("Local storage exists for coin tracking, loading it");
         coins = JSON.parse(ls.coins); //set the global object to whatever is in the local storage for tracked coins
         for (var key in coins) { //tick the appropiate checkboxes for the coins that are in local storage
-            document.getElementById(coins[key]).setAttribute("checked", true);
+            document.getElementById(coins[key]).checked = true;
         }
     }
     if (!ls.currency) { //checks if the local storage setting for currency does NOT exist
@@ -629,11 +698,14 @@ function load_settings() {
     } else { //if the local storage setting for currency does exist...
         cl("Local storage exists for currency, loading it");
         currency = ls.currency; //set the global variable for currency to whatever is in local storage
-        currency_select.options[currency_select.selectedIndex].removeAttribute("selected"); //remove the selected attribute from the default currency setting (usd)
-        document.getElementById("c_" + ls.currency.toLowerCase()).setAttribute("selected", "selected"); //set the selected attribute for whatever is set in local storage
+        currency_select.selectedIndex = -1; //reset the selected option for currency select
+        document.getElementById("c_usd").removeAttribute("selected"); //remove the default selected option (USD)
+        currency_select.selectedIndex = get_select_index(currency_select, ls.currency); //set the locally stored currency as the selection
+        document.getElementById("c_" + ls.currency.toLowerCase()).setAttribute("selected", "selected"); //set the selected attribute
     }
     if (ls.ampm) { //user has turned on AM/PM time format previously
-        document.getElementById("ampm").setAttribute("checked", true);
+        cl("Local storage exists for time format, loading it");
+        document.getElementById("ampm").checked = true;
     }
 }
 

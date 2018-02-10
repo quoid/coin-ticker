@@ -46,5 +46,9 @@
         ga("send", "event", "ticker", "update-ticker");
     }
     
+    function ga_close_alert_event() {
+        ga("send", "event", "ticker", "close-alert");
+    }
+    
     safari.application.addEventListener("popover", open_popover, true);
 </script>

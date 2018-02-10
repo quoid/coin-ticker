@@ -1,8 +1,5 @@
 <section id="ticker">
-    <div id="alert">
-        Update available. <a href="https://google.com" target="_blank">Click here for newest version</a>.
-        <div id="close-alert"></div>
-    </div>
+    {% include alert.html %}
     <div id="placeholder" class="ti" style="display: none" ondragstart="dragstart(event)" ondragend="dragend(event)" ondragenter="dragenter(event)" ondragover="dragover(event)" ondrop="drop(event)">
         <div class="ti-icon" onmousedown="mousedown(event)" onmouseup="mouseup(event)"></div>
         <div class="ti-content">
