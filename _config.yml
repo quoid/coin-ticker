@@ -1,5 +1,10 @@
 version: "2.0"
 
+compress_html:
+  clippings: all
+  startings: [html, head, body]
+  endings: [html, head, body]
+
 #build
 source: src
 destination: _site

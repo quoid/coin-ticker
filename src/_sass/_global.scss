@@ -1,0 +1,85 @@
+html,
+body {
+    background-color: $background-color;
+    color: $font-dark;
+    font-family: "Roboto", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    height: 600px;
+    letter-spacing: $letter-spacing;
+    line-height: 18px;
+    width: 300px;
+}
+
+body {
+    overflow: hidden;
+    position: relative;
+    -moz-osx-font-smoothing: grayscale; 
+    -webkit-font-smoothing: antialiased;
+}
+
+.flex {
+    -webkit-box-align: center;
+    align-items: center;
+    display: -webkit-box;
+    display: flex;
+}
+
+%font-small {
+    font-size: 11px;
+    line-height: 12px;
+}
+
+%font-medium {
+    font-size: 13px;
+    line-height: 18px;
+}
+
+a {
+    color: $pop;
+    cursor: pointer;
+    font-weight: 500;
+    text-decoration: underline;
+}
+
+.button {
+    @extend %font-medium;
+    background-color: $pop;
+    border: none;
+    border-radius: 20px;
+    -webkit-box-shadow: 0 10px 20px 0 rgba(0,0,0,0.19),
+                        0 6px 6px 0 rgba(0,0,0,0.23);
+    box-shadow: 0 10px 20px 0 rgba(0,0,0,0.19),
+                0 6px 6px 0 rgba(0,0,0,0.23);
+    color: #fff;
+    cursor: pointer;
+    letter-spacing: $letter-spacing;
+    margin: 0;
+    padding: 6px 24px;
+
+    &:active {
+        -webkit-box-shadow: 0px 1px 3px 0 rgba(0,0,0,0.1);
+        box-shadow: 0px 1px 3px 0 rgba(0,0,0,0.1);
+    }
+    
+}
+
+.container {
+    padding: 0 12px;
+}
+
+.arrow {
+    background: transparent url("inc/img/chevron-right.svg") no-repeat right center/7px 12px;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+    cursor: pointer;
+    height: 12px;
+    width: 7px;
+}
+
+section {
+    background-color: $background-color;
+    padding-top: 54px;
+    position: relative;
+    min-height: 100vh;
+}

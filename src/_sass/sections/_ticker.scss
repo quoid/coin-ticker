@@ -1,0 +1,131 @@
+#alert {
+    @extend %font-small;
+    background-color: #faead1;
+    -webkit-box-shadow: inset 0 -1px 0 #fedfae, inset 0 1px 0 #fedfae;
+    box-shadow: inset 0 -1px 0 #fedfae, inset 0 1px 0 #fedfae;
+    color: #e2a54a;
+    display: none;
+    padding: 12px;
+    position: -webkit-sticky;
+    position: -moz-sticky;
+    position: sticky;
+    position: fixed;
+    top: 54px; //height of header
+    width: 100%;
+    
+    a {
+        color: #e2a54a;
+    }
+    
+    .show-alert & {
+        display: block;
+    }
+}
+
+.show-alert #ticker > div:nth-of-type(3) { //the first item actual item in the ticker will be the 3rd - first is the alert, second is the place holder
+    margin-top: 36px;
+}
+
+#close-alert {
+    background: transparent url("inc/img/clear-alert.svg") no-repeat center center/contain;
+    cursor: pointer;
+    height: 16px;
+    width: 16px;
+    position: absolute;
+    right: 12px;
+    top: 10px;
+}
+
+#welcome {
+    color: $font-light;
+    left: 50%;
+    position: absolute;
+	top: calc(50% - 27px); //54px (height of header) /2 = 27px (perfect center)
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	text-align: center;
+	width: 100%;
+}
+
+.actual ~ #welcome {
+    display: none;
+}
+
+.ti {
+    @extend .flex;
+    background-color: $background-color;
+    -webkit-box-shadow: inset 0 -1px 0 $border;
+    box-shadow: inset 0 -1px 0 $border;
+    opacity: 1;
+    padding: 9px 12px;
+}
+
+.loading .ti {
+    opacity: 0;
+}
+
+.ti-icon {
+    background: transparent url("inc/img/coin-default.svg") no-repeat center center/contain;
+    height: 24px;
+    margin-right: 6px;
+    width: 24px;
+}
+
+.ti-content {
+    @extend .flex;
+    -webkit-box-flex: 1;
+    flex: 1;
+    
+    > div {
+        -webkit-box-flex: 1;
+        flex: 1;
+        
+        &:nth-child(2) {
+            text-align: right;
+        }
+        
+    }
+    
+}
+
+.ti-arrow {
+    @extend .arrow;
+    display: none;
+    padding: 9px 0 9px 12px;
+}
+
+.ti-name {
+    font-weight: 700;
+}
+
+.ti-symbol,
+.ti-change {
+    @extend %font-small;
+}
+
+.ti-symbol {
+    color: $font-light;
+}
+
+.ti-change {
+    color: $red;
+    font-weight: 600;
+    font-weight: 500;
+}
+
+.ti-price.up .amount {
+    color: $green;
+}
+
+.ti-price.down .amount {
+    color: $red;
+}
+
+.ti-price .sign {
+    color: $placeholder;
+    
+    span {
+        font-size: 9px;
+    }
+    
+}

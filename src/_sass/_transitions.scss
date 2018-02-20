@@ -1,0 +1,33 @@
+//button clicks
+.button {
+    -webkit-transition: -webkit-box-shadow 125ms ease-out;
+    transition: -webkit-box-shadow 125ms ease-out;
+    transition: box-shadow 125ms ease-out;
+    transition: box-shadow 125ms ease-out, -webkit-box-shadow 125ms ease-out;
+}
+
+//drag and drog
+.actual {
+    -webkit-transition: padding-top 175ms ease-out, opacity 175ms ease-out;
+    transition: padding-top 175ms ease-out, opacity 175ms ease-out;
+}
+
+//button disable/enable
+#button-refresh {
+    -webkit-transform-origin: 50% 56%;
+    transform-origin: 50% 56%;
+    -webkit-transition: opacity 175ms ease-out;
+    transition: opacity 175ms ease-out;
+}
+
+#button-back,
+#button-settings {
+    -webkit-transition: left 175ms ease-out, opacity 175ms ease-out;
+    transition: left 175ms ease-out, opacity 175ms ease-out;
+}
+
+//price updates
+.ti-price .amount {
+    -webkit-transition: color 200ms ease-in-out;
+    transition: color 200ms ease-in-out;
+}

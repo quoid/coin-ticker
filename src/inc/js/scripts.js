@@ -11,7 +11,7 @@ var timeout_delay = 0;
 var api_throttle = 10000; //how often a user can request updated price data in ms
 var time_between_checks = 600; //time between motd checks in seconds
 
-// buttons & inputs
+// buttons, inputs & elements
 var button_refresh = document.getElementById("button-refresh");
 var button_settings = document.getElementById("button-settings");
 var button_tracking = document.getElementById("button-tracking");
@@ -23,6 +23,7 @@ var filter_bar = document.getElementById("filter-bar");
 var filter_clear = document.getElementById("clear-filter");
 var time_format_toggle = document.getElementById("ampm");
 var button_close_motd = document.getElementById("close-alert");
+var alert_el = document.getElementById("alert");
 
 //body classes
 var settings_page_class = "show-settings";
@@ -30,6 +31,7 @@ var tracking_page_class = "show-tracking";
 var single_page_class = "show-single";
 var loading_class = "loading";
 var updating_class = "updating";
+var show_alert_class = "show-alert";
 
 //colors
 var green = "#4cd964";
@@ -66,7 +68,7 @@ function sort_object(obj) { //https://stackoverflow.com/a/29622653/3126477
 }
 
 function scroll_top_tracking_page() {
-    var tp = document.getElementById("tracking");
+    var tp = document.getElementById("checkboxes");
     tp.style.overflowY = "scroll";
     tp.scrollTop = 0; //scroll page back to top
     tp.removeAttribute("style");
@@ -192,7 +194,7 @@ function show_settings() {
 function show_tracking() {
     if (body.classList.contains(settings_page_class) && !body.classList.contains(tracking_page_class)) {
         body.classList.add(tracking_page_class);
-        fix_safari_scroll("tracking");
+        fix_safari_scroll("checkboxes");
         cl("Showing tracking page");
     }
 }
@@ -220,7 +222,8 @@ function get_select_index(ele, text) { //https://stackoverflow.com/q/7489982/
 //settings
 function hide_settings() {
     cl("Hiding settings page");
-    clear_filter_bar(event);
+    var event = event || window.event;
+    clear_filter_bar();
     scroll_top_tracking_page();
     
     if (last_curr != ls.currency || !arrays_are_equal(last_coins, Object.keys(coins))) {
@@ -335,6 +338,7 @@ function get_data() {
     
     xhr.onloadstart = function() {
         last_updated = Date.now();
+        ls.setItem("last_updated", last_updated);
     }
     
     xhr.onloadend = function() {
@@ -398,15 +402,14 @@ function get_data() {
 
 //check for MOTD
 function check_motd() {
-    
-    if (!ls.motdCleared) {
-        document.getElementById("alert").style.display = "block";
-        document.getElementById("alert").getElementsByTagName("span")[0].innerHTML = ls.motd;
+    if (!ls.motd_cleared && ls.motd) { //if the user has not manually close the motd & motd exist in local storage
+        body.classList.add(show_alert_class);
+        alert_el.getElementsByTagName("span")[0].innerHTML = ls.motd;
     }
     
-    if (!ls.lastCheck || ((Date.now()/1000) - (parseInt(ls.lastCheck)/1000) > time_between_checks)) { //no motd ever checked or time between checks hit
-        ls.setItem("lastCheck", Date.now());
-        ls.removeItem("motdCleared")
+    if (!ls.last_motd_check || ((Date.now()/1000) - (parseInt(ls.last_motd_check)/1000) > time_between_checks)) { //no motd ever checked or time between checks hit
+        ls.setItem("last_motd_check", Date.now());
+        ls.removeItem("motd_cleared")
         get_motd();
     }
 }
@@ -419,12 +422,11 @@ function get_motd() {
     xhr.onloadend = function() {
         if (xhr.status === 200) {
             var data = JSON.parse(xhr.responseText);
-            document.getElementById("alert").style.display = "block";
             if (data["enabled"] != "false") {
                 var message = data["message"][Math.floor(Math.random() * data["message"].length)];
                 ls.setItem("motd", message);
-                document.getElementById("alert").getElementsByTagName("span")[0].innerHTML = message;
-                document.getElementById("alert").style.display = "block";
+                alert_el.getElementsByTagName("span")[0].innerHTML = message;
+                body.classList.add(show_alert_class);
             }
         } else if (xhr.timeout > 0 && xhr.status === 0) {
             console.log("Timeout error getting data from " + endpoint);
@@ -445,14 +447,15 @@ function show_filter_clear() {
     }
 }
 
-function clear_filter_bar(event) {
-    if (event.type === "click" || event.keyCode === 13 || event.type === "blur") {
+function clear_filter_bar() {
+    //if (!event) event = window.event;
+    //if (event.type === "click" || event.keyCode === 13 || event.type === "blur") {
         filter_bar.value = "";
         filter_bar.blur();
         filter_clear.blur();
         show_filter_clear();
         filter_coins();
-    }
+    //}
 }
 
 function filter_coins() {
@@ -552,7 +555,8 @@ function dragstart(event) {
     if (event.target.classList.contains("actual")) {
         cl("Dragging started for element with class name '" + event.target.className + "'");
         event.target.classList.add("dragging");
-        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.effectAllowed = "copy";
+        event.dataTransfer.setData('Text', this.id);
     } else {
         event.preventDefault();
     }
@@ -622,23 +626,50 @@ function set_coins_order() {
     }
 }
 
-//start
-function start() {
-    update_status("Starting...", "");
-    check_motd();
-    if (Object.keys(coins).length > 0) { //if there are coins set to be tracked
-        if (document.querySelectorAll(".actual").length < 1) { //if the coin elements are not yet built
-            build_elements();
-        } else {
-            update();
-        }
-        
-    } else {
-        update_status("Ready...", "");
+//neccessary event listeners for drag & drop
+document.getElementById("ticker").addEventListener("mousedown", function(event) {
+    if (event.target.className === "ti-icon") {
+        mousedown(event);
     }
-}
+});
 
-// event listeners
+document.getElementById("ticker").addEventListener("mouseup", function(event) {
+    if (event.target.className === "ti-icon") {
+        mouseup(event);
+    }
+});
+
+document.getElementById("ticker").addEventListener("dragstart", function(event) {
+    if (event.target.classList.contains("actual")) {
+        dragstart(event);
+    }    
+});
+
+document.getElementById("ticker").addEventListener("dragend", function(event) {
+    if (event.target.classList.contains("actual")) {
+        dragend(event);
+    }    
+});
+
+document.getElementById("ticker").addEventListener("dragenter", function(event) {
+    if (event.target.classList.contains("actual")) {
+        dragenter(event);
+    }    
+});
+
+document.getElementById("ticker").addEventListener("dragover", function(event) {
+    if (event.target.classList.contains("actual")) {
+        dragover(event);
+    }    
+});
+
+document.getElementById("ticker").addEventListener("drop", function(event) {
+    if (event.target.classList.contains("actual")) {
+        drop(event);
+    }    
+});
+
+//event listeners
 button_settings.addEventListener("click", show_settings);
 button_tracking.addEventListener("click", show_tracking);
 button_back.addEventListener("click", back);
@@ -659,12 +690,14 @@ button_refresh.addEventListener("click", function() {
         update();
     }
 });
+
 button_close_motd.addEventListener("click", function(){
-    ls.setItem("motdCleared", "true");
-    document.getElementById("alert").removeAttribute("style");
+    ls.setItem("motd_cleared", "true");
+    body.classList.remove(show_alert_class);
 });
 
 window.addEventListener("blur", function() {
+    
     cl("Window or extension lost focus");
     if (timeout_id != null) {
         remove_data_request_delay();
@@ -676,13 +709,44 @@ window.addEventListener("blur", function() {
     
     if (body.classList.contains(settings_page_class)) {
         body.classList.remove(settings_page_class);
-        //hide_settings();
-        clear_filter_bar(event);
+        clear_filter_bar();
         scroll_top_tracking_page();
-        update_status("Last updated: " + format_last_updated(last_updated), get_current_date_time(last_updated));
+        if (document.querySelectorAll(".actual").length > 0) {
+            update_status("Last updated: " + format_last_updated(last_updated), get_current_date_time(last_updated));
+        } else {
+            update_status("Ready...", "");
+        }
     }
     
 });
+
+document.addEventListener("click",function(event) {
+    //links
+    if (event.target.tagName === "A") {
+        open_link(event);
+    }
+    //checkbox
+    if (event.target.type === "checkbox" && event.target.className === "ck") {
+        save_setting(event);
+    }
+});
+
+//start
+function start() {
+    update_status("Starting...", "");
+    check_motd();
+    if (Object.keys(coins).length > 0) { //if there are coins set to be tracked
+        if (document.querySelectorAll(".actual").length < 1) { //if the coin elements are not yet built
+            build_elements();
+        } else {
+            update();
+        }
+        
+    } else {
+        update_status("Ready...", "");
+    }
+}
+
 
 //on load
 function load_settings() {
@@ -706,6 +770,9 @@ function load_settings() {
     if (ls.ampm) { //user has turned on AM/PM time format previously
         cl("Local storage exists for time format, loading it");
         document.getElementById("ampm").checked = true;
+    }
+    if (ls.last_updated) { //checks if local storage for last updated exists
+        last_updated = ls.last_updated;
     }
 }
 

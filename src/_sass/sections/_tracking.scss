@@ -1,0 +1,83 @@
+.filter {
+    background-color: $background-color;
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+1,ffffff+80,ffffff+100&1+0,1+80,0+100 */
+    background: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 1%, rgba(255,255,255,1) 80%, rgba(255,255,255,0) 100%);
+    background: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 1%,rgba(255,255,255,1) 80%,rgba(255,255,255,0) 100%);
+    background: linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 1%,rgba(255,255,255,1) 80%,rgba(255,255,255,0) 100%);
+    left: 0;
+    padding: 12px;
+    position: fixed;
+    top: 54px;
+    width: 100%;
+}
+
+#filter-bar {
+    @extend %font-medium;
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 6px;
+    color: $font-dark;
+    font-family: $font-family;
+    font-weight: 400;
+    letter-spacing: $letter-spacing;
+    margin: 0;
+    padding: 6px 24px;
+    width: 100%;
+}
+
+#filter-icon {
+    background: transparent url("inc/img/search.svg") no-repeat center center/contain;
+    height: 13px;
+    left: 18px;
+    pointer-events: none;
+    position: absolute;
+    top: 20.5px;
+    width: 12px;
+}
+
+#clear-filter {
+    background: transparent url("inc/img/clear.svg") no-repeat center center/contain;
+    cursor: pointer;
+    display: none;
+    height: 13px;
+    position: absolute;
+    right: 18px;
+    top: 20.5px;
+    width: 13px;
+}
+
+#checkboxes {
+    @extend .flex;
+    flex-wrap: wrap;
+    margin-left: -6px;
+    max-height: 100vh;
+    padding: 54px 12px;
+    
+    > div {
+        @extend %font-small;
+        color: $font-light;
+        margin-bottom: 12px;
+        margin-left: 6px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: calc(50vw - 24px);
+    }
+    
+    input[type="checkbox"] {
+        cursor: pointer;
+    }
+    
+    label {
+        cursor: pointer;
+        padding-left: 3px;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+}
+
+#uncheck {
+    display: none;
+    margin: 12px auto 0 auto;
+}

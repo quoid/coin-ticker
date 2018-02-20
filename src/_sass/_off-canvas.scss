@@ -1,12 +1,13 @@
-#loading,
-#settings,
-#single,
-#tracking {
+section {
     left: 0;
     max-height: 100vh;
     position: fixed;
     top: 0;
     width: 100%;
+}
+
+#ticker {
+    overflow-y: scroll;
 }
 
 #settings {
@@ -27,7 +28,7 @@
 
 .show-settings #settings,
 .show-single #single,
-.show-tracking.show-settings #tracking {
+.show-tracking.show-settings #tracking #checkboxes{
     overflow-y: scroll;
 }
 

@@ -1,39 +1,25 @@
+---
+layout: compress
+---
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>{{ site.title }}</title>
-		<meta name="description" content="{{ site.description }}">
-		<link rel="stylesheet" href="{{ "main.css" | prepend: site.baseurl }}">
-	</head>
-	<body>		
-		{{ content }}
-	<script src="inc/js/scripts.js"></script>
-	{% if jekyll.environment == "production" %}
-    <script>
-        window.addEventListener("blur", function() {
-            safari.extension.globalPage.contentWindow.ga_close_event();
-        });
-        document.getElementById("button-settings").addEventListener("click", function() {
-            safari.extension.globalPage.contentWindow.ga_open_settings_page();
-        });
-        document.getElementById("button-refresh").addEventListener("click", function() {
-            safari.extension.globalPage.contentWindow.ga_update_event();
-        });
-        document.getElementById("button-tracking").addEventListener("click", function() {
-            safari.extension.globalPage.contentWindow.ga_open_tracking_page();
-        });
-        document.getElementById("button-back").addEventListener("click", function() {
-            if (document.body.classList.contains("show-tracking")) {
-                safari.extension.globalPage.contentWindow.ga_close_tracking_page();
-            }
-            if (document.body.classList.contains("show-settings")) {
-                safari.extension.globalPage.contentWindow.ga_close_settings_page();
-            }
-        });
-        document.getElementById("close-alert").addEventListener("click", function() {
-            safari.extension.globalPage.contentWindow.ga_close_alert_event();
-        });
-    </script>
+    <head>
+        <link rel="stylesheet" href="{{ "main.css" | prepend: site.baseurl }}">
+        {% if jekyll.environment == "chrome" %}
+            <link rel="stylesheet" href="inc/css/chrome.css">
+        {% endif %}
+    </head>
+    <body>      
+        {{ content }}
+    {% if jekyll.environment == "development" %}
+        <script src="inc/js/dev.js"></script>
     {% endif %}
-	</body>
+    {% if jekyll.environment == "safari" %}
+        <script src="inc/js/safari.js"></script>
+    {% endif %}
+    {% if jekyll.environment == "chrome" %}
+        <script src="inc/js/chrome.js"></script>
+    {% endif %}
+    <script src="inc/js/scripts.js"></script>
+    </body>
 </html>

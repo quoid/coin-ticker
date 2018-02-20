@@ -28,7 +28,7 @@ gulp.task("create", function() {
 
 gulp.task("icons", ["create"], function() {
     console.log("\x1b[32m%s\x1b[0m", "Creating filename array from files in /img/coins folder...");
-    return gulp.src("./src/img/coins/*")
+    return gulp.src("./src/inc/img/coins/*")
         .pipe(filelist("icons.json", {
             flatten: true,
             removeExtensions: true
