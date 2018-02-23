@@ -1,0 +1,15 @@
+<section id="tracking">
+    <div class="filter">
+        <div id="filter-icon"></div>
+        <input id="filter-bar" type="text" placeholder="Search for coins...">
+        <div id="clear-filter" tabindex="0"></div>
+    </div>
+    <div id="checkboxes">
+        {% for coin in site.data.coins %}
+            {% include checkbox.html symbol=coin.symbol name=coin.name %}
+        {% endfor %}
+        <span class="uncheck-el">
+            <button id="uncheck" class="button">Uncheck All</button>
+        </span>
+    </div>
+</section>

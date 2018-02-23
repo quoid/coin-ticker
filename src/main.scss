@@ -1,0 +1,30 @@
+---
+---
+
+@charset "utf-8";
+
+@import
+    "base",
+    "fonts",
+    "coins",
+    "vars",
+    "global",
+    "off-canvas",
+    "update",
+    "toggle",
+    "loader",
+    "sections/header",
+    "sections/ticker",
+    "sections/settings",
+    "sections/tracking",
+    "sections/loading",
+    "transitions",
+    "custom"
+;
+
+@each $coin in $coins {
+    $symbol: str-slice($coin, str-index($coin, "_")+1, str-length($coin));
+    .#{$symbol} .ti-icon {
+        background-image: url("inc/img/coins/#{$coin}.svg");
+    }
+}

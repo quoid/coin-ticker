@@ -1,37 +1,25 @@
 ---
 layout: compress
 ---
+<!DOCTYPE html>
 <html>
     <head>
-    {% capture styles %}
-        {% include main.scss %}
-    {% endcapture %}
-    <style>{{ styles | scssify | strip }}</style>
+        <link rel="stylesheet" href="{{ "main.css" | prepend: site.baseurl }}">
+        {% if jekyll.environment == "chrome" %}
+            <link rel="stylesheet" href="inc/css/chrome.css">
+        {% endif %}
     </head>
-    <body>
+    <body>      
         {{ content }}
-    {% capture scripts %}
-        {% include scripts.js %}
-    {% endcapture %}
-    <script>{{ scripts | uglify | strip }}</script>
-    {% if jekyll.environment == "production" %}
-    <script>
-        window.addEventListener("blur", function() {
-            if (document.body.classList.contains("settings")) {
-                safari.extension.globalPage.contentWindow.ga_ticker_page();
-            }
-            safari.extension.globalPage.contentWindow.ga_close_event();
-        });
-        document.getElementById("show-settings").addEventListener("click", function(){
-            safari.extension.globalPage.contentWindow.ga_settings_page();
-        });
-        document.getElementById("update").addEventListener("click", function(){
-            safari.extension.globalPage.contentWindow.ga_update_event();
-        });
-        document.getElementById("hide-settings").addEventListener("click", function(){
-            safari.extension.globalPage.contentWindow.ga_ticker_page();
-        });
-    </script>
+    {% if jekyll.environment == "development" %}
+        <script src="inc/js/dev.js"></script>
     {% endif %}
+    {% if jekyll.environment == "safari" %}
+        <script src="inc/js/safari.js"></script>
+    {% endif %}
+    {% if jekyll.environment == "chrome" %}
+        <script src="inc/js/chrome.js"></script>
+    {% endif %}
+    <script src="inc/js/scripts.js"></script>
     </body>
 </html>

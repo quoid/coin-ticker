@@ -1,0 +1,121 @@
+section {
+    left: 0;
+    max-height: 100vh;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+#ticker {
+    overflow-y: scroll;
+}
+
+#settings {
+    -webkit-transform: translate3d(-100%, 0, 0);
+            transform: translate3d(-100%, 0, 0);
+}
+
+#single,
+#tracking {
+    -webkit-transform: translate3d(100%, 0, 0);
+            transform: translate3d(100%, 0, 0);
+}
+
+/*
+.show-settings,
+.show-single {
+    overflow: hidden;
+}
+*/
+
+.show-settings,
+.show-tracking,
+.show-single {
+    overflow: hidden;
+}
+
+/*
+.show-settings #settings,
+.show-single #single,
+.show-tracking.show-settings #tracking #checkboxes{
+    overflow-y: scroll;
+}
+*/
+
+.show-settings #settings,
+.show-single #single,
+.show-tracking #tracking #checkboxes{
+    overflow-y: scroll;
+}
+
+/*
+.show-settings #button-settings,
+.show-single #button-settings {
+    left: 24px;
+    opacity: 0;
+    pointer-events: none;
+}
+*/
+
+.show-tracking #button-settings,
+.show-settings #button-settings,
+.show-single #button-settings {
+    left: 24px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/*
+.show-settings #button-back,
+.show-single #button-back {
+    left: 0;
+    opacity: 1;
+    pointer-events: auto;
+}
+*/
+
+.show-tracking #button-back,
+.show-settings #button-back,
+.show-single #button-back {
+    left: 0;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/*
+.show-settings #settings,
+.show-single #single,
+.show-tracking.show-settings #tracking {
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+}
+*/
+
+.show-settings #settings,
+.show-single #single,
+.show-tracking #tracking {
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+}
+
+.show-tracking.show-settings #settings {
+    -webkit-transform: translate3d(-20%, 0, 0);
+            transform: translate3d(-20%, 0, 0);
+}
+
+.show-settings #ticker {
+    -webkit-transform: translate3d(20%, 0, 0);
+            transform: translate3d(20%, 0, 0);
+}
+
+$trans-time: 175ms;
+
+#settings,
+#single,
+#ticker,
+#tracking, {
+    -webkit-transition: -webkit-transform $trans-time ease-in;
+    transition: -webkit-transform $trans-time ease-in;
+    transition: transform $trans-time ease-in;
+    transition: transform $trans-time ease-in, -webkit-transform $trans-time ease-in;
+}
