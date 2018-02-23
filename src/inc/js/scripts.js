@@ -1,4 +1,5 @@
 var body = document.body;
+var default_coins = {"Bitcoin":"BTC","Ethereum":"ETH","Litecoin":"LTC","Vertcoin":"VTC"};
 var coins = {};
 var last_coins = [];
 var ls = localStorage;
@@ -9,7 +10,7 @@ var timeout_id = null;
 var last_updated = 0;
 var timeout_delay = 0;
 var api_throttle = 10000; //how often a user can request updated price data in ms
-var time_between_checks = 600; //time between motd checks in seconds
+var time_between_checks = 30;//600; //time between motd checks in seconds
 
 // buttons, inputs & elements
 var button_refresh = document.getElementById("button-refresh");
@@ -18,6 +19,7 @@ var button_tracking = document.getElementById("button-tracking");
 var button_back = document.getElementById("button-back");
 var button_reset = document.getElementById("button-reset");
 var button_uncheck_all = document.getElementById("uncheck");
+var button_add_coins = document.getElementById("add");
 var currency_select = document.getElementById("currency");
 var filter_bar = document.getElementById("filter-bar");
 var filter_clear = document.getElementById("clear-filter");
@@ -192,14 +194,33 @@ function show_settings() {
 }
 
 function show_tracking() {
-    if (body.classList.contains(settings_page_class) && !body.classList.contains(tracking_page_class)) {
+    if (!body.classList.contains(tracking_page_class)) {
+        cl("Showing tracking page");
+        update_status("Coin Tracking", "");
         body.classList.add(tracking_page_class);
         fix_safari_scroll("checkboxes");
-        cl("Showing tracking page");
+        last_coins = Object.keys(coins);
+        last_curr = ls.currency;
     }
 }
 
 function back() {
+    
+    
+    if (body.classList.contains(tracking_page_class) && !body.classList.contains(settings_page_class)) { //on tracking page, from ticker, back to ticker
+        body.classList.remove(tracking_page_class);
+        hide_tracking();
+    } else if (body.classList.contains(tracking_page_class) && body.classList.contains(settings_page_class)) { //on tracking page, from settings, back to settings
+        body.classList.remove(tracking_page_class);
+        update_status("Settings", "");
+    } else if(body.classList.contains(settings_page_class) && !body.classList.contains(tracking_page_class)) { //on settings page, back to ticker
+        body.classList.remove(settings_page_class);
+        hide_settings();
+    } else if (body.classList.contains(single_page_class)) { //not yet implemented
+        body.classList.remove(single_page_class);
+    }
+    
+    /*
     if (body.classList.contains(settings_page_class) && body.classList.contains(tracking_page_class)) { //on coin tracking page, going back to settings page
         body.classList.remove(tracking_page_class);
     } else if (body.classList.contains(settings_page_class) && !body.classList.contains(tracking_page_class)) { //on settings page, going back to ticker page
@@ -208,6 +229,7 @@ function back() {
     } /*else if (!body.classList.contains(settings_page_class) && body.classList.contains(single_page_class)) { //on single coin page, going back to ticker page
         body.classList.remove(single_page_class);
     }*/
+    
 }
 
 function get_select_index(ele, text) { //https://stackoverflow.com/q/7489982/
@@ -219,10 +241,15 @@ function get_select_index(ele, text) { //https://stackoverflow.com/q/7489982/
     return undefined;
 }
 
+function hide_tracking() {
+    if (!body.classList.contains(settings_page_class)) {
+        hide_settings();
+    }
+}
+
 //settings
 function hide_settings() {
     cl("Hiding settings page");
-    var event = event || window.event;
     clear_filter_bar();
     scroll_top_tracking_page();
     
@@ -232,6 +259,8 @@ function hide_settings() {
         });
         if (Object.keys(coins).length > 0) { //there are coins to track / elements to be built
             build_elements();
+        } else {
+            update_status("Ready...", "");
         }
     } else {
         if (document.querySelectorAll(".actual").length > 0) { //if there are elements that were previously tracked
@@ -258,18 +287,18 @@ function change_time_format(event) {
 }
 
 function reset() {
-    ls.clear();
-    document.querySelectorAll(".actual").forEach(function(e) { //remove all coin elements
-        return e.parentNode.removeChild(e);
-    });
     clear_all_checked();
-    document.getElementById("ampm").checked = false;
-    body.classList.remove(settings_page_class);
-    ls.setItem("currency", "USD");
-    document.getElementById("c_usd").setAttribute("selected", "selected");
-    currency_select.selectedIndex = get_select_index(currency_select, "USD");
-    currency = "USD";
-    update_status("Ready...", "");
+    ls.clear(); //clear all local storage
+    ls.setItem("currency", "USD"); //set the default currency in local storage
+    ls.setItem("coins", JSON.stringify(default_coins)); //set local storage to default coins
+    
+    currency = "USD"; //set the global variable to the default currency
+    currency_select.selectedIndex = get_select_index(currency_select, "USD"); //select the default value for the currency select element
+    document.getElementById("ampm").checked = false; //set the time format to the default setting (24 hour time)
+    coins = JSON.parse(ls.coins); //set the global coins variable to the default coins
+    for (var key in coins) { //tick the default coins
+        document.getElementById(coins[key]).checked = true;
+    }
 }
 
 //elements
@@ -328,6 +357,7 @@ function update() {
 }
 
 function get_data() {
+    check_motd();
     update_status("Getting data from CryptoCompare...", "");
     var endpoint = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=" + Object.values(coins).toString() + "&tsyms=" + currency;
     var xhr = new XMLHttpRequest();
@@ -448,7 +478,6 @@ function show_filter_clear() {
 }
 
 function clear_filter_bar() {
-    //if (!event) event = window.event;
     //if (event.type === "click" || event.keyCode === 13 || event.type === "blur") {
         filter_bar.value = "";
         filter_bar.blur();
@@ -508,12 +537,14 @@ function save_setting(event) {
                 coins = sort_object(coins); //sort the coins object alphabetically by name (not symbol)
             }
             ls.setItem("coins", JSON.stringify(coins)); //save to local storage
+            ls.removeItem("coins_manually_cleared");
         } else { //when unticking a checkbox
             delete coins[name]; //delete key/value from object
             ls.setItem("coins", JSON.stringify(coins)); //overwrite local storage
             if (Object.keys(coins).length < 1) { //if it was the last coin (meaning user is no longer tracking any coins)
                 ls.removeItem("coins"); //remove the local storage item
                 ls.removeItem("order");
+                ls.setItem("coins_manually_cleared", true);
             }
         }
     } else {
@@ -532,6 +563,7 @@ function clear_all_checked() {
         }
         coins = {};
         ls.removeItem("coins");
+        ls.setItem("coins_manually_cleared", true);
     }
 }
 
@@ -696,6 +728,12 @@ button_close_motd.addEventListener("click", function(){
     body.classList.remove(show_alert_class);
 });
 
+button_add_coins.addEventListener("click", function() {
+    if (!body.classList.contains("show-tracking")) {
+        show_tracking();
+    }
+});
+
 window.addEventListener("blur", function() {
     
     cl("Window or extension lost focus");
@@ -734,7 +772,6 @@ document.addEventListener("click",function(event) {
 //start
 function start() {
     update_status("Starting...", "");
-    check_motd();
     if (Object.keys(coins).length > 0) { //if there are coins set to be tracked
         if (document.querySelectorAll(".actual").length < 1) { //if the coin elements are not yet built
             build_elements();
@@ -750,10 +787,16 @@ function start() {
 
 //on load
 function load_settings() {
-    if (ls.coins) { //check if local storage exists for coin to track
+    if (ls.coins) { //check if local storage exists for coins to track
         cl("Local storage exists for coin tracking, loading it");
         coins = JSON.parse(ls.coins); //set the global object to whatever is in the local storage for tracked coins
         for (var key in coins) { //tick the appropiate checkboxes for the coins that are in local storage
+            document.getElementById(coins[key]).checked = true;
+        }
+    } else if (!ls.coins && !ls.coins_manually_cleared) {
+        ls.setItem("coins", JSON.stringify(default_coins));
+        coins = JSON.parse(ls.coins);
+        for (var key in coins) {
             document.getElementById(coins[key]).checked = true;
         }
     }

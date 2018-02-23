@@ -77,7 +77,12 @@
     }
 }
 
+.uncheck-el {
+    display: block;
+    flex-basis: 100%;
+}
+
 #uncheck {
     display: none;
-    margin: 12px auto 0 auto;
+    margin: 12px auto 48px auto;
 }

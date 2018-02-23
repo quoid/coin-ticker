@@ -23,7 +23,7 @@
 }
 
 .show-alert #ticker > div:nth-of-type(3) { //the first item actual item in the ticker will be the 3rd - first is the alert, second is the place holder
-    margin-top: 36px;
+    margin-top: 36px; //height of alert element
 }
 
 #close-alert {
@@ -37,14 +37,19 @@
 }
 
 #welcome {
+    padding: 72px 12px;
+    text-align: center;
+    /*
     color: $font-light;
     left: 50%;
+    padding: 0 12px;
     position: absolute;
 	top: calc(50% - 27px); //54px (height of header) /2 = 27px (perfect center)
 	-webkit-transform: translate(-50%, -50%);
 	transform: translate(-50%, -50%);
 	text-align: center;
 	width: 100%;
+	*/
 }
 
 .actual ~ #welcome {
@@ -76,14 +81,13 @@
     -webkit-box-flex: 1;
     flex: 1;
     
-    > div {
+    > div:nth-child(1) {
         -webkit-box-flex: 1;
         flex: 1;
-        
-        &:nth-child(2) {
-            text-align: right;
-        }
-        
+    }
+    
+    > div:nth-child(2) {
+        text-align: right;
     }
     
 }
@@ -128,4 +132,42 @@
         font-size: 9px;
     }
     
+}
+
+/*
+#ticker > div:nth-last-child(3) { //look at div order of element, should be the last .ti element
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+*/
+
+.add-coin {
+    background-color: $background-color;
+    bottom: 0;
+    -webkit-box-shadow: inset 0px 1px 1px $border;
+    box-shadow: inset 0px 1px 1px $border;
+    left: 0;
+    position: fixed;
+    text-align: center;
+    width: 100%;
+}
+
+#add {
+    @extend %font-small;
+    -webkit-box-align: center;
+    align-items: center;
+    color: $font-light;
+    cursor: pointer;
+    display: inline-flex;
+    font-weight: 500;
+    padding: 12px;
+}
+
+.add-icon {
+    background: transparent url("inc/img/clear.svg") no-repeat center center/contain;
+    height: 14px;
+    margin: 2px 6px 2px 0;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+    width: 14px;
 }

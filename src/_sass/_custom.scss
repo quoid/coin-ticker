@@ -30,13 +30,20 @@ header {
 }
 
 #alert {
-    z-index: 8;
+    z-index: 6;
 }
 
+.add-coin {
+    z-index: 6;
+}
+
+.updating #add,
+.loading #add,
 .updating #button-settings,
 .loading #button-refresh,
 .loading #button-settings,
-.show-settings #button-refresh {
+.show-settings #button-refresh,
+.show-tracking #button-refresh {
     opacity: 0.4;
     pointer-events: none;
 }
