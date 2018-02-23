@@ -55,6 +55,7 @@
     
     > div {
         @extend %font-small;
+        @extend .flex;
         color: $font-light;
         margin-bottom: 12px;
         margin-left: 6px;

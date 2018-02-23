@@ -7,7 +7,7 @@ section {
 }
 
 #ticker {
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 #settings {
@@ -45,7 +45,7 @@ section {
 .show-settings #settings,
 .show-single #single,
 .show-tracking #tracking #checkboxes{
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 /*
