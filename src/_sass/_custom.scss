@@ -37,6 +37,11 @@ header {
     z-index: 6;
 }
 
+.filter {
+    z-index: 2;
+}
+
+//button disable
 .updating #add,
 .loading #add,
 .updating #button-settings,
