@@ -69,13 +69,52 @@
         cursor: pointer;
     }
     
+    .ck {
+        display: none;
+    }
+    
     label {
         cursor: pointer;
-        padding-left: 3px;
+        padding-left: 15px;
+        position: relative;
         -webkit-touch-callout: none;
         -webkit-user-select: none;
         user-select: none;
+        
+        &:before,
+        &:after {
+            border-radius: 50%;
+            content: "";
+            left: 0;
+            position: absolute;
+            top: 0;
+        }
+        
+        &:before {
+            background-color: transparent;
+            border: 1px solid $border;
+            height: 12px;
+            width: 12px;
+        }
+        
+        &:after {
+            background-color: $pop;
+            display: none;
+            height: 8px;
+            left: 2px;
+            top: 2px;
+            width: 8px;
+        }
+        
     }
+}
+
+#checkboxes .ck:checked + label:before {
+  border-color: #579ffb;
+}
+
+#checkboxes .ck:checked + label:after {
+  display: block;
 }
 
 .uncheck-el {
