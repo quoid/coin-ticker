@@ -10,7 +10,7 @@ var timeout_id = null;
 var last_updated = 0;
 var timeout_delay = 0;
 var api_throttle = 10000; //how often a user can request updated price data in ms
-var time_between_checks = 30;//600; //time between motd checks in seconds
+var time_between_checks = 86400; //time between motd checks in seconds
 
 // buttons, inputs & elements
 var button_refresh = document.getElementById("button-refresh");
@@ -299,6 +299,13 @@ function reset() {
     for (var key in coins) { //tick the default coins
         document.getElementById(coins[key]).checked = true;
     }
+    document.querySelectorAll(".actual").forEach(function(e) { //remove all coin elements
+        return e.parentNode.removeChild(e);
+    });
+    clear_filter_bar();
+    scroll_top_tracking_page();
+    body.classList.remove(settings_page_class);
+    build_elements();
 }
 
 //elements
@@ -313,7 +320,7 @@ function build_elements() {
         var change = clone.querySelector(".ti-change");
         clone.removeAttribute("id");
         clone.removeAttribute("style");
-        clone.classList.add(coins[key].toLowerCase());
+        clone.classList.add("c_" + coins[key].toLowerCase());
         clone.classList.add("actual");
         name.innerHTML = key;
         symbol.innerHTML = coins[key];
@@ -376,7 +383,7 @@ function get_data() {
             var data = JSON.parse(xhr.responseText);
             
             for (var key in data["DISPLAY"]) {
-                var el = document.querySelector("." + key.toLowerCase()); //the element where we should put the data
+                var el = document.querySelector(".c_" + key.toLowerCase()); //the element where we should put the data
                 var price_el = el.querySelector(".amount"); //the element that holds the price data
                 var sign_el = el.querySelector(".sign"); //the element that holds the currency sign
                 var price_old = el.querySelector(".amount").innerHTML; //old price used to determine if price went up/down since last update

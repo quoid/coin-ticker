@@ -24,7 +24,7 @@
 
 @each $coin in $coins {
     $symbol: str-slice($coin, str-index($coin, "_")+1, str-length($coin));
-    .#{$symbol} .ti-icon {
+    .c_#{$symbol} .ti-icon {
         background-image: url("inc/img/coins/#{$coin}.svg");
     }
 }
