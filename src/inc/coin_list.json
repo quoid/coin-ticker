@@ -1,4 +1,4 @@
-coin_list = [
+var coin_list = [
   {
     "name": "Bitcoin",
     "symbol": "BTC",
