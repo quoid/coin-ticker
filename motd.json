@@ -1,13 +1,9 @@
 {
     "enabled": "true",
     "message": [
-        "Have you encountered an issue? <a data-link='https://github.com/quoid/coin-ticker'>Tell us about it</a>",
-        "Good Things Come To Those Who HODL",
+        "Good things come to those who HODL",
         "Only invest what you can afford to lose",
-        "Keep your coins secure with a <a data-link='http://amzn.to/2nPfMAq'>hardware wallet</a>",
-        "Do you mine crypto? Check out <a data-link='https://github.com/kfatehi'>Happy Miner</a>",
-        "Some guy told us Litecoin was the best.",
-        "Fireproof titanium cold storage wallets; <a data-link='https://bitkee.com'>Bitkee</a>",
+        "<a data-link='https://bitkee.com'>Bitkee</a> - Titanium built, cold storage wallets",
         "<a data-link='https://www.cryptocompare.com'>CryptoCompare</a> - Live cryptocurrency prices & more"
     ]
 }
