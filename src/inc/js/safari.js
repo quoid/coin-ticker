@@ -1,13 +1,12 @@
-//open links
 function open_link(event) {
     var a = safari.application.openBrowserWindow();
     var b = a.activeTab;
     b.url = event.target.dataset.link;
 }
 
-window.onblur = function() {
+window.addEventListener("blur",function() {
     safari.extension.globalPage.contentWindow.ga_end_session();
-}
+});
 
 document.getElementById("close-alert").addEventListener("click", function() {
     safari.extension.globalPage.contentWindow.ga_close_motd();
@@ -21,7 +20,7 @@ document.getElementById("button-settings").addEventListener("click", function() 
     safari.extension.globalPage.contentWindow.ga_open_settings_page();
 });
 
-document.getElementById("button-tracking").addEventListener("click", function() {
+document.getElementById("button-add-coins").addEventListener("click", function() {
     safari.extension.globalPage.contentWindow.ga_open_tracking_page();
 });
 
@@ -41,6 +40,6 @@ document.getElementById("ampm").addEventListener("click", function() {
     safari.extension.globalPage.contentWindow.ga_change_time_format();
 });
 
-document.getElementById("button-reset").addEventListener("click", function() {
+document.getElementById("reset").addEventListener("click", function() {
     safari.extension.globalPage.contentWindow.ga_reset_all_settings();
 });

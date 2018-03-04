@@ -5,15 +5,14 @@ function open_link(event) {
     chrome.tabs.create({ url: event.target.dataset.link });
 }
 
-window.onload = function() {
-    //start session
+window.addEventListener("load",function() {
     bg.ga_start_session();
-    start();
-}
+    //start(); //put in scripts.js
+});
 
-window.onblur = function() {
+window.addEventListener("blur",function() {
     bg.ga_end_session();
-}
+});
 
 document.getElementById("close-alert").addEventListener("click", function() {
     bg.ga_close_motd();
@@ -27,7 +26,7 @@ document.getElementById("button-settings").addEventListener("click", function() 
     bg.ga_open_settings_page();
 });
 
-document.getElementById("button-tracking").addEventListener("click", function() {
+document.getElementById("button-add-coins").addEventListener("click", function() {
     bg.ga_open_tracking_page();
 });
 
@@ -47,6 +46,6 @@ document.getElementById("ampm").addEventListener("click", function() {
     bg.ga_change_time_format();
 });
 
-document.getElementById("button-reset").addEventListener("click", function() {
+document.getElementById("reset").addEventListener("click", function() {
     bg.ga_reset_all_settings();
 });

@@ -1,7 +1,11 @@
 .loader {
     font-size: 30px;
     height: 1em;
+    left: 50%;
     position: relative;
+    position: absolute;
+    top: calc(50% - 27px);
+    transform: translate(-50%, -50%);
     width: 1em;
     
     .spinner-blade {

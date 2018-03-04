@@ -17,7 +17,6 @@ $toggle-bg-on: #4cd964;
         background-color: $toggle-bg-off;
         border: 1px solid #e5e5e5;
         border-radius: 20px;
-        -webkit-box-shadow: $toggle-bg-on 0px 0px 0px 0px inset;
         box-shadow: $toggle-bg-on 0px 0px 0px 0px inset;
         cursor: pointer;
         display: block;
@@ -28,7 +27,6 @@ $toggle-bg-on: #4cd964;
         &:after {
             background-color: #fff;
             border-radius: 20px;
-            -webkit-box-shadow: 0px 1px 3px 0px rgba(#000, 0.4);
             box-shadow: 0px 1px 3px 0px rgba(#000, 0.4);
             content: "";
             display: block;
@@ -44,7 +42,6 @@ $toggle-bg-on: #4cd964;
     input:checked + label {
         background-color: $toggle-bg-on;
         border-color: $toggle-bg-on;
-        -webkit-box-shadow: $toggle-bg-on 0px 0px 0px 16px inset;
         box-shadow: $toggle-bg-on 0px 0px 0px 16px inset;
         
         &:after {
@@ -62,13 +59,9 @@ $toggle-bg-on: #4cd964;
 
 //transitions
 .toggle label {
-    -webkit-transition: background-color $toggle-transition ease, border-color $toggle-transition ease, -webkit-box-shadow $toggle-transition ease;
-    transition: background-color $toggle-transition ease, border-color $toggle-transition ease, -webkit-box-shadow $toggle-transition ease;
     transition: background-color $toggle-transition ease, box-shadow $toggle-transition ease, border-color $toggle-transition ease;
-    transition: background-color $toggle-transition ease, box-shadow $toggle-transition ease, border-color $toggle-transition ease, -webkit-box-shadow $toggle-transition ease;
 }
 
 .toggle label:after {
-    -webkit-transition: left $toggle-transition/2 ease;
     transition: left $toggle-transition/2 ease;
 }

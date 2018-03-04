@@ -1,0 +1,742 @@
+$background-color: #fff;
+$font-dark: #4c4d4f;
+$font-light: #838587;
+$placeholder: #c3c3c3;
+$border: #e5e5e5;
+$shadow: #d0d0d0;
+$pop: #579ffb;
+$green: #4cd964;
+$red: #ff3b30;
+$letter-spacing: -0.5px;
+//$font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+$font-family: "Roboto", sans-serif;
+
+$trans-time: 150ms;
+
+//Sections
+//01-Global
+//02-Header
+//03-Off Canvas
+//04-Tracking
+//05-Ticker
+//06-Settings
+
+
+//01-Global
+*,
+*:before,
+*:after  {
+	box-sizing: border-box;
+}
+
+html,
+body {
+    background-color: $background-color;
+    color: $font-dark;
+    font-family: $font-family;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: $letter-spacing;
+    line-height: 18px;
+    min-height: 100vh;
+}
+
+body {
+    margin: 0; // Remove default margin in all browsers
+    overflow: hidden;
+    position: relative;
+    -moz-osx-font-smoothing: grayscale; 
+    -webkit-font-smoothing: antialiased;
+}
+
+%font-small {
+    font-size: 11px;
+    line-height: 12px;
+}
+
+%font-medium {
+    font-size: 13px;
+    line-height: 18px;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+    // Remove the margin in Firefox and Safari
+    margin: 0;
+}
+
+button,
+select {
+    text-transform: none;
+}
+
+button,
+html [type="button"],
+[type="reset"],
+[type="submit"] {
+    -webkit-appearance: button;
+}
+
+ul,
+li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    color: $pop;
+    cursor: pointer;
+    font-weight: 500;
+    text-decoration: underline;
+    //Remove gaps in links underline in iOS 8+ and Safari 8+
+    -webkit-text-decoration-skip: objects;
+}
+
+.button {
+    @extend %font-medium;
+    background-color: $pop;
+    border: none;
+    border-radius: 3px;
+    color: #fff;
+    cursor: pointer;
+    letter-spacing: $letter-spacing;
+    margin: 0;
+    padding: 6px 24px;
+
+    &:active {
+        box-shadow: inset 0px 2px 13px rgba(0, 0, 0, 0.15);
+    }
+    
+}
+
+.container {
+    padding: 0 12px;
+}
+
+.flex {
+    align-items: center;
+    display: flex;
+}
+
+section {
+    background-color: $background-color;
+    left: 0;
+    padding-top: 54px;
+    position: fixed;
+    max-height: 100vh;
+    min-height: 100vh;
+    top: 0;
+    width: 100%;
+}
+
+section#loading {
+    display: none;
+    
+    body.loading & {
+        display: block;
+    }
+    
+}
+
+.loading {
+    overflow: hidden;
+    
+    #ticker, 
+    #tracking, 
+    #settings {
+        overflow: hidden;
+    }
+    
+}
+
+//02-Header
+header {
+    background-color: $background-color;
+    box-shadow: inset 0px -1px 1px $border;
+    left: 0;
+    padding: 11px 0;
+    position: fixed;
+    text-align: center;
+    top: 0;
+    width: 100%;
+}
+
+.header-center {
+    flex: 1;
+}
+
+#logo {
+    background-color: transparent;
+    background-image: url("inc/img/logo.svg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: contain;
+    height: 12px;
+    margin: 4px auto;
+    width: 72px;
+}
+
+#status {
+    @extend %font-small;
+    color: $font-light;
+}
+
+[class^="buttons-"] {
+    @extend .flex;
+    position: relative;
+}
+
+.buttons-left {
+    box-sizing: content-box;
+    height: 24px;
+    padding-right: 36px;
+    width: 24px;
+}
+
+
+header [id^="button-"] {
+    background: transparent url("inc/img/icons/settings.svg") no-repeat center center/16px;
+    box-sizing: content-box;
+    cursor: pointer;
+    height: 16px;
+    padding: 4px;
+    transition: opacity $trans-time ease-in;
+    width: 16px;
+    will-change: opacity;
+}
+
+#button-back,
+#button-settings {
+    left: 0;
+    position: absolute;
+    top: 0;
+    transition: left $trans-time ease-in, opacity $trans-time ease-in;
+    will-change: opacity, left;
+}
+
+#button-back {
+    background-image: url("inc/img/icons/arrow-back.svg");
+    background-size: 16px 13px;
+    left: -24px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#button-add-coins {
+    background-image: url("inc/img/icons/add.svg");
+    margin-right: 12px;
+}
+
+#button-refresh {
+    background-image: url("inc/img/icons/refresh.svg");
+    background-size: 13px 16px;
+    transform-origin: 50% 56%;
+}
+
+.updating #button-refresh {
+    animation: update 650ms infinite linear;
+    cursor: auto;
+}
+
+ @keyframes update {
+     100% {
+        -webkit-transform:rotate(360deg);
+        transform:rotate(360deg)
+    }
+}
+
+//03-Off Canvas
+#ticker,
+#tracking,
+#settings {
+    will-change: transform;
+    transition: transform $trans-time ease-in;
+}
+
+#tracking {
+    transform: translate3d(100vw, 0, 0);
+    
+    .show-tracking & {
+        transform: translate3d(0, 0, 0);
+    }
+    
+}
+
+#settings {
+    transform: translate3d(-100vw, 0, 0);
+    
+    .show-settings & {
+        transform: translate3d(0, 0, 0);
+    }
+    
+}
+
+.show-settings #button-settings,
+.show-tracking #button-settings {
+    left: 24px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.show-settings #button-back,
+.show-tracking #button-back {
+    left: 0;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.show-settings #button-refresh,
+.show-tracking #button-refresh,
+.show-settings #button-add-coins,
+.show-tracking #button-add-coins {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.show-settings #ticker {
+    transform: translate3d(20vw, 0, 0);
+}
+
+.show-tracking #ticker {
+    transform: translate3d(-20vw, 0, 0);
+}
+
+//04-Tracking
+#loader-tracking {
+    background-color: $background-color;
+    display: none;
+    height: calc(100vh - 54px);
+    position: relative;
+    
+    .loader {
+        opacity: 0;
+        transition: opacity $trans-time*2 ease-out $trans-time;
+        will-change: opacity;
+    }
+    
+    .show-tracking & .loader {
+        opacity: 1;
+    }
+    
+    .checkboxes-loading & {
+        display: block;
+    }
+    
+}
+.filter {
+    background-color: $background-color;
+    /* edit gradient: http://colorzilla.com/gradient-editor/#ffffff+1,ffffff+80,ffffff+100&1+0,1+80,0+100 */
+    background: linear-gradient(to bottom, #ffffff 0%, #ffffff 1%, #ffffff 80%, rgba(255,255,255,0) 100%);
+    left: 0;
+    padding: 12px;
+    position: fixed;
+    top: 54px;
+    width: 100%;
+}
+
+#filter-bar {
+    @extend %font-medium;
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 3px;
+    color: $font-dark;
+    font-family: $font-family;
+    font-weight: 400;
+    letter-spacing: $letter-spacing;
+    margin: 0;
+    padding: 6px 24px;
+    transition: width $trans-time ease-in;
+    width: 100%;
+    will-change: width;
+    
+    .show-checked & {
+        width: calc(100% - 88px);
+    }
+    
+}
+
+#filter-icon {
+    background: transparent url("inc/img/icons/search.svg") no-repeat center center/contain;
+    height: 13px;
+    left: 18px;
+    pointer-events: none;
+    position: absolute;
+    top: 20.5px;
+    width: 12px;
+}
+
+#clear-filter {
+    background: transparent url("inc/img/icons/clear.svg") no-repeat center center/contain;
+    cursor: pointer;
+    display: none;
+    height: 13px;
+    position: absolute;
+    right: 18px;
+    top: 20.5px;
+    transition: right $trans-time ease-in;
+    width: 13px;
+    will-change: width;
+    
+    .show-checked & {
+        right: 108.5px;
+    }
+}
+
+#uncheck-all {
+    @extend %font-small;
+    cursor: pointer;
+    opacity: 0;
+    padding: 9px 12px;
+    position: absolute;
+    right: -76px;
+    top: 12px;
+    transition: opacity $trans-time ease-in, right $trans-time ease-in;
+    -webkit-user-select: none;
+    user-select: none;
+    will-change: opacity, right;
+    
+    .show-checked & {
+        opacity: 1;
+        right: 12px;
+    }
+}
+
+#checkboxes {
+    max-height: 100vh;
+    overflow: hidden;
+    overflow-y: scroll;
+    padding: 54px 0;
+    position: relative;
+    
+    .empty-list {
+        text-align: center;
+    }
+    
+    .ck-parent {
+        @extend %font-medium;
+        @extend .flex;
+        background-color: $background-color;
+        border-bottom: 1px solid $border;
+        color: $font-light;
+        opacity: 1;
+        padding: 9px 12px;
+        transition: opacity $trans-time ease-in;
+        will-change: opacity;
+        
+        &:nth-of-type(even) {
+            background: #f9f9f9;
+        }
+        
+        .checkboxes-loading & {
+            opacity: 0;
+        }
+        
+    }
+    
+    input[type="checkbox"] {
+        cursor: pointer;
+    }
+    
+    .ck {
+        display: none;
+    }
+    
+
+    label {
+        cursor: pointer;
+        flex: 1;
+        position: relative;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+        
+        &:before,
+        &:after {
+            border-radius: 50%;
+            content: "";
+            right: 6px;
+            position: absolute;
+            top: 0;
+        }
+        
+        &:before {
+            background-color: transparent;
+            border: 1px solid $border;
+            height: 16px;
+            width: 16px;
+        }
+        
+        &:after {
+            background-color: $pop;
+            display: none;
+            height: 10px;
+            right: 9px;
+            top: 3px;
+            width: 10px;
+        }
+        
+    }
+
+}
+
+#checkboxes .ck:checked + label {
+    color: $pop;
+}
+
+#checkboxes .ck:checked + label:before {
+    border: 2px solid $pop;
+}
+
+#checkboxes .ck:checked + label:after {
+    display: block;
+}
+
+//05-Ticker
+#ticker {
+    overflow-y: auto;
+}
+
+#placeholder {
+    display: none;
+}
+
+#alert {
+    @extend %font-small;
+    background-color: #faead1;
+    -webkit-box-shadow: inset 0 -1px 0 #fedfae, inset 0 1px 0 #fedfae;
+    box-shadow: inset 0 -1px 0 #fedfae, inset 0 1px 0 #fedfae;
+    color: #e2a54a;
+    display: none;
+    padding: 12px;
+    position: -webkit-sticky;
+    position: -moz-sticky;
+    position: sticky;
+    position: fixed;
+    top: 54px; //height of header
+    width: 100%;
+    
+    a {
+        color: #e2a54a;
+    }
+    
+    .show-alert & {
+        display: block;
+    }
+}
+
+.show-alert #ticker > div:nth-of-type(3) { //the first item actual item in the ticker will be the 3rd - first is the alert, second is the place holder
+    margin-top: 36px; //height of alert element
+}
+
+#close-alert {
+    background: transparent url("inc/img/icons/clear-alert.svg") no-repeat center center/contain;
+    cursor: pointer;
+    height: 16px;
+    width: 16px;
+    position: absolute;
+    right: 12px;
+    top: 10px;
+}
+
+#welcome {
+    padding: 72px 12px;
+    text-align: center;
+}
+
+.actual ~ #welcome {
+    display: none;
+}
+
+.ti {
+    @extend .flex;
+    background-color: $background-color;
+    -webkit-box-shadow: inset 0 -1px 0 $border;
+    box-shadow: inset 0 -1px 0 $border;
+    opacity: 1;
+    padding: 9px 12px;
+    transition: padding-top $trans-time ease-in;
+    will-change: padding-top;
+}
+
+.loading .ti {
+    opacity: 0;
+}
+
+.ti-icon {
+    background: transparent url("inc/img/coin-default.svg") no-repeat center center/contain;
+    height: 24px;
+    margin-right: 6px;
+    width: 24px;
+}
+
+.ti-content {
+    @extend .flex;
+    -webkit-box-flex: 1;
+    flex: 1;
+    
+    > div:nth-child(1) {
+        -webkit-box-flex: 1;
+        flex: 1;
+    }
+    
+    > div:nth-child(2) {
+        text-align: right;
+    }
+    
+}
+
+.ti-arrow {
+    display: none;
+    padding: 9px 0 9px 12px;
+}
+
+.ti-name {
+    font-weight: 500;
+}
+
+.ti-symbol,
+.ti-change {
+    @extend %font-small;
+}
+
+.ti-symbol {
+    color: $font-light;
+}
+
+.ti-change {
+    color: $red;
+    font-weight: 500;
+}
+
+.ti-price.up .amount {
+    color: $green;
+}
+
+.ti-price.down .amount {
+    color: $red;
+}
+
+.ti-price .sign {
+    color: $placeholder;
+    
+    span {
+        font-size: 9px;
+    }
+}
+
+.actual .ti-icon {
+    cursor: move;
+}
+
+.actual.dragging {
+    opacity: 0.4;
+}
+
+.dragover {
+    padding-top: calc(12px + 48px);
+}
+
+//06-Settings
+#version {
+    @extend %font-small;
+    background-color: #deecff;
+    box-shadow: inset 0 -1px 0 #bdd3f2, inset 0 1px 0 #bdd3f2;
+    color: $pop;
+    padding: 12px;
+    text-align: center;
+}
+
+li.setting {
+    @extend .ti;
+    
+    > div:not(.setting-control) {
+        -webkit-box-flex: 1;
+        flex: 1;
+    }
+    
+}
+
+.setting-name {
+    font-weight: 500;
+}
+
+.setting-description {
+    @extend .ti-symbol;
+}
+
+#button-tracking {
+    cursor: pointer;
+}
+
+div.setting {
+    @extend .ti;
+    box-shadow: none;
+    display: block;
+    
+    .setting-description {
+        font-size: 11px;
+        line-height: 15px;
+        margin-top: 3px;
+    }
+    
+    button {
+        left: 50%;
+        margin-top: 24px;
+        position: relative;
+        -webkit-transform: translateX(-50%);
+        transform: translateX(-50%);
+    }
+    
+}
+
+//z-index
+header {
+    z-index: 13;
+}
+
+section#loading {
+    z-index: 10;
+}
+
+#ticker {
+    z-index: 2
+}
+
+#tracking {
+    z-index: 4;
+}
+
+#settings {
+    z-index: 4;
+}
+
+#loader-tracking {
+    z-index: 1;
+}
+
+.filter,
+#clear-filter {
+    z-index: 2;
+}
+
+#uncheck-all {
+    z-index: 1;
+}
+
+#checkboxes {
+    z-index: 1;
+}
+
+//button disable
+.updating #button-add-coins,
+.updating #button-settings,
+.loading #button-refresh,
+.loading #button-settings,
+.loading #button-add-coins {
+    opacity: 0.4;
+    pointer-events: none;
+}

@@ -93,7 +93,7 @@ document.getElementById("button-settings").addEventListener("click", function() 
     ga_open_settings_page();
 });
 
-document.getElementById("button-tracking").addEventListener("click", function() {
+document.getElementById("button-add-coins").addEventListener("click", function() {
     ga_open_tracking_page();
 });
 
@@ -113,6 +113,6 @@ document.getElementById("ampm").addEventListener("click", function() {
     ga_change_time_format();
 });
 
-document.getElementById("button-reset").addEventListener("click", function() {
+document.getElementById("reset").addEventListener("click", function() {
     ga_reset_all_settings();
 });

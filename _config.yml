@@ -13,3 +13,12 @@ sass:
   sass_dir: _sass
   style: compressed
 markdown: kramdown
+
+plugins:
+  - jekyll-autoprefixer
+  
+autoprefixer:
+#   only_production: true
+  browsers: 
+    - "Safari >= 7"
+    - "Chrome >= 55"

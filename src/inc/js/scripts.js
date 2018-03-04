@@ -1,65 +1,76 @@
-var body = document.body;
-var default_coins = {"Bitcoin":"BTC","Ethereum":"ETH","Litecoin":"LTC","Vertcoin":"VTC"};
+var clusterize;
+var chks = [];
 var coins = {};
 var last_coins = [];
+var last_updated = 0;
+var last_curr = "";
 var ls = localStorage;
 var max_checks = 46;
+var ux_delay = 300;
+var default_coins = {"Bitcoin":"BTC","Ethereum":"ETH","Litecoin":"LTC","Vertcoin":"VTC"};
 var currency = "USD";
-var last_curr = "";
-var timeout_id = null;
-var last_updated = 0;
 var timeout_delay = 0;
+var timeout_id = null;
 var api_throttle = 10000; //how often a user can request updated price data in ms
 var time_between_checks = 86400; //time between motd checks in seconds
 
-// buttons, inputs & elements
-var button_refresh = document.getElementById("button-refresh");
-var button_settings = document.getElementById("button-settings");
-var button_tracking = document.getElementById("button-tracking");
-var button_back = document.getElementById("button-back");
-var button_reset = document.getElementById("button-reset");
-var button_uncheck_all = document.getElementById("uncheck");
-var button_add_coins = document.getElementById("add");
-var currency_select = document.getElementById("currency");
+
+//classes
+var body = document.body;
+var class_app_loading = "loading";
+var class_app_updating = "updating";
+var class_tracking_page = "show-tracking"; 
+var class_checkbox_loading = "checkboxes-loading";
+var class_show_checked = "show-checked";
+var class_settings_page = "show-settings";
+var class_show_alert = "show-alert";
+var ti_prefix = "ci_";
+
+//sections
+var app_loader = document.getElementById("loader");
+var page_tracking = document.getElementById("tracking");
+
+//elements
 var filter_bar = document.getElementById("filter-bar");
 var filter_clear = document.getElementById("clear-filter");
+var currency_select = document.getElementById("currency");
 var time_format_toggle = document.getElementById("ampm");
-var button_close_motd = document.getElementById("close-alert");
 var alert_el = document.getElementById("alert");
 
-//body classes
-var settings_page_class = "show-settings";
-var tracking_page_class = "show-tracking";
-var single_page_class = "show-single";
-var loading_class = "loading";
-var updating_class = "updating";
-var show_alert_class = "show-alert";
+//buttons
+var button_add_coins = document.getElementById("button-add-coins");
+var button_back = document.getElementById("button-back");
+var button_uncheck_all = document.getElementById("uncheck-all");
+var button_settings = document.getElementById("button-settings");
+var button_reset = document.getElementById("reset");
+var button_refresh = document.getElementById("button-refresh");
+var button_close_motd = document.getElementById("close-alert");
 
 //colors
 var green = "#4cd964";
 var red = "#ff3b30";
 
-var transition_time = 175; //this is the transition time for the view navigation, check off-canvas.scss variable - this is needed to fix bug in Safari
-var update_animation_time = 650; //this is the time (in ms) for the update icon to make a full rotation
-
-//helper functions
+//helpers
 function cl(msg) {
     //console.log(msg);
 }
 
-function update_status(str, title) {
-    var status_element = document.getElementById("status");
-    status_element.innerHTML = str;
-    status_element.title = title;
-    
+function add_class(el, cl) {
+    el.classList.add(cl);
 }
 
-function fix_safari_scroll(id) {
-    document.getElementById(id).style.overflowY = "hidden";
-    setTimeout(function() {
-        document.getElementById(id).style.overflowY = "scroll";
-        document.getElementById(id).removeAttribute("style");
-    }, transition_time);
+function remove_class(el, cl) {
+    el.classList.remove(cl);
+}
+
+function has_class(el, cl) {
+    return (el.classList.contains(cl) ? true : false);
+}
+
+function getKeyByValue(object, value) { //https://stackoverflow.com/a/28191966/3126477
+    return Object.keys(object).find(function (key) {
+        return object[key]["values"][1] === value;
+    });
 }
 
 function sort_object(obj) { //https://stackoverflow.com/a/29622653/3126477
@@ -69,11 +80,13 @@ function sort_object(obj) { //https://stackoverflow.com/a/29622653/3126477
     }, {});
 }
 
-function scroll_top_tracking_page() {
-    var tp = document.getElementById("checkboxes");
-    tp.style.overflowY = "scroll";
-    tp.scrollTop = 0; //scroll page back to top
-    tp.removeAttribute("style");
+function get_select_index(ele, text) { //https://stackoverflow.com/q/7489982/
+    for (var i=0; i<ele.length;i++) {
+        if (ele[i].childNodes[0].nodeValue === text){
+            return i;
+        }
+    }
+    return undefined;
 }
 
 function arrays_are_equal(arr1, arr2) { //https://stackoverflow.com/a/22395370/3126477
@@ -86,6 +99,13 @@ function arrays_are_equal(arr1, arr2) { //https://stackoverflow.com/a/22395370/3
         }
     }
     return true;
+}
+
+function update_status(str, title) {
+    var status_element = document.getElementById("status");
+    status_element.innerHTML = str;
+    status_element.title = title;
+    
 }
 
 function get_current_date_time(d) {
@@ -150,24 +170,6 @@ function format_last_updated(d) {
     return output;
 }
 
-function delay_data_request(ms) { //this isn't currently used
-    cl("Will get updated data from CryptoCompare in " + ms + "ms");
-    update_status("Updating data in " + Math.round(ms/1000) + " seconds...");
-    timeout_id = setTimeout(function() {
-        getData();
-        clearTimeout(timeout_id);
-        timeout_id = null;
-    }, ms);
-}
-
-function remove_data_request_delay() {
-    cl("Cancelling the deffered data request");
-    clearTimeout(timeout_id);
-    timeout_id = null;
-    body.classList.remove(updating_class);
-    update_status("Last updated: " + format_last_updated(last_updated), get_current_date_time(last_updated));
-}
-
 function price_increase(i) {
     document.querySelectorAll(".ti-price")[i].classList.add("up");
     setTimeout(function() {
@@ -182,136 +184,170 @@ function price_decrease(i) {
     }, 350);
 }
 
-// page navigation
-function show_settings() {
-    if (!body.classList.contains(settings_page_class)) {
-        cl("Showing settings page");
-        update_status("Settings", "");
-        body.classList.add(settings_page_class);
-        last_coins = Object.keys(coins);
-        last_curr = ls.currency;
-    }
+function remove_data_request_delay() {
+    cl("Cancelling the deffered data request");
+    clearTimeout(timeout_id);
+    timeout_id = null;
+    remove_class(body, class_app_updating);
+    update_status("Last updated: " + format_last_updated(last_updated), get_current_date_time(last_updated));
 }
 
-function show_tracking() {
-    if (!body.classList.contains(tracking_page_class)) {
-        cl("Showing tracking page");
-        update_status("Coin Tracking", "");
-        body.classList.add(tracking_page_class);
-        fix_safari_scroll("checkboxes");
-        last_coins = Object.keys(coins);
-        last_curr = ls.currency;
-    }
-}
-
-function back() {
-    
-    
-    if (body.classList.contains(tracking_page_class) && !body.classList.contains(settings_page_class)) { //on tracking page, from ticker, back to ticker
-        body.classList.remove(tracking_page_class);
-        hide_tracking();
-    } else if (body.classList.contains(tracking_page_class) && body.classList.contains(settings_page_class)) { //on tracking page, from settings, back to settings
-        body.classList.remove(tracking_page_class);
-        update_status("Settings", "");
-    } else if(body.classList.contains(settings_page_class) && !body.classList.contains(tracking_page_class)) { //on settings page, back to ticker
-        body.classList.remove(settings_page_class);
-        hide_settings();
-    } else if (body.classList.contains(single_page_class)) { //not yet implemented
-        body.classList.remove(single_page_class);
-    }
-    
-    /*
-    if (body.classList.contains(settings_page_class) && body.classList.contains(tracking_page_class)) { //on coin tracking page, going back to settings page
-        body.classList.remove(tracking_page_class);
-    } else if (body.classList.contains(settings_page_class) && !body.classList.contains(tracking_page_class)) { //on settings page, going back to ticker page
-        body.classList.remove(settings_page_class);
-        hide_settings();
-    } /*else if (!body.classList.contains(settings_page_class) && body.classList.contains(single_page_class)) { //on single coin page, going back to ticker page
-        body.classList.remove(single_page_class);
-    }*/
-    
-}
-
-function get_select_index(ele, text) { //https://stackoverflow.com/q/7489982/
-    for (var i=0; i<ele.length;i++) {
-        if (ele[i].childNodes[0].nodeValue === text){
-            return i;
+//tracking page
+function init_clusterize() {
+    clusterize = new Clusterize({
+        scrollId: "checkboxes",
+        contentId: "contentArea",
+        rows_in_block: 20,
+        show_no_data_row: false,
+        callbacks: {
+            onUpdate: clusterize_on_update
         }
-    }
-    return undefined;
-}
-
-function hide_tracking() {
-    if (!body.classList.contains(settings_page_class)) {
-        hide_settings();
-    }
-}
-
-//settings
-function hide_settings() {
-    cl("Hiding settings page");
-    clear_filter_bar();
-    scroll_top_tracking_page();
-    
-    if (last_curr != ls.currency || !arrays_are_equal(last_coins, Object.keys(coins))) {
-        document.querySelectorAll(".actual").forEach(function(e) { //remove all coin elements
-            return e.parentNode.removeChild(e);
-        });
-        if (Object.keys(coins).length > 0) { //there are coins to track / elements to be built
-            build_elements();
-        } else {
-            update_status("Ready...", "");
-        }
-    } else {
-        if (document.querySelectorAll(".actual").length > 0) { //if there are elements that were previously tracked
-            update_status("Last updated: " + format_last_updated(last_updated), get_current_date_time(last_updated));
-        } else { //if ticker is empty
-            update_status("Ready...", "");
-        }
-    }
-}
-
-function set_currency() {
-    ls.setItem("currency", currency_select.value);
-    currency = currency_select.value;
-}
-
-function change_time_format(event) {
-    if (event.target.checked) { //when enabling AM/PM
-        cl("ampm turned on");
-        ls.setItem("ampm", "on");
-    } else {
-        cl("am pm turned off");
-        ls.removeItem("ampm");
-    }
-}
-
-function reset() {
-    clear_all_checked();
-    ls.clear(); //clear all local storage
-    ls.setItem("currency", "USD"); //set the default currency in local storage
-    ls.setItem("coins", JSON.stringify(default_coins)); //set local storage to default coins
-    
-    currency = "USD"; //set the global variable to the default currency
-    currency_select.selectedIndex = get_select_index(currency_select, "USD"); //select the default value for the currency select element
-    document.getElementById("ampm").checked = false; //set the time format to the default setting (24 hour time)
-    coins = JSON.parse(ls.coins); //set the global coins variable to the default coins
-    for (var key in coins) { //tick the default coins
-        document.getElementById(coins[key]).checked = true;
-    }
-    document.querySelectorAll(".actual").forEach(function(e) { //remove all coin elements
-        return e.parentNode.removeChild(e);
     });
-    clear_filter_bar();
-    scroll_top_tracking_page();
-    body.classList.remove(settings_page_class);
-    build_elements();
 }
 
-//elements
+function clusterize_on_update() {
+    if (clusterize.getRowsAmount() > 1) {
+        remove_class(page_tracking, class_checkbox_loading);
+    }
+}
+
+function build_checkboxes() {
+    for (var i = 0; i < coin_list.length; i++) {
+        var name = coin_list[i]["name"];
+        var sym = coin_list[i]["symbol"].toString();
+        chks.push({
+            active: true,
+            checked: false,
+            markup: "<div class='ck-parent'>" +
+                        "<input type='checkbox' class='ck' id='" + sym + "' value='" + sym + "' data-name='" + name + "'>" +
+                        "<label for='" + sym + "'>" +
+                            name + " (" + sym + ")" +
+                        "</label>" +
+                    "</div>",
+            values: [name, sym]
+        });
+        if (coins.hasOwnProperty(name)) { //if coin is present in coin object
+            chks[i].checked = true;
+            chks[i].markup = chks[i].markup.replace("><label", " checked><label"); //set as checked in html
+        }
+    }
+    setTimeout(function() {
+        clusterize.update(filtered_checkboxes(chks));
+    }, ux_delay);
+}
+
+function filtered_checkboxes(rows) {
+    var results = [];
+    for (var i = 0; i < chks.length; i++) {
+        if (rows[i].active) {
+            results.push(chks[i].markup);
+        }
+    }
+    return results;
+}
+
+//filter bar
+function search_checkboxes() {
+    var term = filter_bar.value.toUpperCase();
+    var flag_checked = /(^|\W):check($|\W)|(^|\W):checke($|\W)|(^|\W):checked($|\W)/gi;
+    //add top filter for top 10 (put rank in coin_list.json)
+    
+    if (term.startsWith(":") && flag_checked.exec(term)) {
+        if (Object.keys(coins).length > 0) {
+            add_class(page_tracking, class_show_checked);
+        }
+        for (var i = 0; i < chks.length; i++) {
+            var suitable = false;
+            if (chks[i].checked === true) {
+                suitable = true;
+            }
+            chks[i].active = suitable;
+        }
+        clusterize.update(filtered_checkboxes(chks));
+    } else {
+        remove_class(page_tracking, "show-checked");
+        for (var i = 0; i < chks.length; i++) {
+            var suitable = false;
+            for (var j = 0; j < chks[i].values.length; j++) {
+                if (chks[i].values[j].toString().toUpperCase().indexOf(term) + 1) {
+                    suitable = true;
+                }
+            }
+            chks[i].active = suitable;
+        }
+        clusterize.update(filtered_checkboxes(chks));
+    }
+}
+
+function show_filter_clear() {
+    var l = filter_bar.value.length;
+    if (l > 0) {
+        filter_clear.style.display = "block";
+    } else {
+        filter_clear.removeAttribute("style");
+    }
+}
+
+function clear_filter_bar(e) {
+    filter_bar.value = "";
+    show_filter_clear();
+    search_checkboxes();
+    if (has_class(body, class_tracking_page)) {
+        filter_bar.focus();
+    }
+}
+
+//checkboxes
+function save_setting(event) {
+    var name = event.target.dataset.name
+    var symbol = event.target.id;
+    if (Object.keys(coins).length < max_checks) {
+        var i = getKeyByValue(chks, symbol); //get the index of the coin in object
+        if (event.target.checked) { //when ticking a checkbox
+            coins[name] = symbol; //push to coins object
+            chks[i].checked = true; //mark as checked in chks object
+            chks[i].markup = chks[i].markup.replace("><label", " checked><label"); //set as checked in html
+            if (!ls.order) { //only sort if the user has not set a custom order
+                coins = sort_object(coins); //sort the coins object alphabetically by name (not symbol)
+            }
+            ls.setItem("coins", JSON.stringify(coins)); //save to local storage
+            ls.removeItem("coins_manually_cleared");
+        } else { //when unticking a checkbox
+            delete coins[name]; //delete key/value from object
+            chks[i].checked = false; //mark as checked in chks object
+            chks[i].markup = chks[i].markup.replace(" checked><label", "><label"); //removed checked attribute in markup
+            ls.setItem("coins", JSON.stringify(coins)); //overwrite local storage
+            if (Object.keys(coins).length < 1) { //if it was the last coin (meaning user is no longer tracking any coins)
+                ls.removeItem("coins"); //remove the local storage item
+                ls.removeItem("order");
+                ls.setItem("coins_manually_cleared", true);
+            }
+        }
+    } else {
+        cl("Too many coins are being tracked, remove some, then try again");
+        event.preventDefault();
+        return false;
+    }
+}
+
+function uncheck_all() {
+    for (var key in coins) {
+        var sym = coins[key];
+        var i = getKeyByValue(chks, sym);
+        chks[i].checked = false;
+        chks[i].markup = chks[i].markup.replace(" checked><label", "><label");
+        document.getElementById(sym).checked = false;
+    }
+    coins = {};
+    ls.removeItem("coins");
+    ls.setItem("coins_manually_cleared", true);
+    clear_filter_bar();
+}
+
+//ticker
 function build_elements() {
     update_status("Building elements...", "");
-    body.classList.add(loading_class);
+    add_class(body, class_app_loading);
     for (var key in coins) {
         var clone = document.getElementById("placeholder").cloneNode(true);
         var name = clone.querySelector(".ti-name");
@@ -319,8 +355,7 @@ function build_elements() {
         var price = clone.querySelector(".ti-price");
         var change = clone.querySelector(".ti-change");
         clone.removeAttribute("id");
-        clone.removeAttribute("style");
-        clone.classList.add("c_" + coins[key].toLowerCase());
+        clone.classList.add(ti_prefix + coins[key].toLowerCase());
         clone.classList.add("actual");
         name.innerHTML = key;
         symbol.innerHTML = coins[key];
@@ -329,16 +364,13 @@ function build_elements() {
     update();
 }
 
-//data
 function update() {
     if (document.querySelectorAll(".actual").length > 0) { //if there are elements that have data to update
         var last = Date.now() - last_updated; //log the difference between the current time and last update time set in the getData() function
         timeout_delay = api_throttle - last; //how long to delay the update, to respect API limits
-        
-        if (!body.classList.contains(loading_class)) { //this checks if user clicked the update button vs startup or rebuilding els
-            body.classList.add(updating_class);
+        if (!has_class(body, class_app_loading)) { //this checks if user clicked the update button vs startup or rebuilding els
+            add_class(body, class_app_updating);
         }
-        
         if (timeout_delay > 0) { //if the time between api calls is within the threshold set in the api_throttle variable
             cl("Will get updated data from CryptoCompare in " + timeout_delay + "ms");
             var delay;
@@ -356,34 +388,29 @@ function update() {
                 update();
             }, delay);
         } else {
-            setTimeout(function() { //gives a better ux by showing the loading icon longer so user knows it is being updated
-                get_data();
-            }, 500);
+            setTimeout(function() {
+                get_coin_data();
+            }, ux_delay);
         }
     }
 }
 
-function get_data() {
+function get_coin_data() {
     check_motd();
     update_status("Getting data from CryptoCompare...", "");
     var endpoint = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=" + Object.values(coins).toString() + "&tsyms=" + currency;
     var xhr = new XMLHttpRequest();
-    cl("Requesting data from " + endpoint);
-    
     xhr.timeout = 20000; //after 20 seconds stop trying to get data
     xhr.open('GET', endpoint);
-    
     xhr.onloadstart = function() {
         last_updated = Date.now();
         ls.setItem("last_updated", last_updated);
     }
-    
     xhr.onloadend = function() {
         if (xhr.status === 200) { //if there were no errors
             var data = JSON.parse(xhr.responseText);
-            
             for (var key in data["DISPLAY"]) {
-                var el = document.querySelector(".c_" + key.toLowerCase()); //the element where we should put the data
+                var el = document.querySelector("." + ti_prefix + key.toLowerCase()); //the element where we should put the data
                 var price_el = el.querySelector(".amount"); //the element that holds the price data
                 var sign_el = el.querySelector(".sign"); //the element that holds the currency sign
                 var price_old = el.querySelector(".amount").innerHTML; //old price used to determine if price went up/down since last update
@@ -398,7 +425,7 @@ function get_data() {
                 if (sign.length > 1) { //if the currency sign is letters instead of a symbol
                     sign_el.innerHTML = "<span>" + sign + "</span>";
                 }
-                                
+                
                 //add/update price data
                 price_el.innerHTML = price;
                 if (price_old) { //if there's previously recorded price
@@ -421,26 +448,23 @@ function get_data() {
                 }
             }
             
-            body.classList.remove(loading_class);
-            body.classList.remove(updating_class);
+            remove_class(body, class_app_loading);
+            remove_class(body, class_app_updating);
             update_status("Last updated: " + format_last_updated(last_updated), get_current_date_time(last_updated));
-        } else if (xhr.timeout > 0 && xhr.status === 0) { //if a timeout occurs
-            console.log("Timeout error getting data from " + endpoint);
-            update_status("Error, check console...", "");
-        } else { //if non-timeout error occurs
-            console.log("Error getting data from " + xhr.responseURL + " - " + xhr.responseText);
+        } else {
+            console.log(xhr);
+            console.log("Error getting data from " + endpoint);
             update_status("Error, check console...", "");
         }
+        
     }
-    
     xhr.send(null);
-    
 }
 
-//check for MOTD
+//motd
 function check_motd() {
-    if (!ls.motd_cleared && ls.motd) { //if the user has not manually close the motd & motd exist in local storage
-        body.classList.add(show_alert_class);
+    if (!ls.motd_cleared && ls.motd) { //if the user has not manually closed the motd & motd exist in local storage
+        add_class(body, class_show_alert);
         alert_el.getElementsByTagName("span")[0].innerHTML = ls.motd;
     }
     
@@ -463,118 +487,48 @@ function get_motd() {
                 var message = data["message"][Math.floor(Math.random() * data["message"].length)];
                 ls.setItem("motd", message);
                 alert_el.getElementsByTagName("span")[0].innerHTML = message;
-                body.classList.add(show_alert_class);
+                add_class(body, class_show_alert);
             }
-        } else if (xhr.timeout > 0 && xhr.status === 0) {
-            console.log("Timeout error getting data from " + endpoint);
         } else {
+            alert_el.getElementsByTagName("span")[0].innerHTML = "Error, check console";
              console.log("Error getting data from " + xhr.responseURL + " - " + xhr.responseText);
         }
     }
     xhr.send(null);
 }
 
-//tracking page filtering
-function show_filter_clear() {
-    var l = filter_bar.value.length;
-    if (l > 0) {
-        filter_clear.style.display = "block";
+//settings
+function set_currency() {
+    ls.setItem("currency", currency_select.value);
+    currency = currency_select.value;
+}
+
+function change_time_format(event) {
+    if (event.target.checked) { //when enabling AM/PM
+        cl("ampm turned on");
+        ls.setItem("ampm", "on");
     } else {
-        filter_clear.removeAttribute("style");
+        cl("am pm turned off");
+        ls.removeItem("ampm");
     }
 }
 
-function clear_filter_bar() {
-    //if (event.type === "click" || event.keyCode === 13 || event.type === "blur") {
-        filter_bar.value = "";
-        filter_bar.blur();
-        filter_clear.blur();
-        show_filter_clear();
-        filter_coins();
-    //}
+function reset() {
+    ls.clear(); //clear all local storage
+    ls.setItem("currency", "USD"); //set the default currency in local storage
+    ls.setItem("coins", JSON.stringify(default_coins)); //set local storage to default coins
+    currency = "USD"; //set the global variable to the default currency
+    currency_select.selectedIndex = get_select_index(currency_select, "USD"); //select the default value for the currency select element
+    document.getElementById("ampm").checked = false; //set the time format to the default setting (24 hour time)
+    coins = JSON.parse(ls.coins); //set the global coins variable to the default coins
+    document.querySelectorAll(".actual").forEach(function(e) { //remove all coin elements
+        return e.parentNode.removeChild(e);
+    });
+    remove_class(body, class_settings_page);
+    build_elements();
 }
 
-function filter_coins() {
-    var parent = document.getElementById("checkboxes");
-    var check = parent.getElementsByTagName("div");
-    var term = filter_bar.value.toUpperCase();
-    var flag_checked = /(^|\W):check($|\W)|(^|\W):checke($|\W)|(^|\W):checked($|\W)/gi;
-    
-    if (term.startsWith(":")) { //check if user is entering a special search flag
-        cl("Search flag detected");
-        if (flag_checked.exec(term)) { //if user is searching for elements that are already checked
-            button_uncheck_all.style.display = "block"; //show uncheck all button
-            for (var i = 0; i < check.length; i++) { //iterate through elements
-                var input = check[i].getElementsByTagName("input")[0]; //the actual checkbox element
-                if (input.checked) { //if checkbox is checked
-                    check[i].style.display = ""; //make sure it's display isn't "none"
-                } else {
-                    check[i].style.display = "none"; //hide non-checked elements
-                }
-            }
-        } else { //user is using a search flag but there aren't any flag matches, so show all checkboxes
-            button_uncheck_all.removeAttribute("style"); //make sure uncheck all button isn't showing
-            for (var i = 0; i < check.length; i++) {
-                check[i].style.display = "";
-            }
-        }
-    } else {
-        cl("No search flag detected, filtering as usual");
-        button_uncheck_all.removeAttribute("style"); //make sure uncheck all button isn't showing
-        for (var i = 0; i < check.length; i++) {
-            var label = check[i].getElementsByTagName("label")[0];
-            if (label.innerHTML.toUpperCase().indexOf(term) > - 1) {
-                check[i].style.display = "";
-            } else {
-                check[i].style.display = "none";
-            }
-        }
-    }
-}
-
-
-//tracking checkboxes
-function save_setting(event) {
-    var name = event.target.dataset.name; //name = Bitcoin, Litecoin, etc...
-    var symbol = event.target.id; //id = BTC, LTC, etc...
-    if (document.querySelectorAll(".ck:checked").length < max_checks) { //user can allow track up to this amount, due to API limits
-        if (event.target.checked) { //when ticking a checkbox
-            coins[name] = symbol; //push to coins object
-            if (!ls.order) { //only sort if the user has not set a custom order
-                coins = sort_object(coins); //sort the coins object alphabetically by name (not symbol)
-            }
-            ls.setItem("coins", JSON.stringify(coins)); //save to local storage
-            ls.removeItem("coins_manually_cleared");
-        } else { //when unticking a checkbox
-            delete coins[name]; //delete key/value from object
-            ls.setItem("coins", JSON.stringify(coins)); //overwrite local storage
-            if (Object.keys(coins).length < 1) { //if it was the last coin (meaning user is no longer tracking any coins)
-                ls.removeItem("coins"); //remove the local storage item
-                ls.removeItem("order");
-                ls.setItem("coins_manually_cleared", true);
-            }
-        }
-    } else {
-        cl("Too many coins are being tracked, remove some, then try again");
-        event.preventDefault();
-        return false;
-    }
-}
-
-function clear_all_checked() {
-    var checkboxes = document.getElementsByClassName("ck");
-    for(var i = 0; i < checkboxes.length; i++){
-        var checkbox = checkboxes[i];
-        if(checkbox.checked === true) {
-            checkbox.checked = false;
-        }
-        coins = {};
-        ls.removeItem("coins");
-        ls.setItem("coins_manually_cleared", true);
-    }
-}
-
-//drag n drop
+//drag & drop
 //turns on dragging for the element by clicking it's coin icon
 function mousedown(event) {
     var p = event.target.closest(".actual");
@@ -633,6 +587,13 @@ function dragenter(event) {
         }
         dragon.classList.add("dragover");
     }
+    
+    //if dragging on top of el being dragged, remove the dragover class from other elements
+    if (dragging === dragon) {
+        if (document.querySelectorAll(".dragover").length > 0) {
+            document.querySelector(".dragover").classList.remove("dragover");
+        }
+    }
 }
 
 function dragover(event) {
@@ -665,7 +626,102 @@ function set_coins_order() {
     }
 }
 
-//neccessary event listeners for drag & drop
+//navigation
+function show_tracking_page() {
+    last_coins = Object.keys(coins);
+    add_class(body, class_tracking_page);
+    add_class(page_tracking, class_checkbox_loading);
+    update_status("Select your coins", "");
+    build_checkboxes();
+}
+
+function hide_tracking_page() {
+    remove_class(body, class_tracking_page);
+    clear_filter_bar();
+    clusterize.clear();
+    chks = [];
+    if (!arrays_are_equal(last_coins, Object.keys(coins))) { //user changed the coins to be tracking whilst in tracking page
+        document.querySelectorAll(".actual").forEach(function(e) { //remove all coin elements
+            return e.parentNode.removeChild(e);
+        });
+        if (Object.keys(coins).length > 0) { //there are still coins to be tracked
+            build_elements(); //rebuild all the coin elements and fetch new data
+        } else { //there are no longer coins to be tracked
+            update_status("Ready...", ""); 
+        }
+    } else { //user entered tracking page, but changed nothing
+        if (document.querySelectorAll(".actual").length > 0) { //if there are elements that were previously tracked
+            update_status("Last updated: " + format_last_updated(last_updated), get_current_date_time(last_updated));
+        } else {
+            update_status("Ready...", "");
+        }
+    }
+}
+
+function show_settings_page() {
+    cl("Showing settings page");
+    add_class(body, class_settings_page);
+    last_curr = ls.currency;
+    update_status("Settings", "");
+}
+
+function hide_settings_page() {
+    remove_class(body, class_settings_page);
+    if (last_curr != ls.currency && Object.keys(coins).length > 0) {
+        document.querySelectorAll(".actual").forEach(function(e) { //remove all coin elements
+            return e.parentNode.removeChild(e);
+        });
+        build_elements();
+    } else {
+        update_status("Last updated: " + format_last_updated(last_updated), get_current_date_time(last_updated));
+    }
+}
+
+function navigate_back() {
+    if (has_class(body, class_tracking_page)) { //on tracking page
+        hide_tracking_page();
+    } else if (has_class(body, class_settings_page)) {
+        hide_settings_page();
+    }
+}
+
+//start
+function start() {
+    update_status("Starting...", "");
+    if (Object.keys(coins).length > 0) { //if there are coins set to be tracked
+        if (document.querySelectorAll(".actual").length < 1) { //if the coin elements are not yet built
+            build_elements();
+        } else {
+            update();
+        }
+    } else {
+        update_status("Ready...", "");
+    }
+}
+
+//onload
+function load_settings() {
+    if (ls.coins) {
+        coins = JSON.parse(ls.coins);
+    } else if (!ls.coins && !ls.coins_manually_cleared) {
+        ls.setItem("coins", JSON.stringify(default_coins));
+        coins = default_coins;
+    }
+    if (!ls.currency) { //checks if the local storage setting for currency does NOT exist
+        ls.setItem("currency", "USD"); //set the default currency
+    } else { //if the local storage setting for currency does exist...
+        currency = ls.currency; //set the global variable for currency to whatever is in local storage
+        currency_select.selectedIndex = -1; //reset the selected option for currency select
+        document.getElementById("c_usd").removeAttribute("selected"); //remove selected attr from option within select element
+        currency_select.selectedIndex = get_select_index(currency_select, ls.currency); //set the locally stored currency as the selection
+        document.getElementById("c_" + ls.currency.toLowerCase()).setAttribute("selected", "selected"); //set the selected attribute
+    }
+    if (ls.ampm) { //user has turned on AM/PM time format previously
+        cl("Local storage exists for time format, loading it");
+        time_format_toggle.checked = true;
+    }
+}
+
 document.getElementById("ticker").addEventListener("mousedown", function(event) {
     if (event.target.className === "ti-icon") {
         mousedown(event);
@@ -707,123 +763,69 @@ document.getElementById("ticker").addEventListener("drop", function(event) {
         drop(event);
     }    
 });
-
-//event listeners
-button_settings.addEventListener("click", show_settings);
-button_tracking.addEventListener("click", show_tracking);
-button_back.addEventListener("click", back);
-button_reset.addEventListener("click", reset);
-
-filter_bar.addEventListener("keyup", show_filter_clear);
+button_add_coins.addEventListener("click", show_tracking_page);
+button_back.addEventListener("click", navigate_back);
+filter_bar.addEventListener("input", function() {
+    search_checkboxes();
+    show_filter_clear();
+});
 filter_clear.addEventListener("click", clear_filter_bar);
 filter_clear.addEventListener("keydown", clear_filter_bar);
-filter_bar.addEventListener("keyup", filter_coins);
-button_uncheck_all.addEventListener("click", clear_all_checked);
-
+page_tracking.addEventListener("click", function(e) {
+    if (e.target.className === "ck") {
+        save_setting(e);
+    }
+});
+button_uncheck_all.addEventListener("click", uncheck_all);
+button_settings.addEventListener("click", show_settings_page);
 currency_select.addEventListener("change", set_currency);
-
 time_format_toggle.addEventListener("click", change_time_format);
-
+button_reset.addEventListener("click", reset);
 button_refresh.addEventListener("click", function() {
-    if (!body.classList.contains(updating_class)) { //make sure data isn't already updating
+    if (!has_class(body, class_app_updating)) { //make sure data isn't already updating
         update();
     }
 });
-
-button_close_motd.addEventListener("click", function(){
+button_close_motd.addEventListener("click", function() {
     ls.setItem("motd_cleared", "true");
-    body.classList.remove(show_alert_class);
+    remove_class(body, class_show_alert);
 });
-
-button_add_coins.addEventListener("click", function() {
-    if (!body.classList.contains("show-tracking")) {
-        show_tracking();
+document.addEventListener("click", function(e) { //open links
+    if (event.target.tagName === "A") {
+        open_link(e);
     }
 });
 
-window.addEventListener("blur", function() {
-    
+//extension close
+window.addEventListener("blur",function() {
     cl("Window or extension lost focus");
+    update_status("blur", "");
+    update_status("Last updated: " + format_last_updated(last_updated), get_current_date_time(last_updated));
     if (timeout_id != null) {
         remove_data_request_delay();
     }
-    
-    if (body.classList.contains(tracking_page_class)) {
-        body.classList.remove(tracking_page_class);
-    }
-    
-    if (body.classList.contains(settings_page_class)) {
-        body.classList.remove(settings_page_class);
+    if (has_class(body, class_tracking_page)) {
+        if (!arrays_are_equal(last_coins, Object.keys(coins))) {
+            document.querySelectorAll(".actual").forEach(function(e) { //remove all coin elements
+                return e.parentNode.removeChild(e);
+            });
+        }
+        remove_class(body, class_tracking_page);
         clear_filter_bar();
-        scroll_top_tracking_page();
-        if (document.querySelectorAll(".actual").length > 0) {
-            update_status("Last updated: " + format_last_updated(last_updated), get_current_date_time(last_updated));
-        } else {
-            update_status("Ready...", "");
+        clusterize.clear();
+        chks = [];
+    }
+    if (has_class(body, class_settings_page)) {
+        if (last_curr != ls.currency) {
+            document.querySelectorAll(".actual").forEach(function(e) { //remove all coin elements
+                return e.parentNode.removeChild(e);
+            });
         }
-    }
-    
-});
-
-document.addEventListener("click",function(event) {
-    //links
-    if (event.target.tagName === "A") {
-        open_link(event);
-    }
-    //checkbox
-    if (event.target.type === "checkbox" && event.target.className === "ck") {
-        save_setting(event);
+        remove_class(body, class_settings_page);
     }
 });
 
-//start
-function start() {
-    update_status("Starting...", "");
-    if (Object.keys(coins).length > 0) { //if there are coins set to be tracked
-        if (document.querySelectorAll(".actual").length < 1) { //if the coin elements are not yet built
-            build_elements();
-        } else {
-            update();
-        }
-        
-    } else {
-        update_status("Ready...", "");
-    }
-}
-
-
-//on load
-function load_settings() {
-    if (ls.coins) { //check if local storage exists for coins to track
-        cl("Local storage exists for coin tracking, loading it");
-        coins = JSON.parse(ls.coins); //set the global object to whatever is in the local storage for tracked coins
-        for (var key in coins) { //tick the appropiate checkboxes for the coins that are in local storage
-            document.getElementById(coins[key]).checked = true;
-        }
-    } else if (!ls.coins && !ls.coins_manually_cleared) {
-        ls.setItem("coins", JSON.stringify(default_coins));
-        coins = JSON.parse(ls.coins);
-        for (var key in coins) {
-            document.getElementById(coins[key]).checked = true;
-        }
-    }
-    if (!ls.currency) { //checks if the local storage setting for currency does NOT exist
-        ls.setItem("currency", "USD"); //if it doesn't, that means this is the first time using the extension, so we set the currency to default value (usd)
-    } else { //if the local storage setting for currency does exist...
-        cl("Local storage exists for currency, loading it");
-        currency = ls.currency; //set the global variable for currency to whatever is in local storage
-        currency_select.selectedIndex = -1; //reset the selected option for currency select
-        document.getElementById("c_usd").removeAttribute("selected"); //remove the default selected option (USD)
-        currency_select.selectedIndex = get_select_index(currency_select, ls.currency); //set the locally stored currency as the selection
-        document.getElementById("c_" + ls.currency.toLowerCase()).setAttribute("selected", "selected"); //set the selected attribute
-    }
-    if (ls.ampm) { //user has turned on AM/PM time format previously
-        cl("Local storage exists for time format, loading it");
-        document.getElementById("ampm").checked = true;
-    }
-    if (ls.last_updated) { //checks if local storage for last updated exists
-        last_updated = ls.last_updated;
-    }
-}
-
-load_settings();
+window.addEventListener("load",function() {
+    load_settings();
+    init_clusterize();
+});
