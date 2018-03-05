@@ -720,6 +720,9 @@ function load_settings() {
         cl("Local storage exists for time format, loading it");
         time_format_toggle.checked = true;
     }
+    if (ls.last_updated) { //checks if local storage for last updated exists
+        last_updated = ls.last_updated;
+    }
 }
 
 document.getElementById("ticker").addEventListener("mousedown", function(event) {
