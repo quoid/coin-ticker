@@ -18,7 +18,7 @@ Developed for Safari 7+.
 
 **Chrome**
 
-Head over to the [Chrome Extension Store](https://chrome.google.com/webstore/category/extensions) and install the extension from there.
+Head over to the [Chrome Extension Store](https://chrome.google.com/webstore/detail/cointicker/heohpoipgmadpdmafmddijgdckhnhaml) and install the extension from there.
 
 Developed for Chrome 55+.
 
