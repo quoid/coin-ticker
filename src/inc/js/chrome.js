@@ -18,10 +18,6 @@ document.getElementById("close-alert").addEventListener("click", function() {
     bg.ga_close_motd();
 });
 
-document.getElementById("button-refresh").addEventListener("click", function() {
-    bg.ga_refresh();
-});
-
 document.getElementById("button-settings").addEventListener("click", function() {
     bg.ga_open_settings_page();
 });

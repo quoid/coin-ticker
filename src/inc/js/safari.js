@@ -12,10 +12,6 @@ document.getElementById("close-alert").addEventListener("click", function() {
     safari.extension.globalPage.contentWindow.ga_close_motd();
 });
 
-document.getElementById("button-refresh").addEventListener("click", function() {
-    safari.extension.globalPage.contentWindow.ga_refresh();
-});
-
 document.getElementById("button-settings").addEventListener("click", function() {
     safari.extension.globalPage.contentWindow.ga_open_settings_page();
 });

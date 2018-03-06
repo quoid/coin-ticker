@@ -43,7 +43,6 @@ var button_back = document.getElementById("button-back");
 var button_uncheck_all = document.getElementById("uncheck-all");
 var button_settings = document.getElementById("button-settings");
 var button_reset = document.getElementById("reset");
-var button_refresh = document.getElementById("button-refresh");
 var button_close_motd = document.getElementById("close-alert");
 
 //colors
@@ -789,11 +788,6 @@ button_settings.addEventListener("click", show_settings_page);
 currency_select.addEventListener("change", set_currency);
 time_format_toggle.addEventListener("click", change_time_format);
 button_reset.addEventListener("click", reset);
-button_refresh.addEventListener("click", function() {
-    if (!has_class(body, class_app_updating)) { //make sure data isn't already updating
-        update();
-    }
-});
 button_close_motd.addEventListener("click", function() {
     ls.setItem("motd_cleared", "true");
     remove_class(body, class_show_alert);

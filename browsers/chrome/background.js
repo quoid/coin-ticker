@@ -28,11 +28,6 @@ function ga_close_motd() {
     ga("send", "event", "tickerV2", "close-motd");
 }
 
-function ga_refresh() {
-    ga("send", "event", "tickerV2", "refresh-ticker");
-    ga("set", "dimension1", localStorage.currency);
-}
-
 function ga_open_settings_page() {
     ga("send", "pageview", "/settings.html");
     ga("send", "event", "tickerV2", "open-settings");
