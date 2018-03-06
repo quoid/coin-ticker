@@ -116,7 +116,7 @@ var coin_list = [
   },
   {
     "name": "Nano",
-    "symbol": "NANO",
+    "symbol": "XRB",
     "rank": 24
   },
   {
@@ -1398,11 +1398,6 @@ var coin_list = [
     "name": "Unobtanium",
     "symbol": "UNO",
     "rank": 280
-  },
-  {
-    "name": "BitConnect",
-    "symbol": "BCC",
-    "rank": 281
   },
   {
     "name": "Blocktix",

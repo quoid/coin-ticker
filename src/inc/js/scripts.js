@@ -6,7 +6,7 @@ var last_updated = 0;
 var last_curr = "";
 var ls = localStorage;
 var max_checks = 46;
-var ux_delay = 300;
+var ux_delay = 0;
 var default_coins = {"Bitcoin":"BTC","Ethereum":"ETH","Litecoin":"LTC","Vertcoin":"VTC"};
 var currency = "USD";
 var timeout_delay = 0;
@@ -119,17 +119,21 @@ function get_current_date_time(d) {
     // 24hr - Fri Feb 09 2018 11:49:57 (EST)
     //12hr - Fri Feb 09 2018 11:49:57 AM (EST)
     
-    if (ls.ampm) { //if the user has set the time format to AM/PM (if this setting doesn't exist, user kept default format at 24 hour clock)
-        var hours = time.slice(0, -6); //outputs 00
+    if (ls.ampm) { //if the user has set the time format to AM/PM
+        var hours = time.slice(0, -6); //outputs 00, 01, 13 etc...
         var period = "AM";
         if (hours >= 13) {
             hours = hours - 12;
             period = "PM";
         }
+        if (hours == "12") {
+            hours = "12";
+            period = "PM";
+        }
         if (hours == "00") {
             hours = "12";
         }
-        hours = ("0" + hours).slice(-2);
+        hours = ("0" + hours).slice(-2); //adds a 0 in front of all hours, takes the last 2 integers
         var min_sec = time.slice(-6);
         output = date + " " + hours + min_sec + " " + period + " " + timezone;
     }
@@ -372,7 +376,7 @@ function update() {
             add_class(body, class_app_updating);
         }
         if (timeout_delay > 0) { //if the time between api calls is within the threshold set in the api_throttle variable
-            cl("Will get updated data from CryptoCompare in " + timeout_delay + "ms");
+            cl("Will get updated data in " + timeout_delay + "ms");
             var delay;
             if (timeout_delay > 1000) { //if greater than a second
                 update_status("Updating data in " + Math.round(timeout_delay/1000) + " seconds...");
@@ -397,7 +401,7 @@ function update() {
 
 function get_coin_data() {
     check_motd();
-    update_status("Getting data from CryptoCompare...", "");
+    update_status("Getting data...", "");
     var endpoint = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=" + Object.values(coins).toString() + "&tsyms=" + currency;
     var xhr = new XMLHttpRequest();
     xhr.timeout = 20000; //after 20 seconds stop trying to get data
@@ -633,6 +637,7 @@ function show_tracking_page() {
     add_class(page_tracking, class_checkbox_loading);
     update_status("Select your coins", "");
     build_checkboxes();
+    filter_bar.focus();
 }
 
 function hide_tracking_page() {
