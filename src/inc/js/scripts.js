@@ -6,7 +6,7 @@ var last_updated = 0;
 var last_curr = "";
 var ls = localStorage;
 var max_checks = 46;
-var ux_delay = 300;
+var ux_delay = 0;
 var default_coins = {"Bitcoin":"BTC","Ethereum":"ETH","Litecoin":"LTC","Vertcoin":"VTC"};
 var currency = "USD";
 var timeout_delay = 0;
@@ -637,6 +637,7 @@ function show_tracking_page() {
     add_class(page_tracking, class_checkbox_loading);
     update_status("Select your coins", "");
     build_checkboxes();
+    filter_bar.focus();
 }
 
 function hide_tracking_page() {
@@ -804,7 +805,7 @@ document.addEventListener("click", function(e) { //open links
 });
 
 //extension close
-window.addEventListener("blurb",function() {
+window.addEventListener("blur",function() {
     cl("Window or extension lost focus");
     update_status("blur", "");
     update_status("Last updated: " + format_last_updated(last_updated), get_current_date_time(last_updated));
