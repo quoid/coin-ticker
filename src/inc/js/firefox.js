@@ -1,13 +1,21 @@
 var bg = chrome.extension.getBackgroundPage();
 
 function open_link(event) {
-    console.log(event);
-    chrome.tabs.create({ url: event.target.dataset.link });
+    var url = event.target.dataset.link;
+    var creating = browser.tabs.create({
+        url: url
+    });
+    creating.then(function() {
+            browser.extension.getViews()[1].close()
+        }, 
+        function() {
+            console.log('Error opening link...');
+        }
+    );
 }
 
 window.addEventListener("load",function() {
     bg.ga_start_session();
-    //start(); //put in scripts.js
 });
 
 window.addEventListener("blur",function() {

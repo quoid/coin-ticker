@@ -9,6 +9,9 @@ layout: compress
         {% if jekyll.environment == "chrome" %}
             <link rel="stylesheet" href="inc/css/chrome.css">
         {% endif %}
+        {% if jekyll.environment == "firefox" %}
+            <link rel="stylesheet" href="inc/css/firefox.css">
+        {% endif %}
     </head>
     <body>      
         {{ content }}
@@ -22,6 +25,9 @@ layout: compress
     {% endif %}
     {% if jekyll.environment == "chrome" %}
         <script src="inc/js/chrome.js"></script>
+    {% endif %}
+    {% if jekyll.environment == "firefox" %}
+        <script src="inc/js/firefox.js"></script>
     {% endif %}
     <script src="inc/js/scripts.js"></script>
     </body>

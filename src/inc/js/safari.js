@@ -1,4 +1,6 @@
 function open_link(event) {
+    //safari.application.activeBrowserWindow.openTab()
+    //safari.self.hide();
     var a = safari.application.openBrowserWindow();
     var b = a.activeTab;
     b.url = event.target.dataset.link;
@@ -10,10 +12,6 @@ window.addEventListener("blur",function() {
 
 document.getElementById("close-alert").addEventListener("click", function() {
     safari.extension.globalPage.contentWindow.ga_close_motd();
-});
-
-document.getElementById("button-refresh").addEventListener("click", function() {
-    safari.extension.globalPage.contentWindow.ga_refresh();
 });
 
 document.getElementById("button-settings").addEventListener("click", function() {
@@ -34,10 +32,6 @@ document.getElementById("button-back").addEventListener("click", function() {
 
 document.getElementById("currency").addEventListener("change", function(e) {
     safari.extension.globalPage.contentWindow.ga_change_currency();
-});
-
-document.getElementById("ampm").addEventListener("click", function() {
-    safari.extension.globalPage.contentWindow.ga_change_time_format();
 });
 
 document.getElementById("reset").addEventListener("click", function() {

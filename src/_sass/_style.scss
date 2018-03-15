@@ -125,7 +125,7 @@ a {
 section {
     background-color: $background-color;
     left: 0;
-    padding-top: 54px;
+    padding-top: 48px;
     position: fixed;
     max-height: 100vh;
     min-height: 100vh;
@@ -158,7 +158,7 @@ header {
     background-color: $background-color;
     box-shadow: inset 0px -1px 1px $border;
     left: 0;
-    padding: 11px 0;
+    padding: 12px 0;
     position: fixed;
     text-align: center;
     top: 0;
@@ -175,14 +175,9 @@ header {
     background-repeat: no-repeat;
     background-position: center center;
     background-size: contain;
-    height: 12px;
-    margin: 4px auto;
-    width: 72px;
-}
-
-#status {
-    @extend %font-small;
-    color: $font-light;
+    height: 14px;
+    margin: 0 auto;
+    width: 84px;
 }
 
 [class^="buttons-"] {
@@ -193,7 +188,6 @@ header {
 .buttons-left {
     box-sizing: content-box;
     height: 24px;
-    padding-right: 36px;
     width: 24px;
 }
 
@@ -228,25 +222,6 @@ header [id^="button-"] {
 
 #button-add-coins {
     background-image: url("inc/img/icons/add.svg");
-    margin-right: 12px;
-}
-
-#button-refresh {
-    background-image: url("inc/img/icons/refresh.svg");
-    background-size: 13px 16px;
-    transform-origin: 50% 56%;
-}
-
-.updating #button-refresh {
-    animation: update 650ms infinite linear;
-    cursor: auto;
-}
-
- @keyframes update {
-     100% {
-        -webkit-transform:rotate(360deg);
-        transform:rotate(360deg)
-    }
 }
 
 //03-Off Canvas
@@ -289,8 +264,6 @@ header [id^="button-"] {
     pointer-events: auto;
 }
 
-.show-settings #button-refresh,
-.show-tracking #button-refresh,
 .show-settings #button-add-coins,
 .show-tracking #button-add-coins {
     opacity: 0.4;
@@ -309,7 +282,7 @@ header [id^="button-"] {
 #loader-tracking {
     background-color: $background-color;
     display: none;
-    height: calc(100vh - 54px);
+    height: calc(100vh - 48px);
     position: relative;
     
     .loader {
@@ -334,7 +307,7 @@ header [id^="button-"] {
     left: 0;
     padding: 12px;
     position: fixed;
-    top: 54px;
+    top: 48px;
     width: 100%;
 }
 
@@ -409,7 +382,7 @@ header [id^="button-"] {
     max-height: 100vh;
     overflow: hidden;
     overflow-y: scroll;
-    padding: 54px 0;
+    padding: 48px 0;
     position: relative;
     
     .empty-list {
@@ -516,7 +489,7 @@ header [id^="button-"] {
     position: -moz-sticky;
     position: sticky;
     position: fixed;
-    top: 54px; //height of header
+    top: 48px; //height of header
     width: 100%;
     
     a {
@@ -557,7 +530,7 @@ header [id^="button-"] {
     -webkit-box-shadow: inset 0 -1px 0 $border;
     box-shadow: inset 0 -1px 0 $border;
     opacity: 1;
-    padding: 9px 12px;
+    padding: 9px 12px 9px 0;
     transition: padding-top $trans-time ease-in;
     will-change: padding-top;
 }
@@ -567,10 +540,11 @@ header [id^="button-"] {
 }
 
 .ti-icon {
-    background: transparent url("inc/img/coin-default.svg") no-repeat center center/contain;
+    background: transparent url("inc/img/coin-default.svg") no-repeat 6px center/contain;
     height: 24px;
-    margin-right: 6px;
-    width: 24px;
+    margin-left: 6px;
+    padding: 0 6px 0 6px;
+    width: 36px;
 }
 
 .ti-content {
@@ -652,6 +626,7 @@ header [id^="button-"] {
 
 li.setting {
     @extend .ti;
+    padding-left: 12px;
     
     > div:not(.setting-control) {
         -webkit-box-flex: 1;
@@ -676,6 +651,7 @@ div.setting {
     @extend .ti;
     box-shadow: none;
     display: block;
+    padding-left: 12px;
     
     .setting-description {
         font-size: 11px;
@@ -734,7 +710,6 @@ section#loading {
 //button disable
 .updating #button-add-coins,
 .updating #button-settings,
-.loading #button-refresh,
 .loading #button-settings,
 .loading #button-add-coins {
     opacity: 0.4;

@@ -56,7 +56,7 @@ var coin_list = [
   },
   {
     "name": "IOTA",
-    "symbol": "IOT",
+    "symbol": "MIOTA",
     "rank": 12
   },
   {
@@ -116,7 +116,7 @@ var coin_list = [
   },
   {
     "name": "Nano",
-    "symbol": "XRB",
+    "symbol": "NANO",
     "rank": 24
   },
   {
@@ -1398,6 +1398,11 @@ var coin_list = [
     "name": "Unobtanium",
     "symbol": "UNO",
     "rank": 280
+  },
+  {
+    "name": "BitConnect",
+    "symbol": "BCC",
+    "rank": 281
   },
   {
     "name": "Blocktix",

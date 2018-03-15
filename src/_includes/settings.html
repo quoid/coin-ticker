@@ -1,7 +1,7 @@
 <section id="settings">
     <div id="version">
         <div class="container">
-            Coin Ticker for Safari - Version {{site.version}}
+            CoinTicker for Safari - Version {{site.version}}
         </div>
     </div>
     <ul>
@@ -13,24 +13,43 @@
             <div class="setting-control">
                 <select id="currency">
                     <option id="c_aud" value="AUD">AUD</option>
+                    <option id="c_brl" value="BRL">BRL</option>
                     <option id="c_cad" value="CAD">CAD</option>
-                    <option id="c_cny" value="CNY">CNY</option>
-                    <option id="c_eur" value="EUR">EUR</option>
-                    <option id="c_gbp" value="GBP">GBP</option>
+                    <option id="c_chf" value="CHF">CHF</option>
+                    <option id="c_clp" value="CLP">CLP</option>
+                    <option id="c_cny" value="CNY" data-symbol="&#165;">CNY</option>
+                    <option id="c_czk" value="CZK">CZK</option>
+                    <option id="c_dkk" value="DKK">DKK</option>
+                    <option id="c_eur" value="EUR" data-symbol="&#8364;">EUR</option>
+                    <option id="c_gbp" value="GBP" data-symbol="&#163;">GBP</option>
                     <option id="c_hkd" value="HKD">HKD</option>
-                    <option id="c_jpy" value="JPY">JPY</option>
-                    <option id="c_krw" value="KRW">KRW</option>
-                    <option id="c_pln" value="PLN">PLN</option>
+                    <option id="c_huf" value="HUF">HUF</option>
+                    <option id="c_idr" value="IDR">IDR</option>
+                    <option id="c_ils" value="ILS" data-symbol="&#8362;">ILS</option>
+                    <option id="c_inr" value="INR" data-symbol="&#8377;">INR</option>
+                    <option id="c_jpy" value="JPY" data-symbol="&#165;">JPY</option>
+                    <option id="c_krw" value="KRW" data-symbol="&#8361;">KRW</option>
+                    <option id="c_mxn" value="MXN">MXN</option>
+                    <option id="c_myr" value="MYR">MYR</option>
+                    <option id="c_nok" value="NOK">NOK</option>
+                    <option id="c_nzd" value="NZD">NZD</option>
+                    <option id="c_php" value="PHP" data-symbol="&#8369;">PHP</option>
+                    <option id="c_pkr" value="PKR">PKR</option>
+                    <option id="c_pln" value="PLN" data-symbol="z&#322;">PLN</option>
                     <option id="c_rub" value="RUB">RUB</option>
                     <option id="c_sek" value="SEK">SEK</option>
-                    <option id="c_usd" value="USD" selected="selected">USD</option>
+                    <option id="c_sgd" value="SGD">SGD</option>
+                    <option id="c_thb" value="THB" data-symbol="&#3647;">THB</option>
+                    <option id="c_try" value="TRY" data-symbol="&#8378;">TRY</option>
+                    <option id="c_twd" value="TWD">TWD</option>
+                    <option id="c_usd" value="USD" data-symbol="&#36;" selected="selected">USD</option>
+                    <option id="c_zar" value="ZAR">ZAR</option>
                     <option disabled>&#9472;&#9472;&#9472;</option>
-                    <option id="c_btc" value="BTC">BTC</option>
-                    <option id="c_eth" value="ETH">ETH</option>
-                    <option id="c_usdt" value="USDT">USDT</option>
+                    <option id="c_btc" value="BTC" data-symbol="&#579;">BTC</option>
                 </select>
             </div>
         </li>
+<!--
         <li class="setting">
             <div>
                 <div class="setting-name">Show AM/PM</div>
@@ -43,11 +62,15 @@
                 </div>
             </div>
         </li>
+-->
     </ul>
     <div class="setting">
         <div class="setting-name">Support & Information</div>
         <div class="setting-description">
-            If you'd like to leave feedback or report a bug, <a data-link="https://github.com/quoid/coin-ticker">visit the extension repository</a>. Price data is graciously provided by <a data-link="https://www.cryptocompare.com">CryptoCompare</a>.
+            Price data is graciously provided by <a data-link="https://coinmarketcap.com">CoinMarketCap</a>. It's updated when you open the extension popover. It is limited to update every 60 seconds. If you open the popover multiple times within a 60 seconds timeframe it will use old data until those 60 seconds have passed.
+            <br>
+            <br>
+            If you'd like to leave feedback or report a bug, <a data-link="https://github.com/quoid/coin-ticker">visit the extension repository</a>.
         </div>
     </div>
     <div class="setting">

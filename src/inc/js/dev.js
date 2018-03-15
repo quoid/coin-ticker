@@ -35,11 +35,6 @@ function ga_close_motd() {
     ga("send", "event", "tickerV2", "close-motd");
 }
 
-function ga_refresh() {
-    ga("send", "event", "tickerV2", "refresh-ticker");
-    ga("set", "dimension1", localStorage.currency);
-}
-
 function ga_open_settings_page() {
     ga("send", "pageview", "/settings.html");
     ga("send", "event", "tickerV2", "open-settings");
@@ -85,10 +80,6 @@ document.getElementById("close-alert").addEventListener("click", function() {
     ga_close_motd();
 });
 
-document.getElementById("button-refresh").addEventListener("click", function() {
-    ga_refresh();
-});
-
 document.getElementById("button-settings").addEventListener("click", function() {
     ga_open_settings_page();
 });
@@ -107,10 +98,6 @@ document.getElementById("button-back").addEventListener("click", function() {
 
 document.getElementById("currency").addEventListener("change", function(e) {
     ga_change_currency();
-});
-
-document.getElementById("ampm").addEventListener("click", function() {
-    ga_change_time_format();
 });
 
 document.getElementById("reset").addEventListener("click", function() {
