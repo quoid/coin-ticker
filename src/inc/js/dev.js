@@ -100,10 +100,6 @@ document.getElementById("currency").addEventListener("change", function(e) {
     ga_change_currency();
 });
 
-document.getElementById("ampm").addEventListener("click", function() {
-    ga_change_time_format();
-});
-
 document.getElementById("reset").addEventListener("click", function() {
     ga_reset_all_settings();
 });

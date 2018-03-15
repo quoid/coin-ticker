@@ -52,10 +52,6 @@ function ga_change_currency() {
     ga("send", "event", "tickerV2", "change-currency");
 }
 
-function ga_change_time_format() {
-    ga("send", "event", "tickerV2", "change-time-format");
-}
-
 function ga_reset_all_settings() {
     ga("send", "event", "tickerV2", "reset-settings");
 }

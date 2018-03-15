@@ -38,10 +38,6 @@ document.getElementById("currency").addEventListener("change", function(e) {
     bg.ga_change_currency();
 });
 
-document.getElementById("ampm").addEventListener("click", function() {
-    bg.ga_change_time_format();
-});
-
 document.getElementById("reset").addEventListener("click", function() {
     bg.ga_reset_all_settings();
 });

@@ -1,4 +1,6 @@
 function open_link(event) {
+    //safari.application.activeBrowserWindow.openTab()
+    //safari.self.hide();
     var a = safari.application.openBrowserWindow();
     var b = a.activeTab;
     b.url = event.target.dataset.link;
@@ -30,10 +32,6 @@ document.getElementById("button-back").addEventListener("click", function() {
 
 document.getElementById("currency").addEventListener("change", function(e) {
     safari.extension.globalPage.contentWindow.ga_change_currency();
-});
-
-document.getElementById("ampm").addEventListener("click", function() {
-    safari.extension.globalPage.contentWindow.ga_change_time_format();
 });
 
 document.getElementById("reset").addEventListener("click", function() {

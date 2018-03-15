@@ -4,18 +4,21 @@ var coins = {};
 var last_coins = [];
 var last_updated = 0;
 var last_curr = "";
-var last_data = [];
 var ls = localStorage;
-var ux_delay = 300;
+var max_checks = 46;
+var ux_delay = 0;
 var default_coins = {"Bitcoin":"BTC","Ethereum":"ETH","Litecoin":"LTC","Vertcoin":"VTC"};
 var currency = "USD";
-var interval_price = 60000; //how often a user can request updated price data in ms
-var interval_motd = 86400; //time between motd checks in seconds
+var timeout_delay = 0;
+var timeout_id = null;
+var api_throttle = 60000; //10000; //how often a user can request updated price data in ms
+var time_between_checks = 86400; //time between motd checks in seconds
 
 
 //classes
 var body = document.body;
 var class_app_loading = "loading";
+var class_app_updating = "updating";
 var class_tracking_page = "show-tracking"; 
 var class_checkbox_loading = "checkboxes-loading";
 var class_show_checked = "show-checked";
@@ -31,6 +34,7 @@ var page_tracking = document.getElementById("tracking");
 var filter_bar = document.getElementById("filter-bar");
 var filter_clear = document.getElementById("clear-filter");
 var currency_select = document.getElementById("currency");
+var time_format_toggle = document.getElementById("ampm");
 var alert_el = document.getElementById("alert");
 
 //buttons
@@ -62,8 +66,8 @@ function has_class(el, cl) {
     return (el.classList.contains(cl) ? true : false);
 }
 
-function get_key_by_value(object, value) {
-    return Object.keys(object).find(function (key) { //https://stackoverflow.com/a/28191966/3126477
+function getKeyByValue(object, value) { //https://stackoverflow.com/a/28191966/3126477
+    return Object.keys(object).find(function (key) {
         return object[key]["values"][1] === value;
     });
 }
@@ -96,46 +100,102 @@ function arrays_are_equal(arr1, arr2) { //https://stackoverflow.com/a/22395370/3
     return true;
 }
 
-function format_time(t) {
-    var d = new Date(t);
-    var date = d.toString().split(" ", 4).join(" "); //outputs Web Apr 19 2017
-    var time = d.toString().split(" ")[4]; //outpts 00:25:35
-    var timezone = d.toString().split(" ")[6]; //outputs (EDT)
-    var hours = time.slice(0, -6); //outputs 00, 01, 13 etc...
-    var period = "AM";
-    if (hours >= 13) {
-        hours = hours - 12;
-        period = "PM";
+function update_status(str, title) {
+    var status_element = document.getElementById("status");
+    status_element.innerHTML = str;
+    status_element.title = title;
+    
+}
+
+/*
+function get_current_date_time(d) {
+    var t = new Date(d); //outputs Wed Apr 19 2017 00:25:35 GMT-0400 (EDT);
+    var date = t.toString().split(" ", 4).join(" "); //outputs Web Apr 19 2017
+    var time = t.toString().split(" ")[4]; //outpts 00:25:35
+    var timezone = t.toString().split(" ")[6]; //otputs (EDT)
+    
+    var output = date + " " + time + " " + timezone;
+    //time formats
+    // 24hr - Fri Feb 09 2018 11:49:57 (EST)
+    //12hr - Fri Feb 09 2018 11:49:57 AM (EST)
+    
+    if (ls.ampm) { //if the user has set the time format to AM/PM
+        var hours = time.slice(0, -6); //outputs 00, 01, 13 etc...
+        var period = "AM";
+        if (hours >= 13) {
+            hours = hours - 12;
+            period = "PM";
+        }
+        if (hours == "12") {
+            hours = "12";
+            period = "PM";
+        }
+        if (hours == "00") {
+            hours = "12";
+        }
+        hours = ("0" + hours).slice(-2); //adds a 0 in front of all hours, takes the last 2 integers
+        var min_sec = time.slice(-6);
+        output = date + " " + hours + min_sec + " " + period + " " + timezone;
     }
-    if (hours == "12") {
-        hours = "12";
-        period = "PM";
-    }
-    if (hours == "00") {
-        hours = "12";
-    }
-    hours = ("0" + hours).slice(-2); //adds a 0 in front of all hours, takes the last 2 integers
-    var min_sec = time.slice(-6);
-    var output = date + " " + hours + min_sec + " " + period + " " + timezone;
+    
     return output;
 }
 
-function round(numStr) {
-    //https://stackoverflow.com/a/12830454/3126477
-    //https://stackoverflow.com/a/27865285/3126477
-    var num = parseFloat(numStr);
-    if (num >= 1) {
-        return number_with_commas(num.toFixed(2));
+function format_last_updated(d) {
+    var then = d;
+    var now = Date.now();
+    var diff = (now - then)/1000; //the difference between the two unix timestamps is reflected in ms, so divide it by 1000 to get differences in seconds
+    var output;
+            
+    if (diff < 86400) { //if difference is less than 24 hours
+        var raw = get_current_date_time(then);
+        var time = raw.split(" ").slice(4, 5)[0].split(":").slice(0,2).join(":"); //in both 12/24 time format, the time portion is in the 4 index, remove seconds here
+        var hour = time.split(":").slice(0,1)[0]; //get hour for adding AM/PM
+
+        if (parseInt(hour) > 0 && parseInt(hour) < 10) {
+            time = time.substring(1);
+        }
+                
+        if (new Date(now).getDate() === new Date(then).getDate()) { //compares the days within the 24 hour to see if they occured on the same day
+            output = "Today at " + time;
+        } else {
+            output= "Yesterday at " + time;
+        }
+        
+        if (ls.ampm) {
+            var period = raw.split(" ").slice(5, 6);
+            output += " " + period;
+        }
+        
     } else {
-        return numStr;
+        output = "More than a 24 hours ago";
     }
+    
+    return output;
+}
+*/
+
+function price_increase(i) {
+    document.querySelectorAll(".ti-price")[i].classList.add("up");
+    setTimeout(function() {
+        document.querySelectorAll(".ti-price")[i].classList.remove("up");
+    }, 350);
 }
 
-function number_with_commas(x) { //https://stackoverflow.com/a/2901298/3126477
-    var parts = x.toString().split(".");
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    return parts.join(".");
-};
+function price_decrease(i) {
+    document.querySelectorAll(".ti-price")[i].classList.add("down");
+    setTimeout(function() {
+        document.querySelectorAll(".ti-price")[i].classList.remove("down");
+    }, 350);
+}
+
+function remove_data_request_delay() {
+    cl("Cancelling the deffered data request");
+    clearTimeout(timeout_id);
+    timeout_id = null;
+    remove_class(body, class_app_updating);
+    update_status("Last updated: " + last_updated, last_updated);
+}
 
 //tracking page
 function init_clusterize() {
@@ -246,33 +306,39 @@ function clear_filter_bar(e) {
 function save_setting(event) {
     var name = event.target.dataset.name
     var symbol = event.target.id;
-    var i = get_key_by_value(chks, symbol); //get the index of the coin in object
-    if (event.target.checked) { //when ticking a checkbox
-        coins[name] = symbol; //push to coins object
-        chks[i].checked = true; //mark as checked in chks object
-        chks[i].markup = chks[i].markup.replace("><label", " checked><label"); //set as checked in html
-        if (!ls.order) { //only sort if the user has not set a custom order
-            coins = sort_object(coins); //sort the coins object alphabetically by name (not symbol)
+    if (Object.keys(coins).length < max_checks) {
+        var i = getKeyByValue(chks, symbol); //get the index of the coin in object
+        if (event.target.checked) { //when ticking a checkbox
+            coins[name] = symbol; //push to coins object
+            chks[i].checked = true; //mark as checked in chks object
+            chks[i].markup = chks[i].markup.replace("><label", " checked><label"); //set as checked in html
+            if (!ls.order) { //only sort if the user has not set a custom order
+                coins = sort_object(coins); //sort the coins object alphabetically by name (not symbol)
+            }
+            ls.setItem("coins", JSON.stringify(coins)); //save to local storage
+            ls.removeItem("coins_manually_cleared");
+        } else { //when unticking a checkbox
+            delete coins[name]; //delete key/value from object
+            chks[i].checked = false; //mark as checked in chks object
+            chks[i].markup = chks[i].markup.replace(" checked><label", "><label"); //removed checked attribute in markup
+            ls.setItem("coins", JSON.stringify(coins)); //overwrite local storage
+            if (Object.keys(coins).length < 1) { //if it was the last coin (meaning user is no longer tracking any coins)
+                ls.removeItem("coins"); //remove the local storage item
+                ls.removeItem("order");
+                ls.setItem("coins_manually_cleared", true);
+            }
         }
-        ls.setItem("coins", JSON.stringify(coins)); //save to local storage
-        ls.removeItem("coins_manually_cleared");
-    } else { //when unticking a checkbox
-        delete coins[name]; //delete key/value from object
-        chks[i].checked = false; //mark as checked in chks object
-        chks[i].markup = chks[i].markup.replace(" checked><label", "><label"); //removed checked attribute in markup
-        ls.setItem("coins", JSON.stringify(coins)); //overwrite local storage
-        if (Object.keys(coins).length < 1) { //if it was the last coin (meaning user is no longer tracking any coins)
-            ls.removeItem("coins"); //remove the local storage item
-            ls.removeItem("order");
-            ls.setItem("coins_manually_cleared", true);
-        }
+    } else {
+        cl("Too many coins are being tracked, remove some, then try again");
+        event.preventDefault();
+        return false;
     }
 }
 
 function uncheck_all() {
     for (var key in coins) {
         var sym = coins[key];
-        var i = get_key_by_value(chks, sym);
+        var i = getKeyByValue(chks, sym);
         chks[i].checked = false;
         chks[i].markup = chks[i].markup.replace(" checked><label", "><label");
         document.getElementById(sym).checked = false;
@@ -284,7 +350,8 @@ function uncheck_all() {
 }
 
 //ticker
-function build_elements(callback) {
+function build_elements() {
+    update_status("Building elements...", "");
     add_class(body, class_app_loading);
     for (var key in coins) {
         var clone = document.getElementById("placeholder").cloneNode(true);
@@ -299,12 +366,44 @@ function build_elements(callback) {
         symbol.innerHTML = coins[key];
         document.getElementById("ticker").insertBefore(clone, document.getElementById("welcome"));
     }
-    callback();
-    //get_coin_data();
+    update();
+}
+
+function update() {
+    if (document.querySelectorAll(".actual").length > 0) { //if there are elements that have data to update
+        var last = Date.now() - last_updated; //log the difference between the current time and last update time set in the getData() function
+        timeout_delay = api_throttle - last; //how long to delay the update, to respect API limits
+        if (!has_class(body, class_app_loading)) { //this checks if user clicked the update button vs startup or rebuilding els
+            add_class(body, class_app_updating);
+        }
+        if (timeout_delay > 0) { //if the time between api calls is within the threshold set in the api_throttle variable
+            return;
+            cl("Will get updated data in " + timeout_delay + "ms");
+            var delay;
+            if (timeout_delay > 1000) { //if greater than a second
+                update_status("Updating data in " + Math.round(timeout_delay/1000) + " seconds...");
+                delay = 1000;
+            } else if (timeout_delay < 1000 && timeout_delay > 0) { //if less than a second but still greater than 0
+                update_status("Updating data in " + timeout_delay + " ms...");
+                delay = timeout_delay;
+            }
+            timeout_id = setTimeout(function() {
+                timeout_delay = timeout_delay - delay;
+                clearTimeout(timeout_id);
+                timeout_id = null;
+                update();
+            }, delay);
+        } else {
+            setTimeout(function() {
+                get_coin_data();
+            }, ux_delay);
+        }
+    }
 }
 
 function get_coin_data() {
     check_motd();
+    update_status("Getting data...", "");
     var endpoint = "https://api.coinmarketcap.com/v1/ticker/?convert=" + currency + "&limit=0";
     //endpoint = "/inc/cmc.json";
     var xhr = new XMLHttpRequest();
@@ -317,8 +416,6 @@ function get_coin_data() {
     xhr.onloadend = function() {
         if (xhr.status === 200) { //if there were no errors
             var data = JSON.parse(xhr.responseText);
-            ls.removeItem("last_data");
-            last_data = [];
             for (var key in data) {
                 var name = data[key]["name"];
                 var sym = data[key]["symbol"];
@@ -330,44 +427,84 @@ function get_coin_data() {
                     var el = document.querySelector("." + ti_prefix + sym.toLowerCase());
                     var price_el = el.querySelector(".amount");
                     var change_el = el.querySelector(".ti-change");
-                    price_el.innerHTML = round(price);
+                    price_el.innerHTML = price;
                     change_el.innerHTML = change + "%";
-                    last_data.push({
-                        symbol: sym,
-                        price: round(price),
-                        change: change
-                    });
-                    ls.setItem("last_data", JSON.stringify(last_data));
                 }
             }
-            setTimeout(function() {
-                remove_class(body, class_app_loading);
-            }, ux_delay);
-            document.getElementById("logo").title = "Last updated: " + format_time(last_updated);
+            remove_class(body, class_app_loading);
+            remove_class(body, class_app_updating);
+            update_status("Last updated: " + last_updated);
         } else {
-            console.log(xhr);
-            console.log("Error getting data from " + endpoint);
-            document.getElementById("logo").title = "Error getting data...";
+            
         }
     }
     xhr.send(null);
 }
 
-function parse_local_data() {
+function get_coin_data_old() {
     check_motd();
-    var data = last_data;
-    for (var key in data) {
-        var s = data[key]["symbol"];
-        var p = data[key]["price"];
-        var c = data[key]["change"];
-        var el = document.querySelector("." + ti_prefix + s.toLowerCase());
-        el.querySelector(".amount").innerHTML = p;
-        el.querySelector(".ti-change").innerHTML = c;
+    update_status("Getting data...", "");
+    var endpoint = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=" + Object.values(coins).toString() + "&tsyms=" + currency;
+    var xhr = new XMLHttpRequest();
+    xhr.timeout = 20000; //after 20 seconds stop trying to get data
+    xhr.open('GET', endpoint);
+    xhr.onloadstart = function() {
+        last_updated = Date.now();
+        ls.setItem("last_updated", last_updated);
     }
-    setTimeout(function() {
-        remove_class(body, class_app_loading);
-    }, ux_delay);
-    document.getElementById("logo").title = "Last updated: " + format_time(last_updated);
+    xhr.onloadend = function() {
+        if (xhr.status === 200) { //if there were no errors
+            var data = JSON.parse(xhr.responseText);
+            for (var key in data["DISPLAY"]) {
+                var el = document.querySelector("." + ti_prefix + key.toLowerCase()); //the element where we should put the data
+                var price_el = el.querySelector(".amount"); //the element that holds the price data
+                var sign_el = el.querySelector(".sign"); //the element that holds the currency sign
+                var price_old = el.querySelector(".amount").innerHTML; //old price used to determine if price went up/down since last update
+                var price = data["DISPLAY"][key][currency][ "PRICE"].split(" ")[1]; //price data
+                var sign = data["DISPLAY"][key][currency][ "TOSYMBOL"]; //currency sign from data, e.g. $ €
+                var change_el = el.querySelector(".ti-change"); //the element that holds the 24hr change data
+                var change = data["DISPLAY"][key][currency]["CHANGEPCT24HOUR"]; //the 24hr change data
+                var i = Object.values(coins).indexOf(key) + 1; //store the index of the coin so we can use it for the increase and decrease price functions (+1 for placholder)
+                
+                //set currency sign
+                sign_el.innerHTML = sign;
+                if (sign.length > 1) { //if the currency sign is letters instead of a symbol
+                    sign_el.innerHTML = "<span>" + sign + "</span>";
+                }
+                
+                //add/update price data
+                price_el.innerHTML = price;
+                if (price_old) { //if there's previously recorded price
+                    if (parseFloat(price) > parseFloat(price_old)) { //if price went up
+                        cl(key + " price has gone up - old price was " + parseFloat(price_old) + ", new price is " + parseFloat(price));
+                        price_increase(i);
+                    } else if (parseFloat(price) < parseFloat(price_old)) { //if price went down
+                        cl(key + " price has gone down - old price was " + parseFloat(price_old) + ", new price is " + parseFloat(price));
+                        price_decrease(i);
+                    }
+                }
+                
+                //color 24hr change text
+                if (change.startsWith("-")) { //since we're getting back a string, we know it is negative if the string starts with a "-"
+                    change_el.style.color = red;
+                    change_el.innerHTML = change + "%";
+                } else {
+                    change_el.style.color = green;
+                    change_el.innerHTML = "+" + change + "%";
+                }
+            }
+            
+            remove_class(body, class_app_loading);
+            remove_class(body, class_app_updating);
+            update_status("Last updated: " + last_updated, last_updated);
+        } else {
+            console.log(xhr);
+            console.log("Error getting data from " + endpoint);
+            update_status("Error, check console...", "");
+        }
+        
+    }
+    xhr.send(null);
 }
 
 //motd
@@ -377,7 +514,7 @@ function check_motd() {
         alert_el.getElementsByTagName("span")[0].innerHTML = ls.motd;
     }
     
-    if (!ls.last_motd_check || ((Date.now()/1000) - (parseInt(ls.last_motd_check)/1000) > interval_motd)) { //no motd ever checked or time between checks hit
+    if (!ls.last_motd_check || ((Date.now()/1000) - (parseInt(ls.last_motd_check)/1000) > time_between_checks)) { //no motd ever checked or time between checks hit
         ls.setItem("last_motd_check", Date.now());
         ls.removeItem("motd_cleared")
         get_motd();
@@ -400,7 +537,7 @@ function get_motd() {
             }
         } else {
             alert_el.getElementsByTagName("span")[0].innerHTML = "Error, check console";
-            console.log("Error getting data from " + xhr.responseURL + " - " + xhr.responseText);
+             console.log("Error getting data from " + xhr.responseURL + " - " + xhr.responseText);
         }
     }
     xhr.send(null);
@@ -410,17 +547,15 @@ function get_motd() {
 function set_currency() {
     ls.setItem("currency", currency_select.value);
     currency = currency_select.value;
-    set_currency_symbol();
 }
 
-function set_currency_symbol() {
-    var sign_el = document.getElementById("placeholder").querySelector(".ti-price").querySelector(".sign");
-    var sign = currency_select.selectedOptions[0].dataset.symbol;
-    var v = currency_select.value;
-    if (sign != undefined) {
-        sign_el.innerHTML = sign;
+function change_time_format(event) {
+    if (event.target.checked) { //when enabling AM/PM
+        cl("ampm turned on");
+        ls.setItem("ampm", "on");
     } else {
-        sign_el.innerHTML = "<span>" + currency_select.value + "</span>";
+        cl("am pm turned off");
+        ls.removeItem("ampm");
     }
 }
 
@@ -430,18 +565,20 @@ function reset() {
     ls.setItem("coins", JSON.stringify(default_coins)); //set local storage to default coins
     currency = "USD"; //set the global variable to the default currency
     currency_select.selectedIndex = get_select_index(currency_select, "USD"); //select the default value for the currency select element
+    document.getElementById("ampm").checked = false; //set the time format to the default setting (24 hour time)
     coins = JSON.parse(ls.coins); //set the global coins variable to the default coins
     document.querySelectorAll(".actual").forEach(function(e) { //remove all coin elements
         return e.parentNode.removeChild(e);
     });
     remove_class(body, class_settings_page);
-    build_elements(get_coin_data);
+    build_elements();
 }
 
 //drag & drop
 //turns on dragging for the element by clicking it's coin icon
 function mousedown(event) {
     var p = event.target.closest(".actual");
+    cl("Turning drag on for elment with class name '" + p.className + "'");
     p.setAttribute("draggable", true);
 }
 
@@ -455,6 +592,7 @@ function mouseup(event) {
 
 function dragstart(event) {
     if (event.target.classList.contains("actual")) {
+        cl("Dragging started for element with class name '" + event.target.className + "'");
         event.target.classList.add("dragging");
         event.dataTransfer.effectAllowed = "copy";
         event.dataTransfer.setData('Text', this.id);
@@ -487,8 +625,8 @@ function dragenter(event) {
         dragon = event.target.closest(".actual");
     }
     
-    //if NOT the element being dragged & and dragging el exists & not the immediate nextSibling of the element being dragged
-    if (!dragon.classList.contains("dragging") && dragging && dragon != dragging.nextSibling) {
+    //if NOT the element being dragged & not the immediate nextSibling of the element being dragged
+    if (!dragon.classList.contains("dragging") && dragon != dragging.nextSibling) {
         //if another element has the dragover class, remove it before applying to new element
         if (document.querySelectorAll(".dragover").length > 0) {
             document.querySelector(".dragover").classList.remove("dragover");
@@ -539,6 +677,7 @@ function show_tracking_page() {
     last_coins = Object.keys(coins);
     add_class(body, class_tracking_page);
     add_class(page_tracking, class_checkbox_loading);
+    update_status("Select your coins", "");
     build_checkboxes();
     filter_bar.focus();
 }
@@ -548,20 +687,29 @@ function hide_tracking_page() {
     clear_filter_bar();
     clusterize.clear();
     chks = [];
-    if (!arrays_are_equal(last_coins, Object.keys(coins))) {
-        //user changed the coins to be tracking whilst in tracking page
+    if (!arrays_are_equal(last_coins, Object.keys(coins))) { //user changed the coins to be tracking whilst in tracking page
         document.querySelectorAll(".actual").forEach(function(e) { //remove all coin elements
             return e.parentNode.removeChild(e);
         });
-        if (Object.keys(coins).length > 0) {
-            build_elements(get_coin_data); //rebuild all the coin elements and fetch new data
+        if (Object.keys(coins).length > 0) { //there are still coins to be tracked
+            build_elements(); //rebuild all the coin elements and fetch new data
+        } else { //there are no longer coins to be tracked
+            update_status("Ready...", ""); 
+        }
+    } else { //user entered tracking page, but changed nothing
+        if (document.querySelectorAll(".actual").length > 0) { //if there are elements that were previously tracked
+            update_status("Last updated: " + last_updated, last_updated);
+        } else {
+            update_status("Ready...", "");
         }
     }
 }
 
 function show_settings_page() {
+    cl("Showing settings page");
     add_class(body, class_settings_page);
     last_curr = ls.currency;
+    update_status("Settings", "");
 }
 
 function hide_settings_page() {
@@ -570,7 +718,9 @@ function hide_settings_page() {
         document.querySelectorAll(".actual").forEach(function(e) { //remove all coin elements
             return e.parentNode.removeChild(e);
         });
-        build_elements(get_coin_data);
+        build_elements();
+    } else {
+        update_status("Last updated: " + last_updated, last_updated);
     }
 }
 
@@ -584,24 +734,15 @@ function navigate_back() {
 
 //start
 function start() {
-    var last = Date.now() - last_updated;
-    add_class(body, class_app_loading);
+    update_status("Starting...", "");
     if (Object.keys(coins).length > 0) { //if there are coins set to be tracked
         if (document.querySelectorAll(".actual").length < 1) { //if the coin elements are not yet built
-            if (last < interval_price) {
-                build_elements(parse_local_data);
-            } else {
-                build_elements(get_coin_data);
-            }
+            build_elements();
         } else {
-            if (last < interval_price) {
-                parse_local_data();
-            } else {
-                get_coin_data();
-            }
+            update();
         }
     } else {
-        remove_class(body, class_app_loading);
+        update_status("Ready...", "");
     }
 }
 
@@ -621,17 +762,16 @@ function load_settings() {
         document.getElementById("c_usd").removeAttribute("selected"); //remove selected attr from option within select element
         currency_select.selectedIndex = get_select_index(currency_select, ls.currency); //set the locally stored currency as the selection
         document.getElementById("c_" + ls.currency.toLowerCase()).setAttribute("selected", "selected"); //set the selected attribute
-        set_currency_symbol();
+    }
+    if (ls.ampm) { //user has turned on AM/PM time format previously
+        cl("Local storage exists for time format, loading it");
+        time_format_toggle.checked = true;
     }
     if (ls.last_updated) { //checks if local storage for last updated exists
-        last_updated = parseInt(ls.last_updated);
-    }
-    if (ls.last_data) { //if local storage item exists for last_data
-        last_data =  JSON.parse(ls.last_data);
+        last_updated = ls.last_updated;
     }
 }
 
-//event listeners
 document.getElementById("ticker").addEventListener("mousedown", function(event) {
     if (event.target.className === "ti-icon") {
         mousedown(event);
@@ -689,6 +829,7 @@ page_tracking.addEventListener("click", function(e) {
 button_uncheck_all.addEventListener("click", uncheck_all);
 button_settings.addEventListener("click", show_settings_page);
 currency_select.addEventListener("change", set_currency);
+time_format_toggle.addEventListener("click", change_time_format);
 button_reset.addEventListener("click", reset);
 button_close_motd.addEventListener("click", function() {
     ls.setItem("motd_cleared", "true");
@@ -700,7 +841,15 @@ document.addEventListener("click", function(e) { //open links
     }
 });
 
+/*
+//extension close
 window.addEventListener("blur",function() {
+    cl("Window or extension lost focus");
+    update_status("blur", "");
+    update_status("Last updated: " + last_updated, last_updated);
+    if (timeout_id != null) {
+        remove_data_request_delay();
+    }
     if (has_class(body, class_tracking_page)) {
         if (!arrays_are_equal(last_coins, Object.keys(coins))) {
             document.querySelectorAll(".actual").forEach(function(e) { //remove all coin elements
@@ -726,3 +875,4 @@ window.addEventListener("load",function() {
     load_settings();
     init_clusterize();
 });
+*/
