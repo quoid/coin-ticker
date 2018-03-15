@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/quoid/coin-ticker/sandbox/etc/logo.png" width="64" height="64">
 
-A Safari & Chrome extension that puts a configurable cryptocurrency ticker right in your browser.
+A Safari, Chrome & Firefox extension that puts a configurable cryptocurrency ticker right in your browser.
 
 ![ticker image](https://raw.githubusercontent.com/quoid/coin-ticker/sandbox/etc/safari/Screenshot.png)
 
@@ -21,6 +21,9 @@ Developed for Safari 7+.
 Head over to the [Chrome Extension Store](https://chrome.google.com/webstore/detail/cointicker/heohpoipgmadpdmafmddijgdckhnhaml) and install the extension from there.
 
 Developed for Chrome 55+.
+
+**Firefox**
+Install on Firefox through the [Firefox Add-on page](https://addons.mozilla.org/en-US/firefox/addon/coin-ticker/).
 
 ## Usage
 
@@ -57,8 +60,7 @@ Prices can be reflected in the following currencies:
 - RUB
 - SEK
 - BTC
-- ETH
-- USDT
+- and many more
 
 You can change the price's currency and the time format (12/24 hr) on the settings page.
 
