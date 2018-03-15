@@ -695,7 +695,7 @@ button_close_motd.addEventListener("click", function() {
     remove_class(body, class_show_alert);
 });
 document.addEventListener("click", function(e) { //open links
-    if (event.target.tagName === "A") {
+    if (e.target.tagName === "A") {
         open_link(e);
     }
 });
