@@ -430,6 +430,7 @@ function reset() {
     ls.setItem("coins", JSON.stringify(default_coins)); //set local storage to default coins
     currency = "USD"; //set the global variable to the default currency
     currency_select.selectedIndex = get_select_index(currency_select, "USD"); //select the default value for the currency select element
+    set_currency_symbol();
     coins = JSON.parse(ls.coins); //set the global coins variable to the default coins
     document.querySelectorAll(".actual").forEach(function(e) { //remove all coin elements
         return e.parentNode.removeChild(e);
