@@ -37,7 +37,7 @@ To make finding your coins easier, you can use the filter bar on the tracking pa
 
 You can use the search flag `:checked` within the filter bar to *only* show the coins that are currently selected. This makes "de-selecting" coins much easier. 
 
-![filter coins](https://raw.githubusercontent.com/quoid/coin-ticker/sandbox/etc/gif/uncheck-all.gif)
+![filter coins](https://raw.githubusercontent.com/quoid/coin-ticker/sandbox/etc/gif/checked.gif)
 
 By default the coins are ordered by their rank on [CoinMarketCap](https://coinmarketcap.com) at around the time of the last update. Ranks change often, so don't expect the ranks in this extension to be reflective of the current coin rank (but it should be close).
 
@@ -46,32 +46,19 @@ You can reorder the coins by dragging and dropping from *their icons*.
 ![reorder coins](https://raw.githubusercontent.com/quoid/coin-ticker/sandbox/etc/gif/drag.gif)
 
 ## Currencies
-Prices can be reflected in the following currencies:
+Prices can be reflected in the following fiat currencies: `"AUD", "BRL", "CAD", "CHF", "CLP", "CNY", "CZK", "DKK", "EUR", "GBP", "HKD", "HUF", "IDR", "ILS", "INR", "JPY", "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN", "RUB", "SEK", "SGD", "THB", "TRY", "TWD", "ZAR"`
 
-- AUD
-- CAD
-- CNY
-- EUR
-- GBP
-- HKD
-- JPY
-- KRW
-- PLN
-- RUB
-- SEK
-- BTC
-- and many more
+You can also choose to show prices in `BTC`.
 
-You can change the price's currency and the time format (12/24 hr) on the settings page.
+You can change the currency settings on the settings page.
 
 ![change currency](https://raw.githubusercontent.com/quoid/coin-ticker/sandbox/etc/gif/settings.gif)
 
 ## Notes
-- All data is from [CryptoCompare](https://www.cryptocompare.com) and generalized from multiple exchanges
+- All data is from [CoinMarketCap](https://coinmarketcap.com)
 - Coin icons from a personal fork of [cryptocoins](https://github.com/quoid/cryptocoins)
 - Extension logo inspired by [Anton Kalik](https://thenounproject.com/antonkalik/)
-- You can only track, at max, 46 coins at one time.
-- Because of API limits, you can only update the prices every 10 seconds
+- Because of API limits, the price data updates every 60 seconds
 
 ## Pipeline
 
