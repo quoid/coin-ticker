@@ -12,9 +12,5 @@
         "default_icon": "Icon.png",
         "default_title": "Open CoinTicker",
         "default_popup": "popup.html"
-    },
-    "background": {
-        "scripts": ["background.js"]
-    },
-    "content_security_policy": "script-src 'self' https://www.google-analytics.com; object-src 'self'"
+    }
 }
